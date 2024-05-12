@@ -1,0 +1,22 @@
+{
+  "name": "@spin-spot/utils",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings 0"
+  },
+  "devDependencies": {
+    "@spin-spot/eslint-config": "*",
+    "@spin-spot/typescript-config": "*",
+    "@types/eslint": "^8.56.5",
+    "@types/node": "^20.11.24",
+    "clsx": "^2.1.1",
+    "eslint": "^8.57.0",
+    "tailwind-merge": "^2.3.0",
+    "typescript": "^5.3.3"
+  }
+}

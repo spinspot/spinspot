@@ -1,0 +1,6 @@
+{
+  "extends": "@spin-spot/typescript-config/base.json",
+  "compilerOptions": {
+    "noEmit": true
+  }
+}
