@@ -1,0 +1,13 @@
+{
+  "conventionalCommits.scopes": [
+    "general",
+    "api",
+    "client",
+    "admin",
+    "components",
+    "services",
+    "models",
+    "utils",
+    "config"
+  ]
+}

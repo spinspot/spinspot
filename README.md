@@ -1,6 +1,6 @@
 # Spin Spot Turborepo
 
-This is an official starter Turborepo.
+This is Spin Spot's Turborepo.
 
 ## What's inside?
 
@@ -8,17 +8,24 @@ This Turborepo includes the following packages/apps:
 
 ### Apps and Packages
 
-- `client`: a [Next.js](https://nextjs.org/) app
-- `admin`: another [Next.js](https://nextjs.org/) app
-- `api`: an [Express.js](https://expressjs.com/) app
+#### Apps
+
+- `@spin-spot/client`: a [Next.js](https://nextjs.org/) app
+- `@spin-spot/admin`: another [Next.js](https://nextjs.org/) app
+- `@spin-spot/api`: an [Express.js](https://expressjs.com/) app
+
+#### Packages
+
 - `@spin-spot/components`: a React component library shared by both `client` and `admin` applications
 - `@spin-spot/services`: a React hook library shared by both `client` and `admin` applications
 - `@spin-spot/models`: a TypeScript types and Zod validators library
 - `@spin-spot/utils`: a general utility functions library
+
+#### Config Packages
+
 - `@spin-spot/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
 - `@spin-spot/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+- `@spin-spot/tailwindcss-config`: `tailwind.config.ts` used by front-end apps and packages
 
 ### Utilities
 
