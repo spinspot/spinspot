@@ -2,21 +2,23 @@
   "name": "@spin-spot/services",
   "version": "0.0.0",
   "private": true,
-  "exports": {
-    ".": "./src/index.ts",
-    "./*": "./src/*.ts"
-  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./src/index.ts",
   "scripts": {
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
     "lint": "eslint . --max-warnings 0"
   },
   "devDependencies": {
-    "@spin-spot/models": "*",
-    "@spin-spot/utils": "*",
     "@spin-spot/eslint-config": "*",
+    "@spin-spot/models": "*",
     "@spin-spot/typescript-config": "*",
-    "@types/node": "^20.11.24",
+    "@spin-spot/utils": "*",
     "@types/eslint": "^8.56.5",
+    "@types/node": "^20.11.24",
     "eslint": "^8.57.0",
+    "tsup": "^8.0.2",
     "typescript": "^5.3.3"
   }
 }

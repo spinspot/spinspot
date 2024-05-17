@@ -3,11 +3,11 @@
   "globalDependencies": ["**/.env", "**/.env.*local"],
   "pipeline": {
     "@spin-spot/api": {
-      "env": ["PORT", "CORS_ORIGINS"]
+      "env": ["PORT", "CORS_ORIGINS", "MONGODB_URI"]
     },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
     "lint": {
       "dependsOn": ["^lint"]
