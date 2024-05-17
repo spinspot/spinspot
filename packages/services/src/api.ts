@@ -1,0 +1,32 @@
+function fetchApi(input: string | URL, init?: RequestInit) {
+  const url = new URL(input, process.env.NEXT_PUBLIC_API_URL);
+  const headers: HeadersInit = {};
+
+  if (init?.body) {
+    return fetch(url.href, { ...init, headers });
+  } else {
+    const body = JSON.stringify(init?.body);
+    headers["Content-Type"] = "application/json";
+
+    return fetch(url.href, {
+      ...init,
+      headers,
+      body,
+    });
+  }
+}
+
+export const api = {
+  get(input: string | URL, init?: RequestInit) {
+    return fetchApi(input, { ...init, method: "GET" });
+  },
+  post(input: string | URL, init?: RequestInit) {
+    return fetchApi(input, { ...init, method: "POST" });
+  },
+  put(input: string | URL, init?: RequestInit) {
+    return fetchApi(input, { ...init, method: "PUT" });
+  },
+  delete(input: string | URL, init?: RequestInit) {
+    return fetchApi(input, { ...init, method: "DELETE" });
+  },
+};
