@@ -9,7 +9,7 @@ export async function getUsers() {
 }
 
 export function useUsers() {
-  return useQuery({ queryKey: ["users"], queryFn: getUsers });
+  return useQuery({ queryKey: ["getUsers"], queryFn: getUsers });
 }
 
 export async function getUser(_id: TGetUserParamsDefinition["_id"]) {
@@ -19,5 +19,5 @@ export async function getUser(_id: TGetUserParamsDefinition["_id"]) {
 }
 
 export function useUser(_id: TGetUserParamsDefinition["_id"]) {
-  return useQuery({ queryKey: ["user", _id], queryFn: () => getUser(_id) });
+  return useQuery({ queryKey: ["getUser", _id], queryFn: () => getUser(_id) });
 }

@@ -1,4 +1,6 @@
-function fetchApi(input: string | URL, init?: RequestInit) {
+type ApiRequestInit = Omit<RequestInit, "body"> & { body?: any };
+
+function fetchApi(input: string | URL, init?: ApiRequestInit) {
   const url = new URL(input, process.env.NEXT_PUBLIC_API_URL);
   const headers: HeadersInit = {};
 
@@ -17,16 +19,16 @@ function fetchApi(input: string | URL, init?: RequestInit) {
 }
 
 export const api = {
-  get(input: string | URL, init?: RequestInit) {
+  get(input: string | URL, init?: ApiRequestInit) {
     return fetchApi(input, { ...init, method: "GET" });
   },
-  post(input: string | URL, init?: RequestInit) {
+  post(input: string | URL, init?: ApiRequestInit) {
     return fetchApi(input, { ...init, method: "POST" });
   },
-  put(input: string | URL, init?: RequestInit) {
+  put(input: string | URL, init?: ApiRequestInit) {
     return fetchApi(input, { ...init, method: "PUT" });
   },
-  delete(input: string | URL, init?: RequestInit) {
+  delete(input: string | URL, init?: ApiRequestInit) {
     return fetchApi(input, { ...init, method: "DELETE" });
   },
 };
