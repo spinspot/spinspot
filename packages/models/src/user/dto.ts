@@ -1,5 +1,5 @@
-import { baseModelDefinition, passwordDefinition } from "@/definitions";
 import z from "zod";
+import { baseModelDefinition, passwordDefinition } from "../definitions";
 
 export const userDefinition = baseModelDefinition.extend({
   email: z.string().email(),

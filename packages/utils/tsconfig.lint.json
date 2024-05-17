@@ -1,10 +1,5 @@
 {
   "extends": "@spin-spot/typescript-config/base.json",
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  },
-  "include": ["src", "turbo"],
-  "exclude": ["node_modules"]
+  "include": ["src", "turbo", "../**/src/index.ts"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -5,6 +5,15 @@
     "@spin-spot/api": {
       "env": ["PORT", "CORS_ORIGINS", "MONGODB_URI"]
     },
+    "@spin-spot/client": {
+      "env": ["NEXT_PUBLIC_API_URL"]
+    },
+    "@spin-spot/admin": {
+      "env": ["NEXT_PUBLIC_API_URL"]
+    },
+    "@spin-spot/services": {
+      "env": ["NEXT_PUBLIC_API_URL"]
+    },
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]

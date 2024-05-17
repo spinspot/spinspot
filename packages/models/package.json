@@ -11,6 +11,7 @@
     "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
+    "@spin-spot/utils": "*",
     "mongoose": "^8.3.4",
     "zod": "^3.23.8"
   },
