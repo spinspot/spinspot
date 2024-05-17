@@ -7,6 +7,12 @@ export const baseModelDefinition = z.object({
   updatedAt: z.date().optional(),
 });
 
+export const genderDefinition = z.enum(["MALE", "FEMALE", "OTHER"]);
+export type TGenderEnum = z.infer<typeof genderDefinition>;
+
+export const userTypeDefinition = z.enum(["PLAYER", "ADMIN"]);
+export type TUserTypeEnum = z.infer<typeof userTypeDefinition>;
+
 export const passwordDefinition = z
   .string()
   .regex(/^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9]).{6,})\S$/, {
