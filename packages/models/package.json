@@ -2,12 +2,17 @@
   "name": "@spin-spot/models",
   "version": "0.0.0",
   "private": true,
-  "exports": {
-    ".": "./src/index.ts",
-    "./*": "./src/*.ts"
-  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./src/index.ts",
   "scripts": {
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
     "lint": "eslint . --max-warnings 0"
+  },
+  "dependencies": {
+    "mongoose": "^8.3.4",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@spin-spot/eslint-config": "*",
@@ -15,8 +20,7 @@
     "@types/eslint": "^8.56.5",
     "@types/node": "^20.11.24",
     "eslint": "^8.57.0",
-    "mongoose": "^8.3.4",
-    "typescript": "^5.3.3",
-    "zod": "^3.23.8"
+    "tsup": "^8.0.2",
+    "typescript": "^5.3.3"
   }
 }

@@ -4,9 +4,9 @@
   "private": true,
   "main": "src/index.ts",
   "scripts": {
-    "dev": "nodemon --watch src src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch --onSuccess \"node dist/index.js\"",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "start": "node api/main.js",
     "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
@@ -17,6 +17,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-async-errors": "^3.1.1",
     "mongoose": "^8.3.4",
     "zod": "^3.23.8"
   },
@@ -28,6 +29,7 @@
     "@types/node": "^20",
     "eslint": "^8",
     "nodemon": "^3.1.0",
+    "tsup": "^8.0.2",
     "typescript": "^5"
   }
 }

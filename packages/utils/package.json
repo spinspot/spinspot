@@ -2,11 +2,12 @@
   "name": "@spin-spot/utils",
   "version": "0.0.0",
   "private": true,
-  "exports": {
-    ".": "./src/index.ts",
-    "./*": "./src/*.ts"
-  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./src/index.ts",
   "scripts": {
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
     "lint": "eslint . --max-warnings 0"
   },
   "devDependencies": {
@@ -17,6 +18,7 @@
     "clsx": "^2.1.1",
     "eslint": "^8.57.0",
     "tailwind-merge": "^2.3.0",
+    "tsup": "^8.0.2",
     "typescript": "^5.3.3"
   }
 }
