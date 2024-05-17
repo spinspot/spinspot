@@ -5,8 +5,13 @@ import {
   userSchema,
   type TCreateUserInputDefinition,
 } from "@spin-spot/models";
+import { hash } from "bcrypt";
 import { model } from "mongoose";
 
+userSchema.pre("save", async function (next) {
+  if (this.password) this.password = await hash(this.password, 10);
+  next();
+});
 const User = model("User", userSchema);
 
 async function getUsers() {

@@ -10,14 +10,16 @@
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "lint": "eslint . --max-warnings 0"
   },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.3.0"
+  },
   "devDependencies": {
     "@spin-spot/eslint-config": "*",
     "@spin-spot/typescript-config": "*",
     "@types/eslint": "^8.56.5",
     "@types/node": "^20.11.24",
-    "clsx": "^2.1.1",
     "eslint": "^8.57.0",
-    "tailwind-merge": "^2.3.0",
     "tsup": "^8.0.2",
     "typescript": "^5.3.3"
   }

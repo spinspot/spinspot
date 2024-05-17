@@ -1,6 +1,7 @@
 import { Schema } from "mongoose";
+import { IUser } from "./dto";
 
-export const userSchema = new Schema(
+export const userSchema = new Schema<IUser>(
   {
     email: String,
     password: String,

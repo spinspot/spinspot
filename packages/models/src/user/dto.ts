@@ -1,13 +1,18 @@
-import { baseModelDefinition, passwordDefinition } from "@/definitions";
 import z from "zod";
+import {
+  baseModelDefinition,
+  genderDefinition,
+  passwordDefinition,
+  userTypeDefinition,
+} from "../definitions";
 
 export const userDefinition = baseModelDefinition.extend({
   email: z.string().email(),
   password: passwordDefinition,
   firstName: z.string(),
   lastName: z.string(),
-  gender: z.string(),
-  userType: z.string(),
+  gender: genderDefinition,
+  userType: userTypeDefinition,
   isActive: z.boolean(),
 });
 export type IUser = z.infer<typeof userDefinition>;
