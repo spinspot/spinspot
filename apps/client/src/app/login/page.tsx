@@ -1,5 +1,6 @@
 "use client";
-import { useMediaQuery } from "@react-hook/media-query";
+
+import { useMediaQuery } from "usehooks-ts";
 
 export default function login() {
   const isSmallScreen = useMediaQuery("(max-width: 700px)");

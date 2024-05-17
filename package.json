@@ -22,9 +22,5 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ],
-  "dependencies": {
-    "@react-hook/media-query": "^1.1.1",
-    "react-responsive": "^10.0.0"
-  }
+  ]
 }
