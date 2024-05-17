@@ -5,8 +5,6 @@ function fetchApi(input: string | URL, init?: ApiRequestInit) {
   const headers: HeadersInit = {};
 
   if (init?.body) {
-    return fetch(url.href, { ...init, headers });
-  } else {
     const body = JSON.stringify(init?.body);
     headers["Content-Type"] = "application/json";
 
@@ -15,6 +13,8 @@ function fetchApi(input: string | URL, init?: ApiRequestInit) {
       headers,
       body,
     });
+  } else {
+    return fetch(url.href, { ...init, headers });
   }
 }
 
