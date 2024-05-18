@@ -3,7 +3,16 @@
   "globalDependencies": ["**/.env", "**/.env.*local"],
   "pipeline": {
     "@spin-spot/api": {
-      "env": ["PORT", "CORS_ORIGINS", "MONGODB_URI"]
+      "env": ["PORT", "CORS_ORIGINS", "MONGODB_URI", "JWT_SECRET"]
+    },
+    "@spin-spot/client": {
+      "env": ["NEXT_PUBLIC_API_URL"]
+    },
+    "@spin-spot/admin": {
+      "env": ["NEXT_PUBLIC_API_URL"]
+    },
+    "@spin-spot/services": {
+      "env": ["NEXT_PUBLIC_API_URL"]
     },
     "build": {
       "dependsOn": ["^build"],
