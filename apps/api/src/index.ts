@@ -31,7 +31,6 @@ passport.use(
     async function verify(payload, done) {
       try {
         const user = await authService.validateJWT(payload);
-        console.log(payload, user);
         done(null, user ?? false);
       } catch (err) {
         done(err);

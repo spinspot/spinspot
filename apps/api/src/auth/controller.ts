@@ -1,6 +1,5 @@
 import { IUser } from "@spin-spot/models";
 import { NextFunction, Request, Response } from "express";
-import { sign } from "jsonwebtoken";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { authService } from "./service";
@@ -34,18 +33,29 @@ function signIn(req: Request, res: Response, next: NextFunction) {
         throw "Correo electrónico o contraseña inválidos";
       }
 
-      const jwt = sign(
-        {
-          _id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          userType: user.userType,
-        },
-        process.env.JWT_SECRET ?? "$pin$pot",
-        {
-          expiresIn: "1h",
-        },
-      );
+      const jwt = authService.signJWT(user);
+
+      return res.status(200).send({
+        user,
+        jwt,
+      });
+    },
+  )(req, res, next);
+}
+
+function refresh(req: Request, res: Response, next: NextFunction) {
+  passport.authenticate(
+    "jwt",
+    { session: false },
+    (err: any, user?: IUser | false | null) => {
+      if (err) {
+        return next(err);
+      }
+      if (!user) {
+        throw "Token inválido";
+      }
+
+      const jwt = authService.signJWT(user);
 
       return res.status(200).send({
         user,
@@ -57,4 +67,5 @@ function signIn(req: Request, res: Response, next: NextFunction) {
 
 export const authController = {
   signIn,
+  refresh,
 } as const;
