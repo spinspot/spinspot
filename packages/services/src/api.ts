@@ -8,6 +8,10 @@ function fetchApi(input: string | URL, init?: ApiRequestInit) {
     const body = JSON.stringify(init?.body);
     headers["Content-Type"] = "application/json";
 
+    if (localStorage && localStorage.getItem("jwt")) {
+      headers["Authorization"] = "Bearer " + localStorage.getItem("jwt");
+    }
+
     return fetch(url.href, {
       ...init,
       headers,

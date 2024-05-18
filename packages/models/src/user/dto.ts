@@ -13,9 +13,14 @@ export const userDefinition = baseModelDefinition.extend({
   lastName: z.string(),
   gender: genderDefinition,
   userType: userTypeDefinition,
-  isActive: z.boolean(),
+  isActive: z.boolean().optional(),
 });
 export type IUser = z.infer<typeof userDefinition>;
+
+export const getUsersQueryDefinition = userDefinition
+  .omit({ password: true })
+  .partial();
+export type TGetUsersQueryDefinition = z.infer<typeof getUsersQueryDefinition>;
 
 export const getUserParamsDefinition = userDefinition.pick({ _id: true });
 export type TGetUserParamsDefinition = z.infer<typeof getUserParamsDefinition>;
@@ -30,7 +35,7 @@ export type TUpdateUserParamsDefinition = z.infer<
   typeof getUserParamsDefinition
 >;
 
-export const updateUserInputDefinition = userDefinition.optional();
+export const updateUserInputDefinition = userDefinition.partial();
 export type TUpdateUserInputDefinition = z.infer<
   typeof updateUserInputDefinition
 >;

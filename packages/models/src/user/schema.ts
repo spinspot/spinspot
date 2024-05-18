@@ -3,13 +3,28 @@ import { IUser } from "./dto";
 
 export const userSchema = new Schema<IUser>(
   {
-    email: String,
+    email: {
+      type: String,
+      unique: true,
+    },
     password: String,
-    firstName: String,
-    lastName: String,
+    firstName: {
+      type: String,
+      trim: true,
+    },
+    lastName: {
+      type: String,
+      trim: true,
+    },
     gender: String,
-    userType: String,
-    isActive: Boolean,
+    userType: {
+      type: String,
+      required: true,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true },
 );

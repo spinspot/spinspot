@@ -1,6 +1,7 @@
 import {
   createUserInputDefinition,
   getUserParamsDefinition,
+  getUsersQueryDefinition,
   updateUserInputDefinition,
   updateUserParamsDefinition,
 } from "@spin-spot/models";
@@ -8,7 +9,8 @@ import { Request, Response } from "express";
 import { userService } from "./service";
 
 async function getUsers(req: Request, res: Response) {
-  const users = await userService.getUsers();
+  const query = getUsersQueryDefinition.parse(req.query);
+  const users = await userService.getUsers(query);
   return res.status(200).json(users);
 }
 
