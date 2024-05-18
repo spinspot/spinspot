@@ -1,3 +1,5 @@
+import "express-async-errors";
+
 import { IUser } from "@spin-spot/models";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -9,8 +11,6 @@ import { ExtractJwt, Strategy as JWTStrategy } from "passport-jwt";
 import { authService } from "./auth";
 import { errorHandler } from "./error-handler";
 import { router } from "./router";
-
-import "express-async-errors";
 
 dotenv.config();
 
