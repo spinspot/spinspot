@@ -1,5 +1,6 @@
 import {
   TGetUserParamsDefinition,
+  TGetUsersQueryDefinition,
   TUpdateUserInputDefinition,
   TUpdateUserParamsDefinition,
   userSchema,
@@ -14,8 +15,8 @@ userSchema.pre("save", async function (next) {
 });
 const User = model("User", userSchema);
 
-async function getUsers() {
-  const users = await User.find();
+async function getUsers(filter: TGetUsersQueryDefinition = {}) {
+  const users = await User.find(filter);
   return users;
 }
 
@@ -24,16 +25,16 @@ async function getUser(_id: TGetUserParamsDefinition["_id"]) {
   return user;
 }
 
-async function createUser(input: TCreateUserInputDefinition) {
-  const user = await User.create(input);
+async function createUser(data: TCreateUserInputDefinition) {
+  const user = await User.create(data);
   return user;
 }
 
 async function updateUser(
   _id: TUpdateUserParamsDefinition["_id"],
-  input: TUpdateUserInputDefinition,
+  data: TUpdateUserInputDefinition,
 ) {
-  const user = await User.findByIdAndUpdate(_id, input);
+  const user = await User.findByIdAndUpdate(_id, data);
   return user;
 }
 
