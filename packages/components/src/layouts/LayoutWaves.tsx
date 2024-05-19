@@ -1,5 +1,3 @@
-import React from "react";
-
 // Layout component que contiene los SVGs
 export function LayoutWaves({ children }: { children: React.ReactNode }) {
   return (

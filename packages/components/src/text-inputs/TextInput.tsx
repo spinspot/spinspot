@@ -1,10 +1,9 @@
 import { cn } from "@spin-spot/utils";
-import React, { ChangeEvent } from "react";
 
 interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   type?: string;
   className?: string;
-  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (_event: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   topLeftLabel?: string;
   topRightLabel?: string;
