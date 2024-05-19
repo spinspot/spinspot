@@ -4,13 +4,13 @@ function fetchApi(input: string | URL, init?: ApiRequestInit) {
   const url = new URL(input, process.env.NEXT_PUBLIC_API_URL);
   const headers: HeadersInit = {};
 
+  if (typeof window !== "undefined" && localStorage.getItem("jwt")) {
+    headers["Authorization"] = "Bearer " + localStorage.getItem("jwt");
+  }
+
   if (init?.body) {
     const body = JSON.stringify(init?.body);
     headers["Content-Type"] = "application/json";
-
-    if (localStorage && localStorage.getItem("jwt")) {
-      headers["Authorization"] = "Bearer " + localStorage.getItem("jwt");
-    }
 
     return fetch(url.href, {
       ...init,

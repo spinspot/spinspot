@@ -1,3 +1,4 @@
+import AuthContext from "@/lib/auth-context";
 import QueryContext from "@/lib/query-context";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -17,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={inter.className}>
-        <QueryContext>{children}</QueryContext>
+        <AuthContext>
+          <QueryContext>{children}</QueryContext>
+        </AuthContext>
       </body>
     </html>
   );

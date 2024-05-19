@@ -20,8 +20,8 @@
   },
   "devDependencies": {
     "@spin-spot/eslint-config": "*",
-    "@spin-spot/typescript-config": "*",
     "@spin-spot/tailwindcss-config": "*",
+    "@spin-spot/typescript-config": "*",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
