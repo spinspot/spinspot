@@ -13,13 +13,15 @@
   "dependencies": {
     "@spin-spot/models": "*",
     "@spin-spot/utils": "*",
-    "@tanstack/react-query": "^5.36.2"
+    "@tanstack/react-query": "^5.36.2",
+    "react": "^18.3.1"
   },
   "devDependencies": {
     "@spin-spot/eslint-config": "*",
     "@spin-spot/typescript-config": "*",
     "@types/eslint": "^8.56.5",
     "@types/node": "^20.11.24",
+    "@types/react": "^18.3.2",
     "eslint": "^8.57.0",
     "tsup": "^8.0.2",
     "typescript": "^5.3.3"

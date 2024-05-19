@@ -1,5 +1,5 @@
 import { userService } from "@/user";
-import { IUser } from "@spin-spot/models";
+import { IUser, JwtPayload } from "@spin-spot/models";
 import bcrypt from "bcrypt";
 import { sign } from "jsonwebtoken";
 
@@ -20,10 +20,11 @@ function signJWT(user: IUser) {
   return sign(
     {
       _id: user._id,
+      email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
       userType: user.userType,
-    },
+    } as JwtPayload,
     process.env.JWT_SECRET ?? "$pin$pot",
     {
       expiresIn: "1d",
