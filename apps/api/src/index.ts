@@ -2,6 +2,7 @@ import "express-async-errors";
 
 import { IUser } from "@spin-spot/models";
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
@@ -29,6 +30,7 @@ app.use(
     origin: JSON.parse(process.env.CORS_ORIGINS || "[]"),
     credentials: true,
   }),
+  cookieParser(),
   bodyParser.json(),
   bodyParser.urlencoded({ extended: true }),
   router,

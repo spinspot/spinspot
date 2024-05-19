@@ -1,9 +1,10 @@
 import { userService } from "@/user";
-import { IUser, signInWithGoogleInputDefinition } from "@spin-spot/models";
+import { IUser, signInWithGoogleQueryDefinition } from "@spin-spot/models";
 import { NextFunction, Request, Response } from "express";
+import ms from "ms";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import { ExtractJwt, Strategy as JWTStrategy } from "passport-jwt";
+import { Strategy as JWTStrategy } from "passport-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
 import { authService } from "./service";
 
@@ -11,7 +12,9 @@ function loadProviders() {
   passport.use(
     new JWTStrategy(
       {
-        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+        jwtFromRequest: (req: Request) => {
+          return req.cookies["JWT_TOKEN"];
+        },
         secretOrKey: process.env.JWT_SECRET,
       },
       async function verify(payload, done) {
@@ -54,7 +57,6 @@ function loadProviders() {
         ).href,
       },
       async function verify(accessToken, refreshToken, profile, done) {
-        console.log(profile);
         try {
           if (!profile.emails || !profile.emails[0]) {
             return done(null, false);
@@ -100,19 +102,22 @@ function signInWithCredentials(
 
       const jwt = authService.signJWT(user);
 
-      return res.status(200).send({
-        user,
-        jwt,
-      });
+      return res
+        .status(200)
+        .cookie("JWT_TOKEN", jwt, { httpOnly: true, maxAge: ms("1d") })
+        .send({
+          user,
+          jwt,
+        });
     },
   )(req, res, next);
 }
 
 function signInWithGoogle(req: Request, res: Response, next: NextFunction) {
-  const input = signInWithGoogleInputDefinition.parse(req.body);
+  const query = signInWithGoogleQueryDefinition.parse(req.query);
   passport.authenticate("google", {
     session: false,
-    state: JSON.stringify(input),
+    state: JSON.stringify(query),
   })(req, res, next);
 }
 
@@ -121,7 +126,7 @@ function signInWithGoogleCallback(
   res: Response,
   next: NextFunction,
 ) {
-  const state = signInWithGoogleInputDefinition.parse(
+  const state = signInWithGoogleQueryDefinition.parse(
     JSON.parse(`${req.query?.state}`),
   );
   passport.authenticate(
@@ -137,16 +142,14 @@ function signInWithGoogleCallback(
 
       const jwt = authService.signJWT(user);
 
-      const searchParams = new URLSearchParams({ jwt });
-
       const baseUrl =
         state.app === "admin"
           ? process.env.ADMIN_APP_URL
           : process.env.CLIENT_APP_URL;
 
-      return res.redirect(
-        new URL(state.route, baseUrl).href + `?${searchParams}`,
-      );
+      return res
+        .cookie("JWT_TOKEN", jwt, { httpOnly: true, maxAge: ms("1d") })
+        .redirect(new URL(state.route, baseUrl).href);
     },
   )(req, res, next);
 }
@@ -165,10 +168,13 @@ function refresh(req: Request, res: Response, next: NextFunction) {
 
       const jwt = authService.signJWT(user);
 
-      return res.status(200).send({
-        user,
-        jwt,
-      });
+      return res
+        .status(200)
+        .cookie("JWT_TOKEN", jwt, { httpOnly: true, maxAge: ms("1d") })
+        .send({
+          user,
+          jwt,
+        });
     },
   )(req, res, next);
 }

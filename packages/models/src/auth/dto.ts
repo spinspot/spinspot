@@ -10,17 +10,16 @@ export type TSignInWithCredentialsInputDefinition = z.infer<
   typeof signInWithCredentialsInputDefinition
 >;
 
-export const signInWithGoogleInputDefinition = z.object({
+export const signInWithGoogleQueryDefinition = z.object({
   app: z.enum(["client", "admin"]),
   route: z.string(),
 });
-export type TSignInWithGoogleInputDefinition = z.infer<
-  typeof signInWithGoogleInputDefinition
+export type TSignInWithGoogleQueryDefinition = z.infer<
+  typeof signInWithGoogleQueryDefinition
 >;
 
-export type TSignInResponse = {
+export type TSignInWithCredentialsResponse = {
   user: IUser;
-  jwt: string;
 };
 
 export type JwtPayload = Pick<
