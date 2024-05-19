@@ -2,15 +2,24 @@ import z from "zod";
 import { passwordDefinition } from "../definitions";
 import { IUser } from "../user";
 
-export const signInInputDefinition = z.object({
+export const signInWithCredentialsInputDefinition = z.object({
   email: z.string().email(),
   password: passwordDefinition,
 });
-export type TSignInInputDefinition = z.infer<typeof signInInputDefinition>;
+export type TSignInWithCredentialsInputDefinition = z.infer<
+  typeof signInWithCredentialsInputDefinition
+>;
 
-export type TSignInResponse = {
+export const signInWithGoogleQueryDefinition = z.object({
+  app: z.enum(["client", "admin"]),
+  route: z.string(),
+});
+export type TSignInWithGoogleQueryDefinition = z.infer<
+  typeof signInWithGoogleQueryDefinition
+>;
+
+export type TSignInWithCredentialsResponse = {
   user: IUser;
-  jwt: string;
 };
 
 export type JwtPayload = Pick<

@@ -1,22 +1,38 @@
 "use client";
 
-import { SessionProvider, getSession } from "next-auth/react";
-import { useEffect } from "react";
+import { IUser } from "@spin-spot/models";
+import { useCurrentUser } from "@spin-spot/services";
+import { createContext, useContext } from "react";
 
-export default function AuthContext({
+interface IAuthContext {
+  user: IUser | null;
+  isLoading: boolean;
+}
+
+const AuthContext = createContext<IAuthContext>({
+  user: null,
+  isLoading: false,
+});
+
+export function useAuthContext() {
+  return useContext(AuthContext);
+}
+
+export default function AuthContextProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  useEffect(() => {
-    (async function () {
-      const session = await getSession();
+  const currentUser = useCurrentUser();
 
-      if (session?.user.jwt) {
-        localStorage.setItem("jwt", session?.user.jwt);
-      }
-    })();
-  }, []);
-
-  return <SessionProvider>{children}</SessionProvider>;
+  return (
+    <AuthContext.Provider
+      value={{
+        user: currentUser.data || null,
+        isLoading: currentUser.isLoading,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }

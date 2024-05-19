@@ -1,14 +1,58 @@
-import { TSignInInputDefinition, TSignInResponse } from "@spin-spot/models";
+import {
+  TSignInWithCredentialsInputDefinition,
+  TSignInWithCredentialsResponse,
+  TSignInWithGoogleQueryDefinition,
+} from "@spin-spot/models";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { api } from "../api";
 
-export async function authorizeSignIn(input: TSignInInputDefinition) {
-  const res = await api.post("/auth/sign-in", { body: input });
+export async function signInWithCredentials(
+  input: TSignInWithCredentialsInputDefinition,
+) {
+  const res = await api.post("/auth/sign-in/credentials", { body: input });
 
   if (!res.ok) {
     return null;
   }
 
-  const { user, jwt }: TSignInResponse = await res.json();
+  const { user }: TSignInWithCredentialsResponse = await res.json();
 
-  return { user, jwt };
+  return { user };
+}
+
+export function useSignInWithCredentials() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ["signInWithCredentials"],
+    mutationFn: signInWithCredentials,
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
+}
+
+export function useSignInWithGoogle() {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationKey: ["signInWithGoogle"],
+    mutationFn: async (query: TSignInWithGoogleQueryDefinition) => {
+      const url = new URL(
+        "/auth/sign-in/google",
+        process.env.NEXT_PUBLIC_API_URL,
+      );
+
+      const searchParams = new URLSearchParams(query);
+
+      router.push(url.href + `?${searchParams}`);
+
+      return true;
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
 }

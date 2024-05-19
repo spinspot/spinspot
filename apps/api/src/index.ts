@@ -2,19 +2,14 @@ import "express-async-errors";
 
 import { IUser } from "@spin-spot/models";
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
-import passport from "passport";
-import { ExtractJwt, Strategy as JWTStrategy } from "passport-jwt";
-import { authService } from "./auth";
+import { authController } from "./auth";
 import { errorHandler } from "./error-handler";
 import { router } from "./router";
-
-dotenv.config();
-
-mongoose.connect(process.env.MONGODB_URI!);
 
 declare global {
   export namespace Express {
@@ -22,22 +17,11 @@ declare global {
   }
 }
 
-passport.use(
-  new JWTStrategy(
-    {
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.JWT_SECRET ?? "$pin$pot",
-    },
-    async function verify(payload, done) {
-      try {
-        const user = await authService.validateJWT(payload);
-        done(null, user ?? false);
-      } catch (err) {
-        done(err);
-      }
-    },
-  ),
-);
+dotenv.config();
+
+mongoose.connect(process.env.MONGODB_URI!);
+
+authController.loadProviders();
 
 const app = express();
 
@@ -46,6 +30,7 @@ app.use(
     origin: JSON.parse(process.env.CORS_ORIGINS || "[]"),
     credentials: true,
   }),
+  cookieParser(),
   bodyParser.json(),
   bodyParser.urlencoded({ extended: true }),
   router,

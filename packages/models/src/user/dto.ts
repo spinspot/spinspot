@@ -8,11 +8,12 @@ import {
 
 export const userDefinition = baseModelDefinition.extend({
   email: z.string().email(),
-  password: passwordDefinition,
+  password: passwordDefinition.optional(),
+  googleId: z.string().optional(),
   firstName: z.string(),
   lastName: z.string(),
-  gender: genderDefinition,
-  userType: userTypeDefinition,
+  gender: genderDefinition.optional(),
+  userType: userTypeDefinition.optional(),
   isActive: z.boolean().optional(),
 });
 export type IUser = z.infer<typeof userDefinition>;

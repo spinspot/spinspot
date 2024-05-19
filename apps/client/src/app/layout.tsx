@@ -18,9 +18,9 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={inter.className}>
-        <AuthContext>
-          <QueryContext>{children}</QueryContext>
-        </AuthContext>
+        <QueryContext>
+          <AuthContext>{children}</AuthContext>
+        </QueryContext>
       </body>
     </html>
   );

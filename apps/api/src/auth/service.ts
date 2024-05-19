@@ -8,9 +8,28 @@ async function validateCredentials(email: string, password: string) {
 
   if (users.length === 1) {
     const user = users[0]!;
-    if (await bcrypt.compare(password, user.password)) {
+    if (user.password && (await bcrypt.compare(password, user.password))) {
       return user;
     }
+  }
+
+  return null;
+}
+
+async function validateGoogle(googleId: string, email: string) {
+  const usersWithGoogle = await userService.getUsers({ googleId });
+
+  if (usersWithGoogle.length === 1) {
+    const user = usersWithGoogle[0]!;
+    return user;
+  }
+
+  const usersWithEmail = await userService.getUsers({ email });
+
+  if (usersWithEmail.length === 1) {
+    const user = usersWithEmail[0]!;
+    const updatedUser = await userService.updateUser(user._id, { googleId });
+    return updatedUser;
   }
 
   return null;
@@ -25,7 +44,7 @@ function signJWT(user: IUser) {
       lastName: user.lastName,
       userType: user.userType,
     } as JwtPayload,
-    process.env.JWT_SECRET ?? "$pin$pot",
+    process.env.JWT_SECRET,
     {
       expiresIn: "1d",
     },
@@ -44,6 +63,7 @@ async function validateJWT(payload: any) {
 
 export const authService = {
   validateCredentials,
+  validateGoogle,
   signJWT,
   validateJWT,
 } as const;

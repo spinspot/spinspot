@@ -8,6 +8,7 @@ export const userSchema = new Schema<IUser>(
       unique: true,
     },
     password: String,
+    googleId: String,
     firstName: {
       type: String,
       trim: true,
@@ -19,7 +20,7 @@ export const userSchema = new Schema<IUser>(
     gender: String,
     userType: {
       type: String,
-      required: true,
+      default: "PLAYER",
     },
     isActive: {
       type: Boolean,
