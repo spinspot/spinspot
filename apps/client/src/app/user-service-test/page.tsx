@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuthContext } from "@/lib/auth-context";
 import {
   useCreateUser,
   useSignInWithCredentials,
@@ -8,6 +9,7 @@ import {
 } from "@spin-spot/services";
 
 export default function UserService() {
+  const auth = useAuthContext();
   const users = useUsers();
   const createUser = useCreateUser();
   const signInWithCredentials = useSignInWithCredentials();
@@ -34,6 +36,9 @@ export default function UserService() {
 
   return (
     <div className="flex flex-col gap-4">
+      <h1 className="font-xl">
+        Te has loggeado como: {auth.user?.firstName} {auth.user?.lastName}
+      </h1>
       <button
         onClick={() =>
           signInWithCredentials.mutate({

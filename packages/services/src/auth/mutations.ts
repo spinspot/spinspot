@@ -3,7 +3,7 @@ import {
   TSignInWithCredentialsResponse,
   TSignInWithGoogleQueryDefinition,
 } from "@spin-spot/models";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { api } from "../api";
 
@@ -22,13 +22,19 @@ export async function signInWithCredentials(
 }
 
 export function useSignInWithCredentials() {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationKey: ["signInWithCredentials"],
     mutationFn: signInWithCredentials,
+    onMutate() {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
   });
 }
 
 export function useSignInWithGoogle() {
+  const queryClient = useQueryClient();
   const router = useRouter();
 
   return useMutation({
@@ -44,6 +50,9 @@ export function useSignInWithGoogle() {
       router.push(url.href + `?${searchParams}`);
 
       return true;
+    },
+    onMutate() {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
   });
 }

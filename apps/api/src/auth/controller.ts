@@ -179,10 +179,15 @@ function refresh(req: Request, res: Response, next: NextFunction) {
   )(req, res, next);
 }
 
+async function getCurrentUser(req: Request, res: Response) {
+  return res.status(200).json(req.user);
+}
+
 export const authController = {
+  loadProviders,
   signInWithCredentials,
   signInWithGoogle,
   signInWithGoogleCallback,
-  loadProviders,
+  getCurrentUser,
   refresh,
 } as const;
