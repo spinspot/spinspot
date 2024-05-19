@@ -1,5 +1,4 @@
 import { cn } from "@spin-spot/utils";
-import React from "react";
 
 interface ButtonProps {
   label?: string;
