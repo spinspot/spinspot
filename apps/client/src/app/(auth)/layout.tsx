@@ -5,5 +5,5 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
-  <LayoutWaves>{children}</LayoutWaves>;
+  return <LayoutWaves>{children}</LayoutWaves>;
 }

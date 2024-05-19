@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@spin-spot/components";
 import { useRouter } from "next/navigation";
 

@@ -1,4 +1,5 @@
-import { Footer, Header } from "@spin-spot/components";
+import { Footer } from "../footers";
+import { Header } from "../headers";
 
 export function LayoutMain({ children }: { children: React.ReactNode }) {
   return (

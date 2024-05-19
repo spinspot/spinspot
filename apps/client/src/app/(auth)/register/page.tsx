@@ -1,6 +1,7 @@
 "use client";
 
-import { Button, TextInputIcon } from "@spin-spot/components";
+import { EnvelopeIcon, KeyIcon, UserIcon } from "@heroicons/react/16/solid";
+import { Button, TextInput } from "@spin-spot/components";
 import { useRouter } from "next/navigation";
 
 export default function Register() {
@@ -16,36 +17,41 @@ export default function Register() {
           <h2 className="text-neutral mb-1 text-center text-3xl font-black">
             Registrarse
           </h2>
-          <TextInputIcon
+          <TextInput
             placeholder="example@email.com"
             type="email"
             topRightLabel="Correo Electrónico"
-            svg="email"
-          ></TextInputIcon>
-          <TextInputIcon
+            className="input-sm"
+            iconLeft={
+              <EnvelopeIcon className="text-primary h-6 w-6"></EnvelopeIcon>
+            }
+          />
+          <TextInput
             placeholder="Jhon Doe"
             type="text"
             topRightLabel="Nombre"
-            svg="username"
-          ></TextInputIcon>
-          <TextInputIcon
+            className="input-sm"
+            iconLeft={<UserIcon className="text-primary h-6 w-6"></UserIcon>}
+          />
+          <TextInput
             placeholder="12345678"
             type="password"
             topRightLabel="Contraseña"
-            svg="password"
-          ></TextInputIcon>
+            className="input-sm"
+            iconLeft={<KeyIcon className="text-primary h-6 w-6"></KeyIcon>}
+          />
         </div>
         <Button
           className="btn-sm btn-neutral w-full"
           label="Registrarse"
           labelSize="text-md"
-        ></Button>
+        />
         <Button
           className="btn-sm btn-link w-full"
           label="Ya tienes cuenta? Inicia Sesión"
           labelSize="text-md"
           onClick={handleRegisterClick}
-        ></Button>
+        />
       </div>
     </div>
   );
