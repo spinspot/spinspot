@@ -1,11 +1,12 @@
-export function GoogleIcon() {
+import { cn } from "@spin-spot/utils";
+
+export function GoogleIcon({ className }: { className?: string }) {
   return (
     <svg
-      width="25"
-      height="24"
       viewBox="0 0 33 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      className={cn("h-[24px] w-[25px]", className)}
     >
       <path
         d="M32.1888 12.8664H30.9V12.8H16.5V19.2H25.5424C24.2232 22.9256 20.6784 25.6 16.5 25.6C11.1984 25.6 6.9 21.3016 6.9 16C6.9 10.6984 11.1984 6.4 16.5 6.4C18.9472 6.4 21.1736 7.3232 22.8688 8.8312L27.3944 4.3056C24.5368 1.6424 20.7144 0 16.5 0C7.664 0 0.5 7.164 0.5 16C0.5 24.836 7.664 32 16.5 32C25.336 32 32.5 24.836 32.5 16C32.5 14.9272 32.3896 13.88 32.1888 12.8664Z"
