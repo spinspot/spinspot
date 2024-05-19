@@ -1,7 +1,12 @@
-import { TSignInInputDefinition, TSignInResponse } from "@spin-spot/models";
+import {
+  TSignInResponse,
+  TSignInWithCredentialsInputDefinition,
+} from "@spin-spot/models";
 import { api } from "../api";
 
-export async function authorizeSignIn(input: TSignInInputDefinition) {
+export async function authorizeSignIn(
+  input: TSignInWithCredentialsInputDefinition,
+) {
   const res = await api.post("/auth/sign-in", { body: input });
 
   if (!res.ok) {
