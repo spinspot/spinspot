@@ -27,7 +27,7 @@ export function useSignInWithCredentials() {
   return useMutation({
     mutationKey: ["signInWithCredentials"],
     mutationFn: signInWithCredentials,
-    onMutate() {
+    onSuccess() {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
   });
@@ -51,7 +51,7 @@ export function useSignInWithGoogle() {
 
       return true;
     },
-    onMutate() {
+    onSuccess() {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
   });
