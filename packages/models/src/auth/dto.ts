@@ -8,7 +8,12 @@ export const signInInputDefinition = z.object({
 });
 export type TSignInInputDefinition = z.infer<typeof signInInputDefinition>;
 
-export type TSignInResponseDefinition = {
+export type TSignInResponse = {
   user: IUser;
   jwt: string;
 };
+
+export type JwtPayload = Pick<
+  IUser,
+  "_id" | "email" | "firstName" | "lastName" | "userType"
+>;

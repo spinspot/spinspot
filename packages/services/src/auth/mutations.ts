@@ -1,21 +1,14 @@
-import {
-  TSignInInputDefinition,
-  TSignInResponseDefinition,
-} from "@spin-spot/models";
-import { useMutation } from "@tanstack/react-query";
+import { TSignInInputDefinition, TSignInResponse } from "@spin-spot/models";
 import { api } from "../api";
 
-export async function signIn(input: TSignInInputDefinition) {
+export async function authorizeSignIn(input: TSignInInputDefinition) {
   const res = await api.post("/auth/sign-in", { body: input });
-  const { user, jwt }: TSignInResponseDefinition = await res.json();
 
-  if (localStorage) {
-    localStorage.setItem("jwt", jwt);
+  if (!res.ok) {
+    return null;
   }
 
-  return user;
-}
+  const { user, jwt }: TSignInResponse = await res.json();
 
-export function useSignIn() {
-  return useMutation({ mutationKey: ["signIn"], mutationFn: signIn });
+  return { user, jwt };
 }
