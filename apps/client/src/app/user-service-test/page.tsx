@@ -6,6 +6,7 @@ import {
   useCreateUser,
   useSignInWithCredentials,
   useSignInWithGoogle,
+  useSignOut,
   useUsers,
 } from "@spin-spot/services";
 
@@ -15,6 +16,7 @@ export default function UserService() {
   const createUser = useCreateUser();
   const signInWithCredentials = useSignInWithCredentials();
   const signInWithGoogle = useSignInWithGoogle();
+  const signOut = useSignOut();
 
   const handleSubmit = () => {
     createUser.mutate(
@@ -61,6 +63,7 @@ export default function UserService() {
         >
           Sign In With Google
         </button>
+        <button onClick={() => signOut.mutate()}>Sign Out</button>
         <button onClick={handleSubmit}>Agregar</button>
         {users.data?.map((user) => <pre>{JSON.stringify(user)}</pre>)}
       </div>

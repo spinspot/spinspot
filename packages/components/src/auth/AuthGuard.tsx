@@ -23,7 +23,7 @@ export function AuthGuard({
     if (!auth.isLoading && !validate(auth.user)) {
       router.replace(routes?.signIn || auth.routes.signIn);
     }
-  }, [auth.isLoading]);
+  }, [auth.isLoading, auth.user]);
 
   if (auth.isLoading) {
     return null;
