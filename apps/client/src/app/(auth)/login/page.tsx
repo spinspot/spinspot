@@ -1,51 +1,40 @@
 "use client";
 
-import { useAuthContext } from "@/lib/auth-context";
 import { EnvelopeIcon, KeyIcon } from "@heroicons/react/16/solid";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, GoogleIcon, TextInput } from "@spin-spot/components";
 import {
-  useCreateUser,
+  TSignInWithCredentialsInputDefinition,
+  signInWithCredentialsInputDefinition,
+} from "@spin-spot/models";
+import {
   useSignInWithCredentials,
   useSignInWithGoogle,
-  useUsers,
 } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 export default function Login() {
   const router = useRouter();
-  const auth = useAuthContext();
-  const users = useUsers();
-  const createUser = useCreateUser();
   const signInWithCredentials = useSignInWithCredentials();
   const signInWithGoogle = useSignInWithGoogle();
 
-  const [formCredentials, setFormCredentials] = useState({
-    email: "",
-    password: "",
-  });
-
-  console.log(formCredentials);
-  console.log(auth.user);
-  console.log(auth.isLoading);
+  const { register, handleSubmit } =
+    useForm<TSignInWithCredentialsInputDefinition>({
+      resolver: zodResolver(signInWithCredentialsInputDefinition),
+    });
 
   const handleRegisterClick = () => {
     router.push("/register");
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormCredentials({
-      ...formCredentials,
-      [name]: value,
-    });
-  };
-
-  const handleSignIn = () => {
+  const handleSignIn: SubmitHandler<TSignInWithCredentialsInputDefinition> = (
+    data,
+  ) => {
     signInWithCredentials.mutate(
       {
-        email: formCredentials.email,
-        password: formCredentials.password,
+        email: data.email,
+        password: data.password,
       },
       {
         onSuccess() {
@@ -60,36 +49,32 @@ export default function Login() {
       <div className="mt-24 w-96 space-y-4 rounded-lg p-8 sm:mt-36">
         <div className="flex flex-col gap-1">
           <h2 className="text-neutral mb-1 text-center text-3xl font-black">
-            Iniciar Sesión
+            Iniciar Sesión -
           </h2>
           <TextInput
             placeholder="example@email.com"
             type="email"
-            name="email"
-            value={formCredentials.email}
-            onChange={handleChange}
             topRightLabel="Correo Electrónico"
             className="input-sm"
             iconLeft={
               <EnvelopeIcon className="text-primary h-6 w-6"></EnvelopeIcon>
             }
+            {...register("email")}
           />
           <TextInput
-            placeholder="12345678"
             type="password"
-            name="password"
-            value={formCredentials.password}
-            onChange={handleChange}
+            placeholder="12345678"
             className="input-sm"
             topRightLabel="Contraseña"
             iconLeft={<KeyIcon className="text-primary h-6 w-6"></KeyIcon>}
+            {...register("password")}
           />
         </div>
         <Button
           className="btn-sm btn-neutral w-full"
           label="Iniciar Sesión"
           labelSize="text-md"
-          onClick={handleSignIn}
+          onClick={handleSubmit(handleSignIn)}
         />
         <Button
           className="btn-sm btn-neutral w-full"
