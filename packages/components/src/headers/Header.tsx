@@ -1,18 +1,17 @@
 "use client";
 
-import { signOut, useAuth } from "@spin-spot/services";
+import { useAuth, useSignOut } from "@spin-spot/services";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Loader } from "../loaders";
 
 export function Header() {
-  const router = useRouter();
   const user = useAuth();
+  const signOut = useSignOut();
+
   console.log(user);
 
   const handleLogoutClick = () => {
-    signOut();
-    router.push("/login");
+    signOut.mutate();
   };
 
   return (
