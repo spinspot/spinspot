@@ -56,3 +56,21 @@ export function useSignInWithGoogle() {
     },
   });
 }
+
+export async function signOut() {
+  const res = await api.post("/auth/sign-out");
+
+  return res.ok;
+}
+
+export function useSignOut() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ["signOut"],
+    mutationFn: signOut,
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
+}

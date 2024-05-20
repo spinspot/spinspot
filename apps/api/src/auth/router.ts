@@ -11,6 +11,7 @@ authRouter.get(
   authController.signInWithGoogleCallback,
 );
 authRouter.post("/sign-in/credentials", authController.signInWithCredentials);
+authRouter.post("/sign-out", authController.signOut);
 authRouter.post("/refresh", authController.refresh);
 
 export { authRouter };
