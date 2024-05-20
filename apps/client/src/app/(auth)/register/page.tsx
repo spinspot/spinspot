@@ -1,15 +1,14 @@
 "use client";
 
-import { useAuthContext } from "@/lib/auth-context";
 import { EnvelopeIcon, KeyIcon, UserIcon } from "@heroicons/react/16/solid";
 import { Button, TextInput } from "@spin-spot/components";
-import { useCreateUser, useUsers } from "@spin-spot/services";
+import { useAuth, useCreateUser, useUsers } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Register() {
   const router = useRouter();
-  const auth = useAuthContext();
+  const auth = useAuth();
   const users = useUsers();
   const createUser = useCreateUser();
 
