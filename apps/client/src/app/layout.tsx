@@ -1,3 +1,4 @@
+import AuthContext from "@/lib/auth-context";
 import QueryContext from "@/lib/query-context";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -11,13 +12,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="es">
       <body className={inter.className}>
-        <QueryContext>{children}</QueryContext>
+        <QueryContext>
+          <AuthContext>{children}</AuthContext>
+        </QueryContext>
       </body>
     </html>
   );

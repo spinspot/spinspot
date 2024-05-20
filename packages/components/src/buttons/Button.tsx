@@ -4,8 +4,8 @@ interface ButtonProps {
   label?: string;
   className?: string;
   onClick?: () => void;
-  leftIcon?: string; // Propiedad para el ícono izquierdo
-  rightIcon?: string; // Propiedad para el ícono derecho
+  leftIcon?: React.ReactNode; // Propiedad para el ícono izquierdo como componente
+  rightIcon?: React.ReactNode; // Propiedad para el ícono derecho como componente
   labelSize?: string; // Clase CSS para el texto del botón
 }
 
@@ -20,11 +20,11 @@ export function Button({
   return (
     <button className={cn("btn", className)} onClick={onClick}>
       {/* Renderizar el ícono izquierdo si la prop está presente */}
-      {leftIcon && <img src={leftIcon} alt="left-icon" className="mr-2" />}
+      {leftIcon && <span className="mr-2">{leftIcon}</span>}
       {/* Aplicar clases de estilo adicionales al texto del botón si se proporciona */}
       {label && <span className={labelSize}>{label}</span>}
       {/* Renderizar el ícono derecho si la prop está presente */}
-      {rightIcon && <img src={rightIcon} alt="right-icon" className="ml-2" />}
+      {rightIcon && <span className="ml-2">{rightIcon}</span>}
     </button>
   );
 }

@@ -12,9 +12,14 @@ function fetchApi(input: string | URL, init?: ApiRequestInit) {
       ...init,
       headers,
       body,
+      credentials: "include",
     });
   } else {
-    return fetch(url.href, { ...init, headers });
+    return fetch(url.href, {
+      ...init,
+      headers,
+      credentials: "include",
+    });
   }
 }
 

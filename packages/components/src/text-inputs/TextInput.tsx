@@ -1,19 +1,20 @@
 import { cn } from "@spin-spot/utils";
-import React, { ChangeEvent } from "react";
 
 interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   type?: string;
   className?: string;
-  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (_event: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   topLeftLabel?: string;
   topRightLabel?: string;
   bottomLeftLabel?: string;
   bottomRightLabel?: string;
+  iconLeft?: React.ReactNode;
+  iconRight?: React.ReactNode;
 }
 
 export function TextInput({
-  type,
+  type = "text",
   className,
   placeholder,
   onChange,
@@ -21,6 +22,9 @@ export function TextInput({
   topRightLabel,
   bottomLeftLabel,
   bottomRightLabel,
+  iconLeft,
+  iconRight,
+  ...props
 }: TextInputProps) {
   const renderTopLabels = topLeftLabel || topRightLabel;
   const renderBottomLabels = bottomLeftLabel || bottomRightLabel;
@@ -37,12 +41,32 @@ export function TextInput({
           )}
         </div>
       )}
-      <input
-        type={type}
-        placeholder={placeholder}
-        className={cn("input input-bordered w-full max-w-xs", className)}
-        onChange={onChange}
-      />
+      <div className="relative w-full max-w-xs">
+        {iconLeft && (
+          <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+            {iconLeft}
+          </span>
+        )}
+        <input
+          type={type}
+          placeholder={placeholder}
+          className={cn(
+            "input input-bordered input-primary w-full max-w-xs",
+            className,
+            {
+              "pl-10": iconLeft,
+              "pr-10": iconRight,
+            },
+          )}
+          onChange={onChange}
+          {...props}
+        />
+        {iconRight && (
+          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+            {iconRight}
+          </span>
+        )}
+      </div>
       {renderBottomLabels && (
         <div className="label">
           {bottomLeftLabel && (

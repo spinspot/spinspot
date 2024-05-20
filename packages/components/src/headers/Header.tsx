@@ -42,10 +42,13 @@ export function Header() {
           href="/"
           tabIndex={0}
           role="button"
-          className="btn btn-ghost btn-circle btn-lg avatar"
+          className="btn btn-link btn-lg avatar"
         >
-          Logo
-          {/* <img className="h-full object-cover" src={logoImage} alt="Logo" /> */}
+          <img
+            className="h-full object-cover"
+            src={"./logoAzul.svg"}
+            alt="Logo"
+          />
         </Link>
       </div>
       <div className="navbar-end">
