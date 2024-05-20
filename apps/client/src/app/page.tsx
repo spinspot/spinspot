@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@spin-spot/components";
+import { Button, Pagination } from "@spin-spot/components";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -18,6 +18,10 @@ export default function Home() {
         className="btn-primary"
         onClick={handleLoginClick}
       />
+      <Pagination
+        ariaLabels={["1", "2", "3", "4", "5"]}
+        className="btn-neutral"
+      ></Pagination>
     </div>
   );
 }
