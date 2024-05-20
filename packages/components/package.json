@@ -15,6 +15,7 @@
     "@spin-spot/services": "*",
     "@spin-spot/utils": "*",
     "react-hook-form": "^7.51.4",
+    "next": "^14.2.3",
     "usehooks-ts": "^3.1.0"
   },
   "devDependencies": {

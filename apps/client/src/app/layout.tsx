@@ -1,5 +1,7 @@
-import AuthContext from "@/lib/auth-context";
-import QueryContext from "@/lib/query-context";
+import {
+  AuthContextProvider,
+  QueryContextProvider,
+} from "@spin-spot/components";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -18,9 +20,11 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={inter.className}>
-        <QueryContext>
-          <AuthContext>{children}</AuthContext>
-        </QueryContext>
+        <QueryContextProvider>
+          <AuthContextProvider routes={{ signIn: "/login" }}>
+            {children}
+          </AuthContextProvider>
+        </QueryContextProvider>
       </body>
     </html>
   );
