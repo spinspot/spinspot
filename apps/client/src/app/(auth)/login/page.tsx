@@ -1,14 +1,58 @@
 "use client";
 
+import { useAuthContext } from "@/lib/auth-context";
 import { EnvelopeIcon, KeyIcon } from "@heroicons/react/16/solid";
 import { Button, GoogleIcon, TextInput } from "@spin-spot/components";
+import {
+  useCreateUser,
+  useSignInWithCredentials,
+  useSignInWithGoogle,
+  useUsers,
+} from "@spin-spot/services";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function Login() {
   const router = useRouter();
+  const auth = useAuthContext();
+  const users = useUsers();
+  const createUser = useCreateUser();
+  const signInWithCredentials = useSignInWithCredentials();
+  const signInWithGoogle = useSignInWithGoogle();
+
+  const [formCredentials, setFormCredentials] = useState({
+    email: "",
+    password: "",
+  });
+
+  console.log(formCredentials);
+  console.log(auth.user);
+  console.log(auth.isLoading);
 
   const handleRegisterClick = () => {
     router.push("/register");
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormCredentials({
+      ...formCredentials,
+      [name]: value,
+    });
+  };
+
+  const handleSignIn = () => {
+    signInWithCredentials.mutate(
+      {
+        email: formCredentials.email,
+        password: formCredentials.password,
+      },
+      {
+        onSuccess() {
+          router.push("/tables");
+        },
+      },
+    );
   };
 
   return (
@@ -21,6 +65,9 @@ export default function Login() {
           <TextInput
             placeholder="example@email.com"
             type="email"
+            name="email"
+            value={formCredentials.email}
+            onChange={handleChange}
             topRightLabel="Correo Electrónico"
             className="input-sm"
             iconLeft={
@@ -30,6 +77,9 @@ export default function Login() {
           <TextInput
             placeholder="12345678"
             type="password"
+            name="password"
+            value={formCredentials.password}
+            onChange={handleChange}
             className="input-sm"
             topRightLabel="Contraseña"
             iconLeft={<KeyIcon className="text-primary h-6 w-6"></KeyIcon>}
@@ -39,15 +89,22 @@ export default function Login() {
           className="btn-sm btn-neutral w-full"
           label="Iniciar Sesión"
           labelSize="text-md"
+          onClick={handleSignIn}
         />
         <Button
           className="btn-sm btn-neutral w-full"
           label="Continuar con Google"
           rightIcon={<GoogleIcon />}
           labelSize="text-md"
+          onClick={() =>
+            signInWithGoogle.mutate({
+              app: "client",
+              route: "/tables",
+            })
+          }
         />
         <Button
-          className="btn-sm btn-link w-full"
+          className="btn-sm btn-link text-neutral w-full"
           label="Eres nuevo? Registrate"
           labelSize="text-md"
           onClick={handleRegisterClick}
