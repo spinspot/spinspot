@@ -1,6 +1,6 @@
 "use client";
 
-import { TextInputIcon } from '@spin-spot/components';
+import { TextInput } from '@spin-spot/components';
 import Image from 'next/image';
 export default function edit() {
 
@@ -17,21 +17,21 @@ export default function edit() {
 
                 </div>
                 {/*Formulario*/}
-                <TextInputIcon
+                <TextInput
                     placeholder="Jane" // PONER NOMBRE DE USUARIO
-                    svg="username"
+                    
                     topRightLabel='First Name'
-                ></TextInputIcon>
-                <TextInputIcon
+                ></TextInput>
+                <TextInput
                     placeholder="Doe" // PONER APELLIDO DE USUARIO
-                    svg="username"
+                    
                     topRightLabel='Last Name'
-                ></TextInputIcon>
-                <TextInputIcon
+                ></TextInput>
+                <TextInput
                     placeholder="email" // PONER CORREO DE USUARIO
-                    svg="email"
+                    
                     topRightLabel='Email'
-                ></TextInputIcon>
+                ></TextInput>
                 <label className="form-control w-full max-w-xs">
                     <div className="label">
                         <span className="label-text text-base">Gender</span>
