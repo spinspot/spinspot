@@ -179,6 +179,10 @@ function refresh(req: Request, res: Response, next: NextFunction) {
   )(req, res, next);
 }
 
+function signOut(req: Request, res: Response) {
+  return res.clearCookie("JWT_TOKEN").end();
+}
+
 async function getCurrentUser(req: Request, res: Response) {
   return res.status(200).json(req.user);
 }
@@ -188,6 +192,7 @@ export const authController = {
   signInWithCredentials,
   signInWithGoogle,
   signInWithGoogleCallback,
-  getCurrentUser,
   refresh,
+  signOut,
+  getCurrentUser,
 } as const;
