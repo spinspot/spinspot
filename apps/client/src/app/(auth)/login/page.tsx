@@ -8,6 +8,7 @@ import {
   signInWithCredentialsInputDefinition,
 } from "@spin-spot/models";
 import {
+  useAuth,
   useSignInWithCredentials,
   useSignInWithGoogle,
 } from "@spin-spot/services";
@@ -16,6 +17,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 
 export default function Login() {
   const router = useRouter();
+  const user = useAuth();
   const signInWithCredentials = useSignInWithCredentials();
   const signInWithGoogle = useSignInWithGoogle();
 
@@ -28,6 +30,7 @@ export default function Login() {
     router.push("/register");
   };
 
+  console.log(user.user);
   const handleSignIn: SubmitHandler<TSignInWithCredentialsInputDefinition> = (
     data,
   ) => {
@@ -49,7 +52,7 @@ export default function Login() {
       <div className="mt-24 w-96 space-y-4 rounded-lg p-8 sm:mt-36">
         <div className="flex flex-col gap-1">
           <h2 className="text-neutral mb-1 text-center text-3xl font-black">
-            Iniciar Sesión -
+            Iniciar Sesión
           </h2>
           <TextInput
             placeholder="example@email.com"
