@@ -1,14 +1,50 @@
 "use client";
 
 import { EnvelopeIcon, KeyIcon } from "@heroicons/react/16/solid";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, GoogleIcon, TextInput } from "@spin-spot/components";
+import {
+  TSignInWithCredentialsInputDefinition,
+  signInWithCredentialsInputDefinition,
+} from "@spin-spot/models";
+import {
+  useAuth,
+  useSignInWithCredentials,
+  useSignInWithGoogle,
+} from "@spin-spot/services";
 import { useRouter } from "next/navigation";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 export default function Login() {
   const router = useRouter();
+  const user = useAuth();
+  const signInWithCredentials = useSignInWithCredentials();
+  const signInWithGoogle = useSignInWithGoogle();
+
+  const { register, handleSubmit } =
+    useForm<TSignInWithCredentialsInputDefinition>({
+      resolver: zodResolver(signInWithCredentialsInputDefinition),
+    });
 
   const handleRegisterClick = () => {
     router.push("/register");
+  };
+
+  console.log(user.user);
+  const handleSignIn: SubmitHandler<TSignInWithCredentialsInputDefinition> = (
+    data,
+  ) => {
+    signInWithCredentials.mutate(
+      {
+        email: data.email,
+        password: data.password,
+      },
+      {
+        onSuccess() {
+          router.push("/tables");
+        },
+      },
+    );
   };
 
   return (
@@ -26,28 +62,37 @@ export default function Login() {
             iconLeft={
               <EnvelopeIcon className="text-primary h-6 w-6"></EnvelopeIcon>
             }
+            {...register("email")}
           />
           <TextInput
-            placeholder="12345678"
             type="password"
+            placeholder="12345678"
             className="input-sm"
             topRightLabel="Contraseña"
             iconLeft={<KeyIcon className="text-primary h-6 w-6"></KeyIcon>}
+            {...register("password")}
           />
         </div>
         <Button
           className="btn-sm btn-neutral w-full"
           label="Iniciar Sesión"
           labelSize="text-md"
+          onClick={handleSubmit(handleSignIn)}
         />
         <Button
           className="btn-sm btn-neutral w-full"
           label="Continuar con Google"
           rightIcon={<GoogleIcon />}
           labelSize="text-md"
+          onClick={() =>
+            signInWithGoogle.mutate({
+              app: "client",
+              route: "/tables",
+            })
+          }
         />
         <Button
-          className="btn-sm btn-link w-full"
+          className="btn-sm btn-link text-neutral w-full"
           label="Eres nuevo? Registrate"
           labelSize="text-md"
           onClick={handleRegisterClick}

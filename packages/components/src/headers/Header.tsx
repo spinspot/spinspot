@@ -1,6 +1,19 @@
+"use client";
+
+import { useAuth, useSignOut } from "@spin-spot/services";
 import Link from "next/link";
+import { Loader } from "../loaders";
 
 export function Header() {
+  const user = useAuth();
+  const signOut = useSignOut();
+
+  console.log(user);
+
+  const handleLogoutClick = () => {
+    signOut.mutate();
+  };
+
   return (
     <div className="navbar bg-base-200">
       <div className="navbar-start">
@@ -23,7 +36,7 @@ export function Header() {
           </div>
           <ul
             tabIndex={0}
-            className={`menu menu-sm dropdown-content bg-base-200 rounded-box z-[1] mt-3 w-52 p-2 shadow`}
+            className="menu menu-sm dropdown-content bg-base-200 rounded-box z-[1] mt-3 w-52 p-2 shadow"
           >
             <li>
               <a>Home</a>
@@ -52,34 +65,37 @@ export function Header() {
         </Link>
       </div>
       <div className="navbar-end">
-        <div className="dropdown dropdown-end">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn btn-ghost btn-circle avatar"
-          >
-            <div className="w-10 rounded-full">
-              <img
-                alt="Tailwind CSS Navbar component"
-                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-              />
+        {!user.isLoading ? (
+          <div className="dropdown dropdown-end flex">
+            <div
+              tabIndex={0}
+              role="button"
+              className="btn btn-ghost btn-circle avatar"
+            >
+              <div className="w-full rounded-full">
+                <img
+                  alt="Tailwind CSS Navbar component"
+                  src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                />
+              </div>
             </div>
+            <ul
+              tabIndex={0}
+              className="menu menu-sm dropdown-content bg-base-200 rounded-box z-[1] mt-[60px] w-52 p-2 shadow"
+            >
+              <li>
+                <a className="justify-between">Profile</a>
+              </li>
+              <li>
+                <a className="text-red-500" onClick={handleLogoutClick}>
+                  Logout
+                </a>
+              </li>
+            </ul>
           </div>
-          <ul
-            tabIndex={0}
-            className={`menu menu-sm dropdown-content bg-base-200 rounded-box z-[1] mt-3 w-52 p-2 shadow`}
-          >
-            <li>
-              <a className="justify-between">Profile</a>
-            </li>
-            <li>
-              <a className="text-red-500">Logout</a>
-            </li>
-          </ul>
-        </div>
-        {/* ) : (
-          <Loader></Loader>
-        )} */}
+        ) : (
+          <Loader size="lg"></Loader>
+        )}
       </div>
     </div>
   );
