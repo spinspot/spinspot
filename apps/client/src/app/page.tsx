@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Pagination } from "@spin-spot/components";
+import { Button, Pagination, SelectInput } from "@spin-spot/components";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -22,6 +22,17 @@ export default function Home() {
         ariaLabels={["1", "2", "3", "4", "5"]}
         className="btn-neutral"
       ></Pagination>
+      <SelectInput
+        options={[
+          "Harry Potter",
+          "Planeta De los Simios",
+          "StarTrek",
+          "Star Wars",
+        ]}
+        defaultOption="Pick A Movie!"
+        topRightLabel="Hola papi"
+        className="select-primary"
+      ></SelectInput>
     </div>
   );
 }
