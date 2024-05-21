@@ -108,6 +108,7 @@ function signInWithCredentials(
           httpOnly: true,
           maxAge: ms("1d"),
           sameSite: "none",
+          secure: true,
         })
         .send({
           user,
@@ -155,6 +156,7 @@ function signInWithGoogleCallback(
           httpOnly: true,
           maxAge: ms("1d"),
           sameSite: "none",
+          secure: true,
         })
         .redirect(new URL(state.route, baseUrl).href);
     },
@@ -181,6 +183,7 @@ function refresh(req: Request, res: Response, next: NextFunction) {
           httpOnly: true,
           maxAge: ms("1d"),
           sameSite: "none",
+          secure: true,
         })
         .send({
           user,
