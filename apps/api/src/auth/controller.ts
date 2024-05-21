@@ -104,10 +104,13 @@ function signInWithCredentials(
 
       return res
         .status(200)
-        .cookie("JWT_TOKEN", jwt, { httpOnly: true, maxAge: ms("1d") })
+        .cookie("JWT_TOKEN", jwt, {
+          httpOnly: true,
+          maxAge: ms("1d"),
+          sameSite: "lax",
+        })
         .send({
           user,
-          jwt,
         });
     },
   )(req, res, next);
@@ -148,7 +151,11 @@ function signInWithGoogleCallback(
           : process.env.CLIENT_APP_URL;
 
       return res
-        .cookie("JWT_TOKEN", jwt, { httpOnly: true, maxAge: ms("1d") })
+        .cookie("JWT_TOKEN", jwt, {
+          httpOnly: true,
+          maxAge: ms("1d"),
+          sameSite: "lax",
+        })
         .redirect(new URL(state.route, baseUrl).href);
     },
   )(req, res, next);
@@ -170,7 +177,11 @@ function refresh(req: Request, res: Response, next: NextFunction) {
 
       return res
         .status(200)
-        .cookie("JWT_TOKEN", jwt, { httpOnly: true, maxAge: ms("1d") })
+        .cookie("JWT_TOKEN", jwt, {
+          httpOnly: true,
+          maxAge: ms("1d"),
+          sameSite: "lax",
+        })
         .send({
           user,
           jwt,
