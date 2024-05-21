@@ -18,7 +18,7 @@ export function Footer() {
             role="button"
             className="btn btn-link btn-lg avatar"
           >
-            <SpinSpotIcon></SpinSpotIcon>
+            <SpinSpotIcon />
           </Link>
           <p>Copyright © 2024 - All right reserved</p>
         </div>
@@ -31,7 +31,7 @@ export function Footer() {
             role="button"
             className="btn btn-ghost btn-circle btn-sm avatar"
           >
-            <TwitterIcon></TwitterIcon>
+            <TwitterIcon />
           </Link>
           <Link
             href="https://www.unimet.edu.ve/"
@@ -39,7 +39,7 @@ export function Footer() {
             role="button"
             className="btn btn-ghost btn-circle btn-sm avatar"
           >
-            <WebIcon></WebIcon>
+            <WebIcon />
           </Link>
           <Link
             href="https://www.instagram.com/unimet?igsh=MWw2MjcwNWg2ZWhsNQ=="
@@ -47,7 +47,7 @@ export function Footer() {
             role="button"
             className="btn btn-ghost btn-circle btn-sm avatar"
           >
-            <InstagramIcon></InstagramIcon>
+            <InstagramIcon />
           </Link>
         </div>
       </nav>
