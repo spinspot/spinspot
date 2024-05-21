@@ -19,7 +19,7 @@ export default function Home() {
         onClick={handleLoginClick}
       />
       <Pagination
-        ariaLabels={["1", "2", "3", "4", "5"]}
+        labels={["1", "2", "3", "4", "5"]}
         className="btn-neutral"
       ></Pagination>
       <SelectInput

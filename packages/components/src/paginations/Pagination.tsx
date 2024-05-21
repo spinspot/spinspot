@@ -4,13 +4,13 @@ import { cn } from "@spin-spot/utils";
 import { useState } from "react";
 
 interface PaginationProps {
-  ariaLabels: string[];
+  labels: string[];
   size?: "xs" | "sm" | "md" | "lg";
   activeIndex?: number;
   className?: string;
 }
 
-const loadingSizes = {
+const paginationSizes = {
   xs: "btn-xs",
   sm: "btn-sm",
   md: "btn-md",
@@ -18,11 +18,10 @@ const loadingSizes = {
 };
 
 export function Pagination({
-  ariaLabels,
+  labels,
   size = "md",
   activeIndex,
   className,
-  ...props
 }: PaginationProps) {
   const [currentIndex, setCurrentIndex] = useState<number | null>(
     activeIndex !== undefined ? activeIndex : null,
@@ -33,17 +32,16 @@ export function Pagination({
   };
 
   return (
-    <div className="join" {...props}>
-      {ariaLabels.map((label, index) => (
+    <div className="join">
+      {labels.map((label, index) => (
         <button
           key={index}
           className={cn(
             "join-item btn btn-square",
-            loadingSizes[size],
+            paginationSizes[size],
             className,
             index === currentIndex ? "btn-active" : "",
           )}
-          aria-label={label}
           onClick={() => handleClick(index)}
         >
           {label}

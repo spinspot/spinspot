@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SpinSpotIcon } from "../extra-icons";
 import { InstagramIcon } from "../extra-icons/InstagramIcon";
 import { TwitterIcon } from "../extra-icons/TwitterIcon";
 import { WebIcon } from "../extra-icons/WebIcon";
@@ -17,11 +18,7 @@ export function Footer() {
             role="button"
             className="btn btn-link btn-lg avatar"
           >
-            <img
-              className="h-full object-cover"
-              src={"./logoAzul.svg"}
-              alt="Logo"
-            />
+            <SpinSpotIcon></SpinSpotIcon>
           </Link>
           <p>Copyright © 2024 - All right reserved</p>
         </div>

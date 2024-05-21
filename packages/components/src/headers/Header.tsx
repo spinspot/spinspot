@@ -2,6 +2,7 @@
 
 import { useAuth, useSignOut } from "@spin-spot/services";
 import Link from "next/link";
+import { SpinSpotIcon } from "../extra-icons";
 import { Loader } from "../loaders";
 
 export function Header() {
@@ -57,11 +58,7 @@ export function Header() {
           role="button"
           className="btn btn-link btn-lg avatar"
         >
-          <img
-            className="h-full object-cover"
-            src={"./logoAzul.svg"}
-            alt="Logo"
-          />
+          <SpinSpotIcon></SpinSpotIcon>
         </Link>
       </div>
       <div className="navbar-end">
