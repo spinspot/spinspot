@@ -6,4 +6,5 @@ export * from "./footers";
 export * from "./headers";
 export * from "./layouts";
 export * from "./loaders";
+export * from "./paginations";
 export * from "./text-inputs";
