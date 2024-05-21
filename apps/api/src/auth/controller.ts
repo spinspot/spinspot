@@ -107,7 +107,8 @@ function signInWithCredentials(
         .cookie("JWT_TOKEN", jwt, {
           httpOnly: true,
           maxAge: ms("1d"),
-          sameSite: "lax",
+          sameSite: "none",
+          secure: true,
         })
         .send({
           user,
@@ -154,7 +155,8 @@ function signInWithGoogleCallback(
         .cookie("JWT_TOKEN", jwt, {
           httpOnly: true,
           maxAge: ms("1d"),
-          sameSite: "lax",
+          sameSite: "none",
+          secure: true,
         })
         .redirect(new URL(state.route, baseUrl).href);
     },
@@ -180,7 +182,8 @@ function refresh(req: Request, res: Response, next: NextFunction) {
         .cookie("JWT_TOKEN", jwt, {
           httpOnly: true,
           maxAge: ms("1d"),
-          sameSite: "lax",
+          sameSite: "none",
+          secure: true,
         })
         .send({
           user,
