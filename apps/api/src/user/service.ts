@@ -16,6 +16,7 @@ userSchema.pre("save", async function (next) {
 userSchema.set("toJSON", {
   transform(doc, ret) {
     delete ret["password"];
+    delete ret["googleId"];
     return ret;
   },
 });
