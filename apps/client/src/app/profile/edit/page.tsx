@@ -1,7 +1,7 @@
 "use client";
 
 import { EnvelopeIcon, UserIcon } from '@heroicons/react/16/solid';
-import { TextInput, Button } from '@spin-spot/components';
+import { TextInput, Button, SelectInput } from '@spin-spot/components';
 import Image from 'next/image';
 import { AuthContext, useUser } from '@spin-spot/services';
 import { useContext } from 'react';
@@ -65,17 +65,10 @@ export default function edit() {
                     }
                     topRightLabel='Email'
                 ></TextInput>
-                <label className="form-control w-full max-w-xs">
-                    <div className="label">
-                        <span className="label-text text-base">Gender</span>
-                    </div>
-                    <select className="select select-bordered">
-                        <option disabled selected>Pick one</option>
-                        <option>Masculine</option>
-                        <option>Femenine</option>
-                        <option>Other</option>
-                    </select>
-                </label>
+                <SelectInput
+                  options={["MALE", "FEMALE", "OTHER"]}
+                  defaultOption='Elige tu Género'
+                  topRightLabel='Género'></SelectInput>
                 <div className="flex justify-center mt-6 space-x-4">
                     <Button className="btn-md btn-secondary w-32"
                         label="Back"

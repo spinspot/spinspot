@@ -4,10 +4,12 @@ import { useAuth, useSignOut } from "@spin-spot/services";
 import Link from "next/link";
 import { SpinSpotIcon } from "../extra-icons";
 import { Loader } from "../loaders";
+import { useRouter } from "next/navigation";
 
 export function Header() {
   const user = useAuth();
   const signOut = useSignOut();
+  const router = useRouter();
 
   console.log(user);
 
