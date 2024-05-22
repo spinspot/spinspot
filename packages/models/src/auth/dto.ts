@@ -3,7 +3,7 @@ import { passwordDefinition } from "../definitions";
 import { IUser } from "../user";
 
 export const signInWithCredentialsInputDefinition = z.object({
-  email: z.string().email(),
+  email: z.string().email({ message: "Correo inválido" }),
   password: passwordDefinition,
 });
 export type TSignInWithCredentialsInputDefinition = z.infer<
