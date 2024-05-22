@@ -25,7 +25,7 @@ export const userDefinition = baseModelDefinition.extend({
 export type IUser = z.infer<typeof userDefinition>;
 
 export const getUsersQueryDefinition = userDefinition
-  .omit({ password: true, googleId: true })
+  .omit({ password: true })
   .partial();
 export type TGetUsersQueryDefinition = z.infer<typeof getUsersQueryDefinition>;
 
@@ -42,9 +42,7 @@ export type TUpdateUserParamsDefinition = z.infer<
   typeof getUserParamsDefinition
 >;
 
-export const updateUserInputDefinition = userDefinition
-  .omit({ password: true, googleId: true })
-  .partial();
+export const updateUserInputDefinition = userDefinition.partial();
 export type TUpdateUserInputDefinition = z.infer<
   typeof updateUserInputDefinition
 >;

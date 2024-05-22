@@ -2,10 +2,37 @@ import {
   TSignInWithCredentialsInputDefinition,
   TSignInWithCredentialsResponse,
   TSignInWithGoogleQueryDefinition,
+  TSignUpWithCredentialsInputDefinition,
 } from "@spin-spot/models";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { api } from "../api";
+
+export async function signUpWithCredentials(
+  input: TSignUpWithCredentialsInputDefinition,
+) {
+  const res = await api.post("/auth/sign-up/credentials", { body: input });
+
+  if (!res.ok) {
+    return null;
+  }
+
+  const { user }: TSignInWithCredentialsResponse = await res.json();
+
+  return { user };
+}
+
+export function useSignUpWithCredentials() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ["signUpWithCredentials"],
+    mutationFn: signUpWithCredentials,
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
+}
 
 export async function signInWithCredentials(
   input: TSignInWithCredentialsInputDefinition,
