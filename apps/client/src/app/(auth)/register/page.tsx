@@ -7,13 +7,13 @@ import {
   TSignUpWithCredentialsInputDefinition,
   signUpWithCredentialsInputDefinition,
 } from "@spin-spot/models";
-import { useCreateUser } from "@spin-spot/services";
+import { useSignUpWithCredentials } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 export default function Register() {
   const router = useRouter();
-  const createUser = useCreateUser();
+  const signUpWithCredentials = useSignUpWithCredentials();
 
   const {
     register,
@@ -32,15 +32,12 @@ export default function Register() {
   const handleSignUp: SubmitHandler<TSignUpWithCredentialsInputDefinition> = (
     data,
   ) => {
-    createUser.mutate(
+    signUpWithCredentials.mutate(
       {
         email: data.email,
         firstName: data.firstName,
         lastName: data.lastName,
-        gender: "MALE",
         password: data.password,
-        userType: "PLAYER",
-        isActive: true,
       },
       {
         onSuccess() {

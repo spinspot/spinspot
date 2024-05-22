@@ -1,5 +1,9 @@
 import { userService } from "@/user";
-import { IUser, signInWithGoogleQueryDefinition } from "@spin-spot/models";
+import {
+  IUser,
+  signInWithGoogleQueryDefinition,
+  signUpWithCredentialsInputDefinition,
+} from "@spin-spot/models";
 import { CookieOptions, NextFunction, Request, Response } from "express";
 import ms from "ms";
 import passport from "passport";
@@ -157,6 +161,17 @@ function signInWithGoogleCallback(
   )(req, res, next);
 }
 
+async function signUpWithCredentials(req: Request, res: Response) {
+  const input = signUpWithCredentialsInputDefinition.parse(req.body);
+  const user = await userService.createUser(input);
+
+  const jwt = authService.signJWT(user);
+
+  return res.status(200).cookie("JWT_TOKEN", jwt, jwtCookieOptions).send({
+    user,
+  });
+}
+
 function refresh(req: Request, res: Response, next: NextFunction) {
   passport.authenticate(
     "jwt",
@@ -179,7 +194,9 @@ function refresh(req: Request, res: Response, next: NextFunction) {
 }
 
 function signOut(req: Request, res: Response) {
-  return res.clearCookie("JWT_TOKEN", jwtCookieOptions).end();
+  return res
+    .clearCookie("JWT_TOKEN", { ...jwtCookieOptions, maxAge: undefined })
+    .end();
 }
 
 async function getCurrentUser(req: Request, res: Response) {
@@ -188,6 +205,7 @@ async function getCurrentUser(req: Request, res: Response) {
 
 export const authController = {
   loadProviders,
+  signUpWithCredentials,
   signInWithCredentials,
   signInWithGoogle,
   signInWithGoogleCallback,
