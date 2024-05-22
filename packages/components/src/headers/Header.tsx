@@ -1,18 +1,18 @@
 "use client";
 
-import { signOut, useAuth } from "@spin-spot/services";
+import { useAuth, useSignOut } from "@spin-spot/services";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { SpinSpotIcon } from "../extra-icons";
 import { Loader } from "../loaders";
 
 export function Header() {
-  const router = useRouter();
   const user = useAuth();
+  const signOut = useSignOut();
+
   console.log(user);
 
   const handleLogoutClick = () => {
-    signOut();
-    router.push("/login");
+    signOut.mutate();
   };
 
   const handleProfileClick = () => {
@@ -62,11 +62,7 @@ export function Header() {
           role="button"
           className="btn btn-link btn-lg avatar"
         >
-          <img
-            className="h-full object-cover"
-            src={"./logoAzul.svg"}
-            alt="Logo"
-          />
+          <SpinSpotIcon />
         </Link>
       </div>
       <div className="navbar-end">
