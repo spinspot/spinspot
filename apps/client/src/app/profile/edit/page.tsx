@@ -1,8 +1,35 @@
 "use client";
 
-import { TextInput } from '@spin-spot/components';
+import { EnvelopeIcon, UserIcon } from '@heroicons/react/16/solid';
+import { TextInput, Button } from '@spin-spot/components';
 import Image from 'next/image';
+import { AuthContext, useUser } from '@spin-spot/services';
+import { useContext } from 'react';
+import { useRouter } from 'next/navigation';
 export default function edit() {
+
+    const router = useRouter();
+
+    const handleBackClick = () => {
+        router.push('/profile');
+    };
+        
+
+
+
+    const { user, isLoading: isAuthLoading } = useContext(AuthContext);
+    const userId = user?._id; 
+
+    const { data: userProfile, isLoading, error } = useUser(userId ?? '');
+
+
+    if (isAuthLoading || isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>Error loading user data</div>;
+    }
 
     return (
         <>
@@ -18,18 +45,24 @@ export default function edit() {
                 </div>
                 {/*Formulario*/}
                 <TextInput
-                    placeholder="Jane" // PONER NOMBRE DE USUARIO
-                    
+                    placeholder={userProfile?.firstName || " "} 
                     topRightLabel='First Name'
+                    iconLeft = {
+                        <UserIcon className="text-primary h-6 w-6"></UserIcon>
+                    }
                 ></TextInput>
                 <TextInput
-                    placeholder="Doe" // PONER APELLIDO DE USUARIO
-                    
+                    placeholder={userProfile?.lastName || " "} 
                     topRightLabel='Last Name'
+                    iconLeft = {
+                        <UserIcon className="text-primary h-6 w-6"></UserIcon>
+                    }
                 ></TextInput>
                 <TextInput
-                    placeholder="email" // PONER CORREO DE USUARIO
-                    
+                    placeholder={userProfile?.email || " "}
+                    iconLeft = {
+                        <EnvelopeIcon className="text-primary h-6 w-6"></EnvelopeIcon>
+                    }
                     topRightLabel='Email'
                 ></TextInput>
                 <label className="form-control w-full max-w-xs">
@@ -43,6 +76,17 @@ export default function edit() {
                         <option>Other</option>
                     </select>
                 </label>
+                <div className="flex justify-center mt-6 space-x-4">
+                    <Button className="btn-md btn-secondary w-32"
+                        label="Back"
+                        labelSize="text-md"
+                        onClick = {handleBackClick}>
+                        </Button>
+                    <Button className="btn-md dark:btn-neutral btn-primary w-40 "
+                        label="Edit Profile"
+                        labelSize="text-md"
+                        ></Button>
+                </div>
 
             </div>
 
