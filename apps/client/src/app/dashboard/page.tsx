@@ -1,6 +1,6 @@
 "use client";
 
-import {Button, Card } from "@spin-spot/components";
+import { Button, Card } from "@spin-spot/components";
 import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
@@ -23,7 +23,7 @@ export default function Dashboard() {
           En esta página podrás realizar las reservas de las nuevas canchas de
           Ping Pong disponibles para los estudiantes.
         </p>
-          <Button
+        <Button
           className="btn btn-active bg-primary h-16 w-72 text-white"
           label="¿Estas listo para empezar a jugar?"
           labelSize="text-md"
