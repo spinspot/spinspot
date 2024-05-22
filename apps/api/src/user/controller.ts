@@ -29,6 +29,11 @@ async function createUser(req: Request, res: Response) {
 async function updateUser(req: Request, res: Response) {
   const params = updateUserParamsDefinition.parse(req.params);
   const input = updateUserInputDefinition.parse(req.body);
+
+  if (req.user?._id !== params._id || req.user.userType !== "ADMIN") {
+    return res.status(401).end();
+  }
+
   const user = await userService.updateUser(params._id, input);
   return res.status(200).json(user);
 }

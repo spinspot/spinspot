@@ -42,9 +42,7 @@ export type TUpdateUserParamsDefinition = z.infer<
   typeof getUserParamsDefinition
 >;
 
-export const updateUserInputDefinition = userDefinition
-  .omit({ password: true })
-  .partial();
+export const updateUserInputDefinition = userDefinition.partial();
 export type TUpdateUserInputDefinition = z.infer<
   typeof updateUserInputDefinition
 >;
