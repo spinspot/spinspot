@@ -1,39 +1,50 @@
 "use client";
 
 import { EnvelopeIcon, KeyIcon, UserIcon } from "@heroicons/react/16/solid";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, TextInput } from "@spin-spot/components";
-import { useAuth, useCreateUser, useUsers } from "@spin-spot/services";
+import {
+  TSignUpWithCredentialsInputDefinition,
+  signUpWithCredentialsInputDefinition,
+} from "@spin-spot/models";
+import { useCreateUser } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 export default function Register() {
   const router = useRouter();
-  const auth = useAuth();
-  const users = useUsers();
   const createUser = useCreateUser();
 
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    trigger,
+  } = useForm<TSignUpWithCredentialsInputDefinition>({
+    resolver: zodResolver(signUpWithCredentialsInputDefinition),
+    shouldFocusError: false,
+  });
 
   const handleRegisterClick = () => {
     router.push("/login");
   };
 
-  const handleSubmit = () => {
+  const handleSignUp: SubmitHandler<TSignUpWithCredentialsInputDefinition> = (
+    data,
+  ) => {
     createUser.mutate(
       {
-        email: email,
-        firstName: firstName,
-        lastName: "Doe",
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
         gender: "MALE",
-        password: password,
+        password: data.password,
         userType: "PLAYER",
         isActive: true,
       },
       {
         onSuccess() {
-          console.log("Registro exitoso!");
+          router.push("/tables");
         },
       },
     );
@@ -50,37 +61,46 @@ export default function Register() {
             placeholder="example@email.com"
             type="email"
             topRightLabel="Correo Electrónico"
-            className="input-sm"
+            className={`input-sm ${errors.email ? "input-error" : "input-primary"}`}
             iconLeft={
               <EnvelopeIcon className="text-primary h-6 w-6"></EnvelopeIcon>
             }
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            bottomLeftLabel={errors.email?.message}
+            {...register("email", { onBlur: () => trigger("email") })}
           />
           <TextInput
-            placeholder="John Doe"
+            placeholder="John"
             type="text"
             topRightLabel="Nombre"
-            className="input-sm"
+            className={`input-sm ${errors.firstName ? "input-error" : "input-primary"}`}
             iconLeft={<UserIcon className="text-primary h-6 w-6"></UserIcon>}
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            bottomLeftLabel={errors.firstName?.message}
+            {...register("firstName", { onBlur: () => trigger("firstName") })}
+          />
+          <TextInput
+            placeholder="Doe"
+            type="text"
+            topRightLabel="Apellido"
+            className={`input-sm ${errors.lastName ? "input-error" : "input-primary"}`}
+            iconLeft={<UserIcon className="text-primary h-6 w-6"></UserIcon>}
+            bottomLeftLabel={errors.lastName?.message}
+            {...register("lastName", { onBlur: () => trigger("lastName") })}
           />
           <TextInput
             placeholder="12345678"
             type="password"
             topRightLabel="Contraseña"
-            className="input-sm"
+            className={`input-sm ${errors.password ? "input-error" : "input-primary"}`}
             iconLeft={<KeyIcon className="text-primary h-6 w-6"></KeyIcon>}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            bottomLeftLabel={errors.password?.message}
+            {...register("password", { onBlur: () => trigger("password") })}
           />
         </div>
         <Button
           className="btn-sm btn-neutral w-full"
           label="Registrarse"
           labelSize="text-md"
-          onClick={handleSubmit}
+          onClick={handleSubmit(handleSignUp)}
         />
         <Button
           className="btn-sm btn-link text-neutral w-full"

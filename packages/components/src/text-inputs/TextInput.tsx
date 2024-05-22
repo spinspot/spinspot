@@ -64,7 +64,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
           )}
         </div>
         {renderBottomLabels && (
-          <div className="label">
+          <div className="label mx-1 mt-2 p-0">
             {bottomLeftLabel && (
               <span className="label-text-alt text-error">
                 {bottomLeftLabel}
