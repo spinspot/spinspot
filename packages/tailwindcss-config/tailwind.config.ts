@@ -13,6 +13,7 @@ const config: TailwindConfig = {
     },
   },
   daisyui: <DaisyConfig>{
+    darkTheme: "spinspotdark",
     themes: [
       {
         spinspot: {
@@ -27,6 +28,23 @@ const config: TailwindConfig = {
           "base-100": "#ffffff",
           "base-200": "#EBF2FA",
           "base-300": "#c0c6ce",
+          info: "#53a6ea",
+          success: "#0bad1e",
+          warning: "#ff9900",
+          error: "#d92020",
+        },
+        spinspotdark: {
+          primary: "#47085F",
+          "primary-content": "#ffffff",
+          secondary: "#1B50A0",
+          "secondary-content": "#ffffff",
+          accent: "#5b2bca",
+          "accent-content": "#ffffff",
+          neutral: "964AB1",
+          "neutral-content": "#ffffff",
+          "base-100": "#0F172A",
+          "base-200": "#526389",
+          "base-300": "#ffffff",
           info: "#53a6ea",
           success: "#0bad1e",
           warning: "#ff9900",

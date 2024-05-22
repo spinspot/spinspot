@@ -1,14 +1,7 @@
-"use client";
-
-import { Button, Card } from "@spin-spot/components";
-import { useRouter } from "next/navigation";
+import { Card } from "@spin-spot/components";
+var cant = 3;
 
 export default function Dashboard() {
-  const router = useRouter();
-
-  const handleClick = () => {
-    router.push("/tables");
-  };
   return (
     <div className="flex-grow">
       <div className="grid h-56 w-full items-center justify-items-center bg-black md:h-60">
@@ -21,14 +14,11 @@ export default function Dashboard() {
         <h1 className="text-1xl h-10">¡Bienvenido a Spin-Spot! </h1>
         <p className="px-6 pb-5 text-center">
           En esta página podrás realizar las reservas de las nuevas canchas de
-          Ping Pong disponibles para los estudiantes.
+          Ping Pong disponibles para los estudiantes.{" "}
         </p>
-        <Button
-          className="btn btn-active bg-primary h-16 w-72 text-white"
-          label="¿Estas listo para empezar a jugar?"
-          labelSize="text-md"
-          onClick={handleClick}
-        />
+        <button className="btn btn-active bg-primary h-16 w-72 text-white">
+          ¿Estas listo para empezar a jugar?
+        </button>
       </div>
       <div className="font-quicksand w-full pt-10 text-center font-normal md:h-20">
         <h1 className="h-10 text-2xl">Torneos activos</h1>

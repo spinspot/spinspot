@@ -1,12 +1,19 @@
 import { userService } from "@/user";
 import { IUser, signInWithGoogleQueryDefinition } from "@spin-spot/models";
-import { NextFunction, Request, Response } from "express";
+import { CookieOptions, NextFunction, Request, Response } from "express";
 import ms from "ms";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as JWTStrategy } from "passport-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
 import { authService } from "./service";
+
+const jwtCookieOptions: CookieOptions = {
+  httpOnly: true,
+  maxAge: ms("1d"),
+  sameSite: "none",
+  secure: true,
+};
 
 function loadProviders() {
   passport.use(
@@ -102,13 +109,9 @@ function signInWithCredentials(
 
       const jwt = authService.signJWT(user);
 
-      return res
-        .status(200)
-        .cookie("JWT_TOKEN", jwt, { httpOnly: true, maxAge: ms("1d") })
-        .send({
-          user,
-          jwt,
-        });
+      return res.status(200).cookie("JWT_TOKEN", jwt, jwtCookieOptions).send({
+        user,
+      });
     },
   )(req, res, next);
 }
@@ -148,7 +151,7 @@ function signInWithGoogleCallback(
           : process.env.CLIENT_APP_URL;
 
       return res
-        .cookie("JWT_TOKEN", jwt, { httpOnly: true, maxAge: ms("1d") })
+        .cookie("JWT_TOKEN", jwt, jwtCookieOptions)
         .redirect(new URL(state.route, baseUrl).href);
     },
   )(req, res, next);
@@ -168,15 +171,15 @@ function refresh(req: Request, res: Response, next: NextFunction) {
 
       const jwt = authService.signJWT(user);
 
-      return res
-        .status(200)
-        .cookie("JWT_TOKEN", jwt, { httpOnly: true, maxAge: ms("1d") })
-        .send({
-          user,
-          jwt,
-        });
+      return res.status(200).cookie("JWT_TOKEN", jwt, jwtCookieOptions).send({
+        user,
+      });
     },
   )(req, res, next);
+}
+
+function signOut(req: Request, res: Response) {
+  return res.clearCookie("JWT_TOKEN", jwtCookieOptions).end();
 }
 
 async function getCurrentUser(req: Request, res: Response) {
@@ -188,6 +191,7 @@ export const authController = {
   signInWithCredentials,
   signInWithGoogle,
   signInWithGoogleCallback,
-  getCurrentUser,
   refresh,
+  signOut,
+  getCurrentUser,
 } as const;

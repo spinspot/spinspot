@@ -1,31 +1,36 @@
 import { cn } from "@spin-spot/utils";
 import { forwardRef } from "react";
 
-interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface SelectInputProps
+  extends React.SelectHTMLAttributes<HTMLSelectElement> {
   topLeftLabel?: string;
   topRightLabel?: string;
   bottomLeftLabel?: string;
   bottomRightLabel?: string;
-  iconLeft?: React.ReactNode;
-  iconRight?: React.ReactNode;
+  options: string[]; // An array of labels, values will be generated automatically
+  defaultOption?: string; // Default option label, value will be an empty string
 }
 
-export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
-  function TextInput(
+export const SelectInput = forwardRef<HTMLSelectElement, SelectInputProps>(
+  function SelectInput(
     {
       className,
       topLeftLabel,
       topRightLabel,
       bottomLeftLabel,
       bottomRightLabel,
-      iconLeft,
-      iconRight,
+      options,
+      defaultOption,
       ...props
     },
     ref,
   ) {
     const renderTopLabels = topLeftLabel || topRightLabel;
     const renderBottomLabels = bottomLeftLabel || bottomRightLabel;
+
+    const generateValue = (label: string) => {
+      return label.toLowerCase().replace(/\s+/g, "-");
+    };
 
     return (
       <label className="form-control w-full max-w-xs">
@@ -40,28 +45,23 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
           </div>
         )}
         <div className="relative w-full max-w-xs">
-          {iconLeft && (
-            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              {iconLeft}
-            </span>
-          )}
-          <input
+          <select
             ref={ref}
-            className={cn(
-              "input input-bordered input-primary w-full max-w-xs",
-              className,
-              {
-                "pl-10": iconLeft,
-                "pr-10": iconRight,
-              },
-            )}
+            className={cn("select select-bordered w-full max-w-xs", className)}
+            defaultValue=""
             {...props}
-          />
-          {iconRight && (
-            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-              {iconRight}
-            </span>
-          )}
+          >
+            {defaultOption && (
+              <option value="" disabled>
+                {defaultOption}
+              </option>
+            )}
+            {options.map((label, index) => (
+              <option key={index} value={generateValue(label)}>
+                {label}
+              </option>
+            ))}
+          </select>
         </div>
         {renderBottomLabels && (
           <div className="label">
