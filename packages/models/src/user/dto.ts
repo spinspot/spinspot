@@ -7,11 +7,17 @@ import {
 } from "../definitions";
 
 export const userDefinition = baseModelDefinition.extend({
-  email: z.string().email(),
+  email: z.string().email({ message: "Correo inválido" }),
   password: passwordDefinition.optional(),
   googleId: z.string().optional(),
-  firstName: z.string(),
-  lastName: z.string(),
+  firstName: z
+    .string()
+    .min(1, { message: "El nombre es requerido" })
+    .max(25, { message: "El nombre no puede tener más de 50 caracteres" }),
+  lastName: z
+    .string()
+    .min(1, { message: "El apellido es requerido" })
+    .max(25, { message: "El apellido no puede tener más de 50 caracteres" }),
   gender: genderDefinition.optional(),
   userType: userTypeDefinition.optional(),
   isActive: z.boolean().optional(),
@@ -19,7 +25,7 @@ export const userDefinition = baseModelDefinition.extend({
 export type IUser = z.infer<typeof userDefinition>;
 
 export const getUsersQueryDefinition = userDefinition
-  .omit({ password: true, googleId: true })
+  .omit({ password: true })
   .partial();
 export type TGetUsersQueryDefinition = z.infer<typeof getUsersQueryDefinition>;
 
@@ -36,9 +42,7 @@ export type TUpdateUserParamsDefinition = z.infer<
   typeof getUserParamsDefinition
 >;
 
-export const updateUserInputDefinition = userDefinition
-  .omit({ password: true, googleId: true })
-  .partial();
+export const updateUserInputDefinition = userDefinition.partial();
 export type TUpdateUserInputDefinition = z.infer<
   typeof updateUserInputDefinition
 >;
