@@ -19,10 +19,10 @@ export default function Register() {
     register,
     handleSubmit,
     formState: { errors },
-    trigger,
   } = useForm<TSignUpWithCredentialsInputDefinition>({
     resolver: zodResolver(signUpWithCredentialsInputDefinition),
     shouldFocusError: false,
+    mode: "onBlur",
   });
 
   const handleRegisterClick = () => {
@@ -37,7 +37,6 @@ export default function Register() {
         email: data.email,
         firstName: data.firstName,
         lastName: data.lastName,
-        gender: "MALE",
         password: data.password,
         userType: "PLAYER",
         isActive: true,
@@ -66,7 +65,7 @@ export default function Register() {
               <EnvelopeIcon className="text-primary h-6 w-6"></EnvelopeIcon>
             }
             bottomLeftLabel={errors.email?.message}
-            {...register("email", { onBlur: () => trigger("email") })}
+            {...register("email")}
           />
           <TextInput
             placeholder="John"
@@ -75,7 +74,7 @@ export default function Register() {
             className={`input-sm ${errors.firstName ? "input-error" : "input-primary"}`}
             iconLeft={<UserIcon className="text-primary h-6 w-6"></UserIcon>}
             bottomLeftLabel={errors.firstName?.message}
-            {...register("firstName", { onBlur: () => trigger("firstName") })}
+            {...register("firstName")}
           />
           <TextInput
             placeholder="Doe"
@@ -84,7 +83,7 @@ export default function Register() {
             className={`input-sm ${errors.lastName ? "input-error" : "input-primary"}`}
             iconLeft={<UserIcon className="text-primary h-6 w-6"></UserIcon>}
             bottomLeftLabel={errors.lastName?.message}
-            {...register("lastName", { onBlur: () => trigger("lastName") })}
+            {...register("lastName")}
           />
           <TextInput
             placeholder="12345678"
@@ -93,7 +92,7 @@ export default function Register() {
             className={`input-sm ${errors.password ? "input-error" : "input-primary"}`}
             iconLeft={<KeyIcon className="text-primary h-6 w-6"></KeyIcon>}
             bottomLeftLabel={errors.password?.message}
-            {...register("password", { onBlur: () => trigger("password") })}
+            {...register("password")}
           />
         </div>
         <Button
