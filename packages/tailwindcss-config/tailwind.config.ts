@@ -34,7 +34,7 @@ const config: TailwindConfig = {
           error: "#d92020",
         },
         spinspotdark: {
-          primary: "#47085F",
+          primary: "#530b6f",
           "primary-content": "#ffffff",
           secondary: "#1B50A0",
           "secondary-content": "#ffffff",
