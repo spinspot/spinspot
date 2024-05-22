@@ -14,6 +14,7 @@ export const signUpWithCredentialsInputDefinition = userDefinition.pick({
   password: true,
   firstName: true,
   lastName: true,
+  gender: true,
 });
 export type TSignUpWithCredentialsInputDefinition = z.infer<
   typeof signUpWithCredentialsInputDefinition

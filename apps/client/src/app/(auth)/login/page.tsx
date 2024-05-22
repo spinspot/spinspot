@@ -25,10 +25,10 @@ export default function Login() {
     register,
     handleSubmit,
     formState: { errors },
-    trigger,
   } = useForm<TSignInWithCredentialsInputDefinition>({
     resolver: zodResolver(signInWithCredentialsInputDefinition),
     shouldFocusError: false,
+    mode: "onBlur",
   });
 
   const handleRegisterClick = () => {
@@ -47,7 +47,7 @@ export default function Login() {
       },
       {
         onSuccess() {
-          router.push("/tables");
+          router.push("/dashboard");
         },
       },
     );
@@ -69,7 +69,7 @@ export default function Login() {
               <EnvelopeIcon className="text-primary h-6 w-6"></EnvelopeIcon>
             }
             bottomLeftLabel={errors.email?.message}
-            {...register("email", { onBlur: () => trigger("email") })}
+            {...register("email")}
           />
           <TextInput
             type="password"
@@ -78,7 +78,7 @@ export default function Login() {
             topRightLabel="Contraseña"
             iconLeft={<KeyIcon className="text-primary h-6 w-6"></KeyIcon>}
             bottomLeftLabel={errors.password?.message}
-            {...register("password", { onBlur: () => trigger("password") })}
+            {...register("password")}
           />
         </div>
         <Button
@@ -95,7 +95,7 @@ export default function Login() {
           onClick={() =>
             signInWithGoogle.mutate({
               app: "client",
-              route: "/tables",
+              route: "/dashboard",
             })
           }
         />

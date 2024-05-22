@@ -59,7 +59,7 @@ export function Header() {
       </div>
       <div className="navbar-center">
         <Link
-          href="/"
+          href="/dashboard"
           tabIndex={0}
           role="button"
           className="btn btn-link btn-lg avatar"
