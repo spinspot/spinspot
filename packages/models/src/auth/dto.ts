@@ -1,13 +1,23 @@
 import z from "zod";
-import { passwordDefinition } from "../definitions";
-import { IUser } from "../user";
+import { IUser, userDefinition } from "../user";
 
-export const signInWithCredentialsInputDefinition = z.object({
-  email: z.string().email(),
-  password: passwordDefinition,
+export const signInWithCredentialsInputDefinition = userDefinition.pick({
+  email: true,
+  password: true,
 });
 export type TSignInWithCredentialsInputDefinition = z.infer<
   typeof signInWithCredentialsInputDefinition
+>;
+
+export const signUpWithCredentialsInputDefinition = userDefinition.pick({
+  email: true,
+  password: true,
+  firstName: true,
+  lastName: true,
+  gender: true,
+});
+export type TSignUpWithCredentialsInputDefinition = z.infer<
+  typeof signUpWithCredentialsInputDefinition
 >;
 
 export const signInWithGoogleQueryDefinition = z.object({
