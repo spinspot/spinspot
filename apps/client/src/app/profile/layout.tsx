@@ -2,14 +2,14 @@
 
 import { AuthGuard, LayoutWaves } from "@spin-spot/components";
 
-export default function AuthLayout({
+export default function ProfileLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
     <LayoutWaves>
-      <AuthGuard validate={(user) => user === null} route="/profile">
+      <AuthGuard>
         {children}
       </AuthGuard>
     </LayoutWaves>
