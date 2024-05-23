@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutWaves } from "@spin-spot/components";
+import { AuthGuard, LayoutWaves } from "@spin-spot/components";
 
 export default function AuthLayout({
   children,
@@ -9,7 +9,9 @@ export default function AuthLayout({
 }) {
   return (
     <LayoutWaves>
+      <AuthGuard validate={(user) => user === null} route="/profile">
         {children}
+      </AuthGuard>
     </LayoutWaves>
   );
 }

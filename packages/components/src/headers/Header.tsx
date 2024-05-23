@@ -2,9 +2,9 @@
 
 import { useAuth, useSignOut } from "@spin-spot/services";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { SpinSpotIcon } from "../extra-icons";
 import { Loader } from "../loaders";
-import { useRouter } from "next/navigation";
 
 export function Header() {
   const user = useAuth();
@@ -19,7 +19,7 @@ export function Header() {
 
   const handleProfileClick = () => {
     router.push("/profile");
-  }
+  };
 
   return (
     <div className="navbar bg-base-200">
@@ -87,7 +87,9 @@ export function Header() {
               className="menu menu-sm dropdown-content bg-base-200 rounded-box z-[1] mt-[60px] w-52 p-2 shadow"
             >
               <li>
-                <a className="justify-between" onClick={handleProfileClick}>Profile</a>
+                <a className="justify-between" onClick={handleProfileClick}>
+                  Profile
+                </a>
               </li>
               <li>
                 <a className="text-red-500" onClick={handleLogoutClick}>
