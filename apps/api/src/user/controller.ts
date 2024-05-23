@@ -30,7 +30,7 @@ async function updateUser(req: Request, res: Response) {
   const params = updateUserParamsDefinition.parse(req.params);
   const input = updateUserInputDefinition.parse(req.body);
 
-  if (req.user?._id !== params._id || req.user.userType !== "ADMIN") {
+  if (req.user?._id !== params._id && req.user?.userType !== "ADMIN") {
     return res.status(401).end();
   }
 
