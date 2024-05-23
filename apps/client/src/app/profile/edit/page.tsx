@@ -70,7 +70,7 @@ export default function edit() {
             <div className="absolute inset-0  z-40 flex flex-col items-center justify-center mb-3">
                 <div className="w-90 h-32 rounded-full overflow-hidden bg-black">
                     <Image
-                        src="" // PONER PERFIL DE USUARIO
+                        src="/DefaultUserImage.png" // PONER PERFIL DE USUARIO
                         alt="Jane Doe"
                         width={128}
                         height={128}

@@ -34,7 +34,7 @@ export default function Profile() {
             <div className="absolute inset-0 z-40 flex flex-col items-center justify-center">
                 <div className="w-90 h-32 rounded-full overflow-hidden bg-black">
                     <Image
-                        src={ '/default-profile.png'} // PONER PERFIL DE USUARIO
+                        src='/DefaultUserImage.png' // PONER PERFIL DE USUARIO
                         alt={userProfile? userFullName : 'User'}
                         width={128}
                         height={128}
