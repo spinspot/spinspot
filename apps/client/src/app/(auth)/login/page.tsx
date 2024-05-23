@@ -47,7 +47,7 @@ export default function Login() {
       },
       {
         onSuccess() {
-          router.push("/tables");
+          router.push("/dashboard");
         },
       },
     );
@@ -95,7 +95,7 @@ export default function Login() {
           onClick={() =>
             signInWithGoogle.mutate({
               app: "client",
-              route: "/tables",
+              route: "/dashboard",
             })
           }
         />
