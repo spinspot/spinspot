@@ -13,6 +13,10 @@ export default function Profile() {
     router.push("/profile/edit");
   };
 
+  const handleBackClick = () => {
+    router.push("/dashboard");
+  }
+
   if (isAuthLoading) {
     return <div>Loading...</div>;
   }
@@ -57,6 +61,7 @@ export default function Profile() {
             className="btn-sm btn-secondary w-24"
             label="Back"
             labelSize="text-md"
+            onClick={handleBackClick}
           ></Button>
           <Button
             className="btn-sm dark:btn-neutral btn-primary w-30"

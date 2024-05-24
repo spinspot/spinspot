@@ -116,7 +116,7 @@ export default function EditProfile() {
             onClick={handleBackClick}
           ></Button>
           <Button
-            className="btn-md dark:btn-neutral btn-primary w-40 "
+            className="btn-md btn-neutral w-40 "
             label="Edit Profile"
             labelSize="text-md"
             onClick={handleSubmit(handleUpdateProfile)}
