@@ -1,10 +1,17 @@
-import AuthContext from "@/lib/auth-context";
-import QueryContext from "@/lib/query-context";
+import {
+  AuthContextProvider,
+  QueryContextProvider,
+} from "@spin-spot/components";
+import { cn } from "@spin-spot/utils";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const bodyFont = Roboto({
+  subsets: ["latin"],
+  variable: "--font-body",
+  weight: ["300", "400", "500", "700"],
+});
 
 export const metadata: Metadata = {
   title: "Client App",
@@ -12,15 +19,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="es">
-      <body className={inter.className}>
-        <AuthContext>
-          <QueryContext>{children}</QueryContext>
-        </AuthContext>
+      <body className={cn("font-body", bodyFont.variable)}>
+        <QueryContextProvider>
+          <AuthContextProvider routes={{ signIn: "/login" }}>
+            {children}
+          </AuthContextProvider>
+        </QueryContextProvider>
       </body>
     </html>
   );

@@ -1,10 +1,20 @@
 import { Config as DaisyConfig } from "daisyui";
 import { Config as TailwindConfig } from "tailwindcss";
+import defaultTheme from "tailwindcss/defaultTheme";
 
 const config: TailwindConfig = {
   content: [],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-body)", ...defaultTheme.fontFamily.sans],
+        body: ["var(--font-body)", ...defaultTheme.fontFamily.sans],
+        title: [
+          "var(--font-title)",
+          "var(--font-body)",
+          ...defaultTheme.fontFamily.sans,
+        ],
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
@@ -13,6 +23,7 @@ const config: TailwindConfig = {
     },
   },
   daisyui: <DaisyConfig>{
+    darkTheme: "spinspotdark",
     themes: [
       {
         spinspot: {
@@ -27,6 +38,23 @@ const config: TailwindConfig = {
           "base-100": "#ffffff",
           "base-200": "#EBF2FA",
           "base-300": "#c0c6ce",
+          info: "#53a6ea",
+          success: "#0bad1e",
+          warning: "#ff9900",
+          error: "#d92020",
+        },
+        spinspotdark: {
+          primary: "#530b6f",
+          "primary-content": "#ffffff",
+          secondary: "#1B50A0",
+          "secondary-content": "#ffffff",
+          accent: "#5b2bca",
+          "accent-content": "#ffffff",
+          neutral: "964AB1",
+          "neutral-content": "#ffffff",
+          "base-100": "#0F172A",
+          "base-200": "#526389",
+          "base-300": "#ffffff",
           info: "#53a6ea",
           success: "#0bad1e",
           warning: "#ff9900",

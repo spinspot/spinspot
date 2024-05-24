@@ -26,5 +26,5 @@ export const passwordDefinition = z
   .string()
   .regex(/^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9]).{6,})\S$/, {
     message:
-      "La contraseña debe incluir al menos una letra minúscula, una letra mayúscula y un número.",
+      "Debe incluir al menos una letra minúscula, una letra mayúscula y un número.",
   });

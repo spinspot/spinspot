@@ -1,16 +1,35 @@
 import z from "zod";
-import { passwordDefinition } from "../definitions";
-import { IUser } from "../user";
+import { IUser, userDefinition } from "../user";
 
-export const signInInputDefinition = z.object({
-  email: z.string().email(),
-  password: passwordDefinition,
+export const signInWithCredentialsInputDefinition = userDefinition.pick({
+  email: true,
+  password: true,
 });
-export type TSignInInputDefinition = z.infer<typeof signInInputDefinition>;
+export type TSignInWithCredentialsInputDefinition = z.infer<
+  typeof signInWithCredentialsInputDefinition
+>;
 
-export type TSignInResponse = {
+export const signUpWithCredentialsInputDefinition = userDefinition.pick({
+  email: true,
+  password: true,
+  firstName: true,
+  lastName: true,
+  gender: true,
+});
+export type TSignUpWithCredentialsInputDefinition = z.infer<
+  typeof signUpWithCredentialsInputDefinition
+>;
+
+export const signInWithGoogleQueryDefinition = z.object({
+  app: z.enum(["client", "admin"]),
+  route: z.string(),
+});
+export type TSignInWithGoogleQueryDefinition = z.infer<
+  typeof signInWithGoogleQueryDefinition
+>;
+
+export type TSignInWithCredentialsResponse = {
   user: IUser;
-  jwt: string;
 };
 
 export type JwtPayload = Pick<
