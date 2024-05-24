@@ -3,6 +3,7 @@ import { cn } from "@spin-spot/utils";
 interface LoaderProps {
   size?: "xs" | "sm" | "md" | "lg";
   variant?: "spinner" | "dots" | "ring" | "ball" | "bars" | "infinity";
+  className?: string;
 }
 
 const loadingSizes = {
@@ -21,13 +22,19 @@ const loadingVariants = {
   infinity: "loading-infinity",
 };
 
-export function Loader({ size = "md", variant = "spinner" }: LoaderProps) {
-  const variantClass =
-    variant === "spinner" ? "loading-spinner" : "loading-dots";
-
+export function Loader({
+  size = "md",
+  variant = "spinner",
+  className,
+}: LoaderProps) {
   return (
     <span
-      className={cn("loading", loadingVariants[variant], loadingSizes[size])}
+      className={cn(
+        "loading",
+        loadingVariants[variant],
+        loadingSizes[size],
+        className,
+      )}
     ></span>
   );
 }

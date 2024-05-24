@@ -61,7 +61,11 @@ export default function ChangePassword() {
         <div className="flex flex-col gap-1">
           {user.isLoading ? (
             <div className="flex items-center justify-center">
-              <Loader size="lg" variant="dots" />
+              <Loader
+                size="lg"
+                variant="dots"
+                className="text-primary dark:text-neutral"
+              />
             </div>
           ) : (
             <h2 className="text-primary dark:text-neutral mb-1 text-center text-3xl font-black">
