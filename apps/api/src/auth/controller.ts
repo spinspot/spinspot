@@ -1,10 +1,13 @@
 import { userService } from "@/user";
 import {
   IUser,
+  forgotPasswordInputDefinition,
+  resetPasswordInputDefinition,
   signInWithGoogleQueryDefinition,
   signUpWithCredentialsInputDefinition,
 } from "@spin-spot/models";
 import { CookieOptions, NextFunction, Request, Response } from "express";
+import { verify } from "jsonwebtoken";
 import ms from "ms";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
@@ -203,6 +206,105 @@ async function getCurrentUser(req: Request, res: Response) {
   return res.status(200).json(req.user);
 }
 
+async function forgotPassword(req: Request, res: Response) {
+  const email = forgotPasswordInputDefinition.parse(req.body);
+
+  const users = await userService.getUsers(email);
+  if (users.length !== 1) {
+    return res.status(404).send("El usuario no existe!");
+  }
+  const user = users[0]!;
+  const token = authService.signJWT(
+    user,
+    process.env.JWT_SECRET + user.password,
+  );
+  const link = new URL(
+    `/change-password?user=${encodeURIComponent(`${user._id}`)}&token=${encodeURIComponent(token)}`,
+    process.env.CLIENT_APP_URL,
+  ).href;
+
+  const nodemailer = require("nodemailer");
+
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      type: "OAuth2",
+      clientId: `${process.env.GOOGLE_CLIENT_ID}`,
+      clientSecret: `${process.env.GOOGLE_CLIENT_SECRET}`,
+    },
+  });
+
+  transporter.sendMail({
+    from: "spinspot.unimet@gmail.com",
+    to: `${email.email}`,
+    subject: "Password Reset 🚨 SpinSpot",
+    html: `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        .button {
+          display: inline-block;
+          padding: 10px 20px;
+          font-size: 16px;
+          background-color: #02415a;
+          color: #ffffff !important;
+          text-decoration: none;
+          border-radius: 5px;
+          transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+          background-color: #022431;
+          color: #ffffff;
+        }
+
+        .text {
+          color: #000000;
+        }
+      </style>
+    </head>
+    <body>
+      <p class="text">Hola! ${user.firstName} ${user.lastName}, te saludamos desde SpinSpot. Presiona el botón a continuación para cambiar tu contraseña:</p>
+      <a href="${link}" class="button">Cambiar Contraseña</a>
+    </body>
+    </html>
+  `,
+    auth: {
+      user: "spinspot.unimet@gmail.com",
+      refreshToken:
+        "1//04kHxYG-uHWlDCgYIARAAGAQSNwF-L9Irk-Gg04X-0VvVp_r0JxRUCIrr2enw0ydDGm2BmaEUixEG_QGYEA-kw-RGzgqv4ogFvqA",
+      expires: 1484314697598,
+    },
+  });
+}
+
+async function resetPassword(req: Request, res: Response) {
+  const {
+    user: id,
+    token,
+    password,
+  } = resetPasswordInputDefinition.parse(req.body);
+  console.log(req.params);
+
+  const user = await userService.getUser(id);
+  if (!user) {
+    return res.status(404).json({ status: "El usuario no exste!" });
+  }
+  const secret = process.env.JWT_SECRET + user.password;
+  console.log(token);
+  if (!token) {
+    return res.status(404).send("Token undefined");
+  }
+  const verifyUser: any = verify(token, secret);
+  if (verifyUser && verifyUser?._id === `${user._id}`) {
+    await userService.updateUser(user._id, { password });
+  }
+  return res.status(401).json({ status: "Usted no esta autorizado" });
+}
+
 export const authController = {
   loadProviders,
   signUpWithCredentials,
@@ -212,4 +314,6 @@ export const authController = {
   refresh,
   signOut,
   getCurrentUser,
+  forgotPassword,
+  resetPassword,
 } as const;

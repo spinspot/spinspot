@@ -35,6 +35,10 @@ export default function Login() {
     router.push("/register");
   };
 
+  const handlePasswordClick = () => {
+    router.push("/reset-password");
+  };
+
   console.log(user.user);
 
   const handleSignIn: SubmitHandler<TSignInWithCredentialsInputDefinition> = (
@@ -104,6 +108,12 @@ export default function Login() {
           label="Eres nuevo? Registrate"
           labelSize="text-md"
           onClick={handleRegisterClick}
+        />
+        <Button
+          className="btn-sm btn-link text-primary w-full space-y-0"
+          label="Olvidaste tu contraseña?"
+          labelSize="text-md"
+          onClick={handlePasswordClick}
         />
       </div>
     </div>
