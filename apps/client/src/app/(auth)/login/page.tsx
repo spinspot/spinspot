@@ -58,10 +58,10 @@ export default function Login() {
   };
 
   return (
-    <div className="absolute inset-0 z-40 flex items-center justify-center">
-      <div className="mt-24 w-96 space-y-4 rounded-lg p-8 sm:mt-36">
+    <div className="absolute inset-0 z-40 flex flex-col items-center justify-center">
+      <div className="mt-24 w-96 space-y-4 rounded-lg px-8 pb-2 pt-8 sm:mt-36">
         <div className="flex flex-col gap-1">
-          <h2 className="text-primary mb-1 text-center text-3xl font-black">
+          <h2 className="text-primary dark:text-neutral mb-1 text-center text-3xl font-black">
             Iniciar Sesión
           </h2>
           <TextInput
@@ -109,8 +109,10 @@ export default function Login() {
           labelSize="text-md"
           onClick={handleRegisterClick}
         />
+      </div>
+      <div className="flex flex-col gap-1">
         <Button
-          className="btn-sm btn-link text-primary w-full space-y-0"
+          className="btn-sm btn-link text-neutral w-full space-y-0"
           label="Olvidaste tu contraseña?"
           labelSize="text-md"
           onClick={handlePasswordClick}

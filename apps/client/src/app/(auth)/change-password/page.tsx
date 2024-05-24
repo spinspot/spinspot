@@ -64,7 +64,7 @@ export default function ChangePassword() {
               <Loader size="lg" variant="dots" />
             </div>
           ) : (
-            <h2 className="text-primary mb-1 text-center text-3xl font-black">
+            <h2 className="text-primary dark:text-neutral mb-1 text-center text-3xl font-black">
               Reset Password {user.data?.firstName} {user.data?.lastName}
             </h2>
           )}

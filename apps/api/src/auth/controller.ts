@@ -274,8 +274,7 @@ async function forgotPassword(req: Request, res: Response) {
   `,
     auth: {
       user: "spinspot.unimet@gmail.com",
-      refreshToken:
-        "1//04kHxYG-uHWlDCgYIARAAGAQSNwF-L9Irk-Gg04X-0VvVp_r0JxRUCIrr2enw0ydDGm2BmaEUixEG_QGYEA-kw-RGzgqv4ogFvqA",
+      refreshToken: `${process.env.GOOGLE_REFRESH_TOKEN}`,
       expires: 1484314697598,
     },
   });
