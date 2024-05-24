@@ -1,0 +1,43 @@
+import z from "zod";
+import {
+    baseModelDefinition,
+    statusTimeTypeDefinition,
+} from "../definitions";
+import { Types, isValidObjectId } from "mongoose";
+
+
+const timeBlockDefinition = baseModelDefinition.extend({
+    table : z.instanceof(Types.ObjectId).or(z.string().refine(isValidObjectId)),
+    startTime: z.string().datetime(),
+    endTime: z.string().datetime(),
+    status: statusTimeTypeDefinition,
+})
+
+export type ITimeBlock = z.infer<typeof timeBlockDefinition>;
+
+export const getTimeBlocksQueryDefinition = timeBlockDefinition
+  .partial();
+export type TGetTimeBlocksQueryDefinition = z.infer<typeof getTimeBlocksQueryDefinition>;
+
+export const getTimeBlockParamsDefinition = timeBlockDefinition.pick({ _id: true });
+export type TGetTimeBlockParamsDefinition = z.infer<typeof getTimeBlockParamsDefinition>;
+
+export const createTimeBlockInputDefinition = timeBlockDefinition.omit({ _id: true });
+export type TCreateTimeBlockInputDefinition = z.infer<
+  typeof createTimeBlockInputDefinition
+>;
+
+export const createTimeBlocksInputDefinition = z.array(timeBlockDefinition.omit({ _id: true }));
+export type TCreateTimeBlocksInputDefinition = z.infer<
+  typeof createTimeBlocksInputDefinition
+>;
+
+export const updateTimeBlockParamsDefinition = timeBlockDefinition.pick({ _id: true });
+export type TUpdateTimeBlockParamsDefinition = z.infer<
+  typeof getTimeBlockParamsDefinition
+>;
+
+export const updateTimeBlockInputDefinition = timeBlockDefinition.partial();
+export type TUpdateTimeBlockInputDefinition = z.infer<
+  typeof updateTimeBlockInputDefinition
+>;
