@@ -51,7 +51,7 @@ export default function Register() {
     <div className="absolute inset-0 z-40 flex items-center justify-center">
       <div className="mt-24 w-96 space-y-4 rounded-lg p-8 sm:mt-36">
         <div className="flex flex-col gap-1">
-          <h2 className="text-primary dark:text-neutral mb-1 text-center text-3xl font-black">
+          <h2 className="text-primary mb-1 text-center text-3xl font-black">
             Registrarse
           </h2>
           <TextInput
@@ -60,7 +60,7 @@ export default function Register() {
             topRightLabel="Correo Electrónico"
             className={`input-sm ${errors.email ? "input-error" : "input-primary"}`}
             iconLeft={
-              <EnvelopeIcon className="text-primary h-6 w-6"></EnvelopeIcon>
+              <EnvelopeIcon className="text-primary dark:text-neutral h-6 w-6" />
             }
             bottomLeftLabel={errors.email?.message}
             {...register("email")}
@@ -70,7 +70,9 @@ export default function Register() {
             type="text"
             topRightLabel="Nombre"
             className={`input-sm ${errors.firstName ? "input-error" : "input-primary"}`}
-            iconLeft={<UserIcon className="text-primary h-6 w-6"></UserIcon>}
+            iconLeft={
+              <UserIcon className="text-primary dark:text-neutral h-6 w-6" />
+            }
             bottomLeftLabel={errors.firstName?.message}
             {...register("firstName")}
           />
@@ -79,7 +81,9 @@ export default function Register() {
             type="text"
             topRightLabel="Apellido"
             className={`input-sm ${errors.lastName ? "input-error" : "input-primary"}`}
-            iconLeft={<UserIcon className="text-primary h-6 w-6"></UserIcon>}
+            iconLeft={
+              <UserIcon className="text-primary dark:text-neutral h-6 w-6" />
+            }
             bottomLeftLabel={errors.lastName?.message}
             {...register("lastName")}
           />
@@ -88,7 +92,9 @@ export default function Register() {
             type="password"
             topRightLabel="Contraseña"
             className={`input-sm ${errors.password ? "input-error" : "input-primary"}`}
-            iconLeft={<KeyIcon className="text-primary h-6 w-6"></KeyIcon>}
+            iconLeft={
+              <KeyIcon className="text-primary dark:text-neutral h-6 w-6" />
+            }
             bottomLeftLabel={errors.password?.message}
             {...register("password")}
           />

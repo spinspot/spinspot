@@ -18,10 +18,7 @@ export default function Home() {
         className="btn-primary"
         onClick={handleLoginClick}
       />
-      <Pagination
-        labels={["1", "2", "3", "4", "5"]}
-        className="btn-neutral"
-      ></Pagination>
+      <Pagination labels={["1", "2", "3", "4", "5"]} className="btn-neutral" />
       <SelectInput
         options={[
           "Harry Potter",
@@ -32,7 +29,7 @@ export default function Home() {
         defaultOption="Pick A Movie!"
         topRightLabel="Hola papi"
         className="select-primary"
-      ></SelectInput>
+      />
     </div>
   );
 }

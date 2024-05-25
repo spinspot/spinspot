@@ -60,7 +60,7 @@ export default function ResetPassword() {
             topRightLabel="Correo Electrónico"
             className={`input-sm ${errors.email ? "input-error" : "input-primary"}`}
             iconLeft={
-              <EnvelopeIcon className="text-primary h-6 w-6"></EnvelopeIcon>
+              <EnvelopeIcon className="text-primary dark:text-neutral h-6 w-6" />
             }
             bottomLeftLabel={errors.email?.message}
             {...register("email")}

@@ -35,6 +35,6 @@ export function Loader({
         loadingSizes[size],
         className,
       )}
-    ></span>
+    />
   );
 }

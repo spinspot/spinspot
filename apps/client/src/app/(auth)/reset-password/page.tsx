@@ -58,14 +58,10 @@ export default function ChangePassword() {
         <div className="flex flex-col gap-1">
           {user.isLoading ? (
             <div className="flex items-center justify-center">
-              <Loader
-                size="lg"
-                variant="dots"
-                className="text-primary dark:text-neutral"
-              />
+              <Loader size="lg" variant="dots" className="text-primary " />
             </div>
           ) : (
-            <h2 className="text-primary dark:text-neutral mb-1 text-center text-3xl font-black">
+            <h2 className="text-primary mb-1 text-center text-3xl font-black">
               Reset Password {user.data?.firstName} {user.data?.lastName}
             </h2>
           )}
@@ -74,7 +70,9 @@ export default function ChangePassword() {
             type="password"
             topRightLabel="Password"
             className={`input-sm ${errors.password ? "input-error" : "input-primary"}`}
-            iconLeft={<KeyIcon className="text-primary h-6 w-6"></KeyIcon>}
+            iconLeft={
+              <KeyIcon className="text-primary dark:text-neutral h-6 w-6" />
+            }
             bottomLeftLabel={errors.password?.message}
             {...register("password")}
           />
@@ -83,7 +81,7 @@ export default function ChangePassword() {
             type="password"
             topRightLabel="Confirm Password"
             className={`input-sm ${errors.confirmPassword ? "input-error" : "input-primary"}`}
-            iconLeft={<KeyIcon className="text-primary h-6 w-6"></KeyIcon>}
+            iconLeft={<KeyIcon className="text-primary h-6 w-6" />}
             bottomLeftLabel={errors.confirmPassword?.message}
             {...register("confirmPassword")}
           />
