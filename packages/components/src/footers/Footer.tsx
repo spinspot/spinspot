@@ -8,7 +8,7 @@ export function Footer() {
   return (
     <footer className="footer footer-center bg-base-200 p-10">
       {/* <aside>
-        <ThemeController></ThemeController>
+        <ThemeController/>
       </aside> */}
       <aside>
         <div className="flex flex-col items-center justify-center gap-7">
