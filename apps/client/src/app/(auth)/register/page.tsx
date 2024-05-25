@@ -1,39 +1,47 @@
 "use client";
 
 import { EnvelopeIcon, KeyIcon, UserIcon } from "@heroicons/react/16/solid";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, TextInput } from "@spin-spot/components";
-import { useAuth, useCreateUser, useUsers } from "@spin-spot/services";
+import {
+  TSignUpWithCredentialsInputDefinition,
+  signUpWithCredentialsInputDefinition,
+} from "@spin-spot/models";
+import { useSignUpWithCredentials } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 export default function Register() {
   const router = useRouter();
-  const auth = useAuth();
-  const users = useUsers();
-  const createUser = useCreateUser();
+  const signUpWithCredentials = useSignUpWithCredentials();
 
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<TSignUpWithCredentialsInputDefinition>({
+    resolver: zodResolver(signUpWithCredentialsInputDefinition),
+    shouldFocusError: false,
+    mode: "onBlur",
+  });
 
   const handleRegisterClick = () => {
     router.push("/login");
   };
 
-  const handleSubmit = () => {
-    createUser.mutate(
+  const handleSignUp: SubmitHandler<TSignUpWithCredentialsInputDefinition> = (
+    data,
+  ) => {
+    signUpWithCredentials.mutate(
       {
-        email: email,
-        firstName: firstName,
-        lastName: "Doe",
-        gender: "MALE",
-        password: password,
-        userType: "PLAYER",
-        isActive: true,
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        password: data.password,
       },
       {
         onSuccess() {
-          console.log("Registro exitoso!");
+          router.push("/tables");
         },
       },
     );
@@ -43,44 +51,59 @@ export default function Register() {
     <div className="absolute inset-0 z-40 flex items-center justify-center">
       <div className="mt-24 w-96 space-y-4 rounded-lg p-8 sm:mt-36">
         <div className="flex flex-col gap-1">
-          <h2 className="text-neutral mb-1 text-center text-3xl font-black">
+          <h2 className="text-primary mb-1 text-center text-3xl font-black">
             Registrarse
           </h2>
           <TextInput
             placeholder="example@email.com"
             type="email"
             topRightLabel="Correo Electrónico"
-            className="input-sm"
+            className={`input-sm ${errors.email ? "input-error" : "input-primary"}`}
             iconLeft={
-              <EnvelopeIcon className="text-primary h-6 w-6"></EnvelopeIcon>
+              <EnvelopeIcon className="text-primary dark:text-neutral h-6 w-6" />
             }
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            bottomLeftLabel={errors.email?.message}
+            {...register("email")}
           />
           <TextInput
-            placeholder="John Doe"
+            placeholder="John"
             type="text"
             topRightLabel="Nombre"
-            className="input-sm"
-            iconLeft={<UserIcon className="text-primary h-6 w-6"></UserIcon>}
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            className={`input-sm ${errors.firstName ? "input-error" : "input-primary"}`}
+            iconLeft={
+              <UserIcon className="text-primary dark:text-neutral h-6 w-6" />
+            }
+            bottomLeftLabel={errors.firstName?.message}
+            {...register("firstName")}
+          />
+          <TextInput
+            placeholder="Doe"
+            type="text"
+            topRightLabel="Apellido"
+            className={`input-sm ${errors.lastName ? "input-error" : "input-primary"}`}
+            iconLeft={
+              <UserIcon className="text-primary dark:text-neutral h-6 w-6" />
+            }
+            bottomLeftLabel={errors.lastName?.message}
+            {...register("lastName")}
           />
           <TextInput
             placeholder="12345678"
             type="password"
             topRightLabel="Contraseña"
-            className="input-sm"
-            iconLeft={<KeyIcon className="text-primary h-6 w-6"></KeyIcon>}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            className={`input-sm ${errors.password ? "input-error" : "input-primary"}`}
+            iconLeft={
+              <KeyIcon className="text-primary dark:text-neutral h-6 w-6" />
+            }
+            bottomLeftLabel={errors.password?.message}
+            {...register("password")}
           />
         </div>
         <Button
           className="btn-sm btn-neutral w-full"
           label="Registrarse"
           labelSize="text-md"
-          onClick={handleSubmit}
+          onClick={handleSubmit(handleSignUp)}
         />
         <Button
           className="btn-sm btn-link text-neutral w-full"

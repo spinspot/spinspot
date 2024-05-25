@@ -4,8 +4,9 @@ import {
   TUpdateUserInputDefinition,
   TUpdateUserParamsDefinition,
 } from "@spin-spot/models";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api";
+import { useAuth } from "../auth";
 
 export async function createUser(input: TCreateUserInputDefinition) {
   const res = await api.post("/users", { body: input });
@@ -31,5 +32,17 @@ export async function updateUser({
 }
 
 export function useUpdateUser() {
-  return useMutation({ mutationKey: ["updateUser"], mutationFn: updateUser });
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationKey: ["updateUser"],
+    mutationFn: updateUser,
+    onSuccess(data) {
+      if (data._id === user?._id) {
+        queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      }
+      queryClient.invalidateQueries({ queryKey: ["getUser", data._id] });
+    },
+  });
 }

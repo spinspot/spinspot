@@ -29,7 +29,7 @@ export const SelectInput = forwardRef<HTMLSelectElement, SelectInputProps>(
     const renderBottomLabels = bottomLeftLabel || bottomRightLabel;
 
     const generateValue = (label: string) => {
-      return label.toLowerCase().replace(/\s+/g, "-");
+      return label.replace(/\s+/g, "-");
     };
 
     return (

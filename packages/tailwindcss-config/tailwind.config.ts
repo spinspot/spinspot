@@ -1,10 +1,20 @@
 import { Config as DaisyConfig } from "daisyui";
 import { Config as TailwindConfig } from "tailwindcss";
+import defaultTheme from "tailwindcss/defaultTheme";
 
 const config: TailwindConfig = {
   content: [],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-body)", ...defaultTheme.fontFamily.sans],
+        body: ["var(--font-body)", ...defaultTheme.fontFamily.sans],
+        title: [
+          "var(--font-title)",
+          "var(--font-body)",
+          ...defaultTheme.fontFamily.sans,
+        ],
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
@@ -34,7 +44,7 @@ const config: TailwindConfig = {
           error: "#d92020",
         },
         spinspotdark: {
-          primary: "#47085F",
+          primary: "#530b6f",
           "primary-content": "#ffffff",
           secondary: "#1B50A0",
           "secondary-content": "#ffffff",
