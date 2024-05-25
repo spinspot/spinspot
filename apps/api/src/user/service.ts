@@ -1,4 +1,5 @@
 import {
+  IUser,
   TGetUserParamsDefinition,
   TGetUsersQueryDefinition,
   TUpdateUserInputDefinition,
@@ -7,10 +8,15 @@ import {
   type TCreateUserInputDefinition,
 } from "@spin-spot/models";
 import { hash } from "bcrypt";
-import { model } from "mongoose";
+import { UpdateQuery, model } from "mongoose";
 
 userSchema.pre("save", async function (next) {
   if (this.password) this.password = await hash(this.password, 10);
+  next();
+});
+userSchema.pre("findOneAndUpdate", async function (next) {
+  const user: UpdateQuery<IUser> | null = this.getUpdate();
+  if (user?.password) user.password = await hash(user.password, 10);
   next();
 });
 userSchema.set("toJSON", {
