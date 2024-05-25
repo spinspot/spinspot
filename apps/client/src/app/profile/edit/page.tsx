@@ -107,20 +107,20 @@ export default function EditProfile() {
           {...register("gender")}
           className={errors.gender ? "input-error" : ""}
           bottomLeftLabel={errors.gender?.message}
-        ></SelectInput>
+        />
         <div className="mt-6 flex justify-center space-x-4">
           <Button
             className="btn-md btn-secondary w-32"
             label="Back"
             labelSize="text-md"
             onClick={handleBackClick}
-          ></Button>
+          />
           <Button
             className="btn-md btn-neutral w-40 "
             label="Edit Profile"
             labelSize="text-md"
             onClick={handleSubmit(handleUpdateProfile)}
-          ></Button>
+          />
         </div>
       </div>
     </>

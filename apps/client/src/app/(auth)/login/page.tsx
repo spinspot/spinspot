@@ -66,7 +66,7 @@ export default function Login() {
             topRightLabel="Correo Electrónico"
             className={`input-sm ${errors.email ? "input-error" : "input-primary"}`}
             iconLeft={
-              <EnvelopeIcon className="text-primary h-6 w-6"></EnvelopeIcon>
+              <EnvelopeIcon className="text-primary dark:text-neutral h-6 w-6" />
             }
             bottomLeftLabel={errors.email?.message}
             {...register("email")}
@@ -76,7 +76,9 @@ export default function Login() {
             placeholder="12345678"
             className={`input-sm ${errors.password ? "input-error" : "input-primary"}`}
             topRightLabel="Contraseña"
-            iconLeft={<KeyIcon className="text-primary h-6 w-6"></KeyIcon>}
+            iconLeft={
+              <KeyIcon className="text-primary dark:text-neutral h-6 w-6" />
+            }
             bottomLeftLabel={errors.password?.message}
             {...register("password")}
           />

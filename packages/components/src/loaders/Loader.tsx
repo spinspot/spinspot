@@ -16,7 +16,5 @@ export function Loader({ size = "md", variant = "spinner" }: LoaderProps) {
   const variantClass =
     variant === "spinner" ? "loading-spinner" : "loading-dots";
 
-  return (
-    <span className={cn("loading", variantClass, loadingSizes[size])}></span>
-  );
+  return <span className={cn("loading", variantClass, loadingSizes[size])} />;
 }
