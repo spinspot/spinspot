@@ -1,4 +1,6 @@
 import {
+  TForgotPasswordInputDefinition,
+  TResetPasswordInputDefinition,
   TSignInWithCredentialsInputDefinition,
   TSignInWithCredentialsResponse,
   TSignInWithGoogleQueryDefinition,
@@ -57,6 +59,40 @@ export function useSignInWithCredentials() {
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
+  });
+}
+
+export async function forgotPassword(input: TForgotPasswordInputDefinition) {
+  const res = await api.post("/auth/forgot-password", { body: input });
+
+  if (!res.ok) {
+    return null;
+  }
+
+  return true;
+}
+
+export function useForgotPassword() {
+  return useMutation({
+    mutationKey: ["forgotPassword"],
+    mutationFn: forgotPassword,
+  });
+}
+
+export async function resetPassword(input: TResetPasswordInputDefinition) {
+  const res = await api.post("/auth/reset-password", { body: input });
+
+  if (!res.ok) {
+    return false;
+  }
+
+  return true;
+}
+
+export function useResetPassword() {
+  return useMutation({
+    mutationKey: ["resetPassword"],
+    mutationFn: resetPassword,
   });
 }
 

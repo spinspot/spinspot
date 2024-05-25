@@ -1,4 +1,4 @@
-import { AuthGuard,LayoutMain } from "@spin-spot/components";
+import { AuthGuard, LayoutMain } from "@spin-spot/components";
 
 export default function dashboardLayout({
   children,
@@ -6,8 +6,8 @@ export default function dashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-  <LayoutMain>
+    <LayoutMain>
       <AuthGuard>{children}</AuthGuard>
-  </LayoutMain>);
+    </LayoutMain>
+  );
 }
-        

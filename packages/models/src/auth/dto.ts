@@ -1,4 +1,5 @@
 import z from "zod";
+import { passwordDefinition } from "../definitions";
 import { IUser, userDefinition } from "../user";
 
 export const signInWithCredentialsInputDefinition = userDefinition.pick({
@@ -7,6 +8,23 @@ export const signInWithCredentialsInputDefinition = userDefinition.pick({
 });
 export type TSignInWithCredentialsInputDefinition = z.infer<
   typeof signInWithCredentialsInputDefinition
+>;
+
+export const forgotPasswordInputDefinition = userDefinition.pick({
+  email: true,
+});
+export type TForgotPasswordInputDefinition = z.infer<
+  typeof forgotPasswordInputDefinition
+>;
+
+export const resetPasswordInputDefinition = z.object({
+  user: userDefinition.shape._id,
+  token: z.string(),
+  password: passwordDefinition,
+  confirmPassword: passwordDefinition,
+});
+export type TResetPasswordInputDefinition = z.infer<
+  typeof resetPasswordInputDefinition
 >;
 
 export const signUpWithCredentialsInputDefinition = userDefinition.pick({
