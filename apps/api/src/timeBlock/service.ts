@@ -3,6 +3,9 @@ import {
   TCreateTimeBlocksInputDefinition,
   TGetTimeBlockParamsDefinition,
   TGetTimeBlocksQueryDefinition,
+  TUpdateTimeBlockInputDefinition,
+  TUpdateTimeBlockParamsDefinition,
+  statusTimeTypeDefinition,
   timeSchema,
 } from "@spin-spot/models";
 import { model } from "mongoose";
@@ -24,6 +27,18 @@ async function getTimeBlocks(filter: TGetTimeBlocksQueryDefinition = {}) {
   return timeBlocks;
 }
 
+async function updateStatusTimeBlock(
+  _id: TUpdateTimeBlockParamsDefinition["_id"],
+  status: typeof statusTimeTypeDefinition.Enum[keyof typeof statusTimeTypeDefinition.Enum]
+) {
+  const timeBlock = await TimeBlock.findByIdAndUpdate(
+    _id,
+    { status },
+    { new: true }
+  );
+  return timeBlock;
+}
+
 async function getTimeBlock(_id: TGetTimeBlockParamsDefinition["_id"]) {
   const timeBlock = await TimeBlock.findById(_id);
   return timeBlock;
@@ -35,4 +50,5 @@ export const timeBlockService = {
   getTimeBlock,
   createTimeBlock,
   createTimeBlocks,
+  updateStatusTimeBlock
 } as const;

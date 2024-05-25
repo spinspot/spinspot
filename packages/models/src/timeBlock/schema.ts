@@ -9,11 +9,11 @@ export const timeSchema = new Schema<ITimeBlock>(
             ref: 'Table',
         },
         startTime: {
-            type: String,
+            type: Date,
             required: true,
         },
         endTime:{
-            type: String,
+            type: Date,
             required: true
         },
         status: String,

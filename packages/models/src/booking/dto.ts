@@ -8,9 +8,9 @@ import { Types, isValidObjectId } from "mongoose";
 
 const eventDefinition = baseModelDefinition.extend({
     eventType : eventTypeDefinition,
-    owner: z.instanceof(Types.ObjectId).or(z.string().refine(isValidObjectId)),
+    owner: z.instanceof(Types.ObjectId).or(z.string().refine(isValidObjectId)).optional(),
     table: z.instanceof(Types.ObjectId).or(z.string().refine(isValidObjectId)),
-    players: z.array(z.instanceof(Types.ObjectId).or(z.string().refine(isValidObjectId))),
+    players: z.array(z.instanceof(Types.ObjectId).or(z.string().refine(isValidObjectId))).optional(),
     timeBlock: z.instanceof(Types.ObjectId).or(z.string().refine(isValidObjectId)),
     status: statusTypeDefinition,
 })

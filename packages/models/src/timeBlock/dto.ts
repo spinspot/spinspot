@@ -8,8 +8,8 @@ import { Types, isValidObjectId } from "mongoose";
 
 const timeBlockDefinition = baseModelDefinition.extend({
     table : z.instanceof(Types.ObjectId).or(z.string().refine(isValidObjectId)),
-    startTime: z.string().datetime(),
-    endTime: z.string().datetime(),
+    startTime: z.coerce.date(),
+    endTime: z.coerce.date(),
     status: statusTimeTypeDefinition,
 })
 
