@@ -79,7 +79,9 @@ export default function EditProfile() {
         <TextInput
           placeholder="First Name"
           topRightLabel="First Name"
-          iconLeft={<UserIcon className="text-primary h-6 w-6" />}
+          iconLeft={
+            <UserIcon className="text-primary dark:text-neutral h-6 w-6" />
+          }
           {...register("firstName")}
           className={errors.firstName ? "input-error" : ""}
           bottomLeftLabel={errors.firstName?.message}
@@ -87,7 +89,9 @@ export default function EditProfile() {
         <TextInput
           placeholder="Last Name"
           topRightLabel="Last Name"
-          iconLeft={<UserIcon className="text-primary h-6 w-6" />}
+          iconLeft={
+            <UserIcon className="text-primary dark:text-neutral h-6 w-6" />
+          }
           {...register("lastName")}
           className={errors.lastName ? "input-error" : ""}
           bottomLeftLabel={errors.lastName?.message}
@@ -95,7 +99,9 @@ export default function EditProfile() {
         <TextInput
           placeholder="Email"
           topRightLabel="Email"
-          iconLeft={<EnvelopeIcon className="text-primary h-6 w-6" />}
+          iconLeft={
+            <EnvelopeIcon className="text-primary dark:text-neutral h-6 w-6" />
+          }
           {...register("email")}
           className={errors.email ? "input-error" : ""}
           bottomLeftLabel={errors.email?.message}

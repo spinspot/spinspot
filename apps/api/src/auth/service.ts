@@ -35,7 +35,11 @@ async function validateGoogle(googleId: string, email: string) {
   return null;
 }
 
-function signJWT(user: IUser) {
+function signJWT(
+  user: IUser,
+  secret: string = process.env.JWT_SECRET,
+  expiresIn: string = "1d",
+) {
   return sign(
     {
       _id: user._id,
@@ -44,9 +48,9 @@ function signJWT(user: IUser) {
       lastName: user.lastName,
       userType: user.userType,
     } as JwtPayload,
-    process.env.JWT_SECRET,
+    secret,
     {
-      expiresIn: "1d",
+      expiresIn: expiresIn,
     },
   );
 }
