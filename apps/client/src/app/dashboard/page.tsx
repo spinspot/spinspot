@@ -35,9 +35,16 @@ export default function Dashboard() {
       </div>
 
       <div className="carousel carousel-center w-full space-x-8  bg-inherit p-4 md:justify-center">
-        <Card />
-        <Card />
-        <Card />
+        <Card 
+          label="Inicio: 11 de junio"
+          className="carousel-item"/>
+        <Card 
+          label="Inicio: 17 de julio"
+          className="carousel-item"/>
+        <Card 
+          label="Inicio 3 de junio"
+          className="carousel-item"/>
+        
       </div>
     </div>
   );
