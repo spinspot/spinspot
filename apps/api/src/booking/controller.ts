@@ -1,41 +1,51 @@
+import { tableService } from "@/table";
+import { timeBlockService } from "@/time-block";
 import {
-    createBookingInputDefinition,
-    getBookingParamsDefinition,
-    getBookingsQueryDefinition,
-    statusTimeTypeDefinition,
-    updateBookingInputDefinition,
-    updateBookingParamsDefinition,
+  createBookingInputDefinition,
+  getBookingParamsDefinition,
+  getBookingsQueryDefinition,
+  statusTimeTypeDefinition,
+  updateBookingInputDefinition,
+  updateBookingParamsDefinition,
 } from "@spin-spot/models";
 import { Request, Response } from "express";
 import { bookingService } from "./service";
-import { timeBlockService } from "@/timeBlock";
-import { tableService } from "@/table";
-
 
 async function bookingWithUser(req: Request, res: Response) {
-  try{
+  try {
     const user = req.user;
     const reservationData = createBookingInputDefinition.parse(req.body);
-  
-    const timeBlock = await timeBlockService.getTimeBlock(reservationData.timeBlock);
-  
-    if ((user?._id)?.toString() !== req.body.owner) {
-      return res.status(401).json({ error: 'You cannot create a booking for a different user' });
+
+    const timeBlock = await timeBlockService.getTimeBlock(
+      reservationData.timeBlock,
+    );
+
+    if (user?._id?.toString() !== req.body.owner) {
+      return res
+        .status(401)
+        .json({ error: "You cannot create a booking for a different user" });
     }
 
-    if (!timeBlock || !timeBlock.table || timeBlock.status !== statusTimeTypeDefinition.Enum.Available) {
-      return res.status(400).json({ error: 'Time Block error while booking' });
+    if (
+      !timeBlock ||
+      !timeBlock.table ||
+      timeBlock.status !== statusTimeTypeDefinition.Enum.Available
+    ) {
+      return res.status(400).json({ error: "Time Block error while booking" });
     }
-    
+
     const currentTime = new Date();
     if (currentTime > timeBlock.startTime) {
-      return res.status(400).json({ error: 'Current time cannot be after the start time of the selected time block' });
+      return res.status(400).json({
+        error:
+          "Current time cannot be after the start time of the selected time block",
+      });
     }
 
     const table = await tableService.getTable(timeBlock.table);
-  
-    if (!table || !table.isActive || req.body.table!==table.id.toString() ) {
-      return res.status(400).json({ error: 'Table error while booking' });
+
+    if (!table || !table.isActive || req.body.table !== table.id.toString()) {
+      return res.status(400).json({ error: "Table error while booking" });
     }
 
     const booking = await bookingService.createBooking({
@@ -44,7 +54,10 @@ async function bookingWithUser(req: Request, res: Response) {
       table: table!._id,
     });
 
-    await timeBlockService.updateStatusTimeBlock(reservationData.timeBlock, statusTimeTypeDefinition.Enum.Booked);
+    await timeBlockService.updateStatusTimeBlock(
+      reservationData.timeBlock,
+      statusTimeTypeDefinition.Enum.Booked,
+    );
 
     res.status(200).json(booking);
   } catch (error) {
@@ -76,9 +89,5 @@ export const bookingController = {
   bookingWithUser,
   getBookings,
   getBooking,
-  updateBooking
+  updateBooking,
 } as const;
-
-
-
-

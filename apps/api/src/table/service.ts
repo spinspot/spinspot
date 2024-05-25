@@ -1,4 +1,8 @@
-import { TCreateTableInputDefinition, TGetTablesQueryDefinition, tableSchema } from "@spin-spot/models";
+import {
+  TCreateTableInputDefinition,
+  TGetTablesQueryDefinition,
+  tableSchema,
+} from "@spin-spot/models";
 import { model } from "mongoose";
 
 const Table = model("Table", tableSchema);
@@ -21,5 +25,5 @@ async function createTable(data: TCreateTableInputDefinition) {
 export const tableService = {
   getTables,
   getTable,
-  createTable
+  createTable,
 } as const;

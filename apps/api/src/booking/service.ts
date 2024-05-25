@@ -37,5 +37,5 @@ export const bookingService = {
   createBooking,
   getBookings,
   getBooking,
-  updateBooking
+  updateBooking,
 } as const;

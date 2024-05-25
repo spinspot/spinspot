@@ -3,7 +3,6 @@ import {
   TCreateTimeBlocksInputDefinition,
   TGetTimeBlockParamsDefinition,
   TGetTimeBlocksQueryDefinition,
-  TUpdateTimeBlockInputDefinition,
   TUpdateTimeBlockParamsDefinition,
   statusTimeTypeDefinition,
   timeSchema,
@@ -29,12 +28,12 @@ async function getTimeBlocks(filter: TGetTimeBlocksQueryDefinition = {}) {
 
 async function updateStatusTimeBlock(
   _id: TUpdateTimeBlockParamsDefinition["_id"],
-  status: typeof statusTimeTypeDefinition.Enum[keyof typeof statusTimeTypeDefinition.Enum]
+  status: (typeof statusTimeTypeDefinition.Enum)[keyof typeof statusTimeTypeDefinition.Enum],
 ) {
   const timeBlock = await TimeBlock.findByIdAndUpdate(
     _id,
     { status },
-    { new: true }
+    { new: true },
   );
   return timeBlock;
 }
@@ -44,11 +43,10 @@ async function getTimeBlock(_id: TGetTimeBlockParamsDefinition["_id"]) {
   return timeBlock;
 }
 
-
 export const timeBlockService = {
   getTimeBlocks,
   getTimeBlock,
   createTimeBlock,
   createTimeBlocks,
-  updateStatusTimeBlock
+  updateStatusTimeBlock,
 } as const;

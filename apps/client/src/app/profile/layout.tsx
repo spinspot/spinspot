@@ -9,9 +9,7 @@ export default function ProfileLayout({
 }) {
   return (
     <LayoutWaves>
-      <AuthGuard>
-        {children}
-      </AuthGuard>
+      <AuthGuard>{children}</AuthGuard>
     </LayoutWaves>
   );
 }

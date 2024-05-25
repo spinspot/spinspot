@@ -1,11 +1,15 @@
-import { createTimeBlockInputDefinition, getTimeBlockParamsDefinition, getTimeBlocksQueryDefinition } from "@spin-spot/models";
+import {
+  createTimeBlockInputDefinition,
+  getTimeBlockParamsDefinition,
+  getTimeBlocksQueryDefinition,
+} from "@spin-spot/models";
 import { Request, Response } from "express";
 import { timeBlockService } from "./service";
 
 async function createTimeBlock(req: Request, res: Response) {
   const timeBlockData = createTimeBlockInputDefinition.parse(req.body);
   const timeBlock = await timeBlockService.createTimeBlock(timeBlockData);
-  res.status(200).json(timeBlock)
+  res.status(200).json(timeBlock);
 }
 
 async function getTimeBlocks(req: Request, res: Response) {
@@ -23,8 +27,5 @@ async function getTimeBlock(req: Request, res: Response) {
 export const timeBlockController = {
   createTimeBlock,
   getTimeBlock,
-  getTimeBlocks
+  getTimeBlocks,
 } as const;
-
-
-

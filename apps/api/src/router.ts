@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { authRouter } from "./auth";
-import { userRouter } from "./user";
-import { tableRouter } from "./table";
-import { timeBlockRouter } from "./timeBlock";
 import { bookingRouter } from "./booking";
+import { tableRouter } from "./table";
+import { timeBlockRouter } from "./time-block";
+import { userRouter } from "./user";
 
 const router = Router();
 

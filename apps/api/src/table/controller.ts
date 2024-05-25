@@ -1,11 +1,15 @@
-import { createTableInputDefinition, getTableParamsDefinition, getTablesQueryDefinition } from "@spin-spot/models";
+import {
+  createTableInputDefinition,
+  getTableParamsDefinition,
+  getTablesQueryDefinition,
+} from "@spin-spot/models";
 import { Request, Response } from "express";
 import { tableService } from "./service";
 
 async function createTable(req: Request, res: Response) {
   const tableData = createTableInputDefinition.parse(req.body);
-  const table = await tableService.createTable(tableData)
-  res.status(200).json(table)
+  const table = await tableService.createTable(tableData);
+  res.status(200).json(table);
 }
 
 async function getTables(req: Request, res: Response) {
@@ -23,9 +27,5 @@ async function getTable(req: Request, res: Response) {
 export const tableController = {
   getTable,
   getTables,
-  createTable
+  createTable,
 } as const;
-
-
-
-

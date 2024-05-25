@@ -1,22 +1,23 @@
 import z from "zod";
-import {
-    baseModelDefinition,
-} from "../definitions";
-import { userDefinition } from "../user"; 
+import { baseModelDefinition } from "../definitions";
+import { userDefinition } from "../user";
 
 const tableDefinition = baseModelDefinition.extend({
-    code : z.string(),
-    isActive: z.boolean()
-})
+  code: z.string(),
+  isActive: z.boolean(),
+});
 
 export type ITable = z.infer<typeof tableDefinition>;
 
-export const getTablesQueryDefinition = tableDefinition
-  .partial();
-export type TGetTablesQueryDefinition = z.infer<typeof getTablesQueryDefinition>;
+export const getTablesQueryDefinition = tableDefinition.partial();
+export type TGetTablesQueryDefinition = z.infer<
+  typeof getTablesQueryDefinition
+>;
 
 export const getTableParamsDefinition = tableDefinition.pick({ _id: true });
-export type TGetTableParamsDefinition = z.infer<typeof getTableParamsDefinition>;
+export type TGetTableParamsDefinition = z.infer<
+  typeof getTableParamsDefinition
+>;
 
 export const createTableInputDefinition = tableDefinition.omit({ _id: true });
 export type TCreateTableInputDefinition = z.infer<
