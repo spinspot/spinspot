@@ -35,8 +35,8 @@ export default function Login() {
     router.push("/register");
   };
 
-  const handlePasswordClick = () => {
-    router.push("/reset-password");
+  const handleForgotPasswordClick = () => {
+    router.push("/forgot-password");
   };
 
   console.log(user.user);
@@ -115,7 +115,7 @@ export default function Login() {
           className="btn-sm btn-link text-neutral w-full space-y-0"
           label="Olvidaste tu contraseña?"
           labelSize="text-md"
-          onClick={handlePasswordClick}
+          onClick={handleForgotPasswordClick}
         />
       </div>
     </div>

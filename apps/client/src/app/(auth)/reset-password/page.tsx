@@ -1,47 +1,52 @@
 "use client";
 
-import { EnvelopeIcon } from "@heroicons/react/16/solid";
+import { KeyIcon } from "@heroicons/react/16/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, TextInput } from "@spin-spot/components";
+import { Button, Loader, TextInput } from "@spin-spot/components";
 import {
-  TForgotPasswordInputDefinition,
-  forgotPasswordInputDefinition,
+  TResetPasswordInputDefinition,
+  resetPasswordInputDefinition,
 } from "@spin-spot/models";
-import { useForgotPassword } from "@spin-spot/services";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useResetPassword, useUser } from "@spin-spot/services";
+import { useSearchParams } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-export default function ResetPassword() {
-  const router = useRouter();
-  const forgotPassword = useForgotPassword();
-  const [isSubmitted, setIsSubmitted] = useState(false);
+export default function ChangePassword() {
+  const resetPassword = useResetPassword();
+  const serachParams = useSearchParams();
+  const user = useUser(serachParams.get("user") || "");
 
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
-  } = useForm<TForgotPasswordInputDefinition>({
-    resolver: zodResolver(forgotPasswordInputDefinition),
+  } = useForm<TResetPasswordInputDefinition>({
+    defaultValues: {
+      user: serachParams.get("user") || undefined,
+      token: serachParams.get("token") || undefined,
+    },
+    resolver: zodResolver(resetPasswordInputDefinition),
     shouldFocusError: false,
     mode: "onBlur",
   });
 
-  const handleVolverClick = () => {
-    router.push("/login");
-  };
-
-  const handleSumbitForgot: SubmitHandler<TForgotPasswordInputDefinition> = (
-    data,
-  ) => {
-    setIsSubmitted(true);
-    forgotPassword.mutate(
+  const handleSumbit: SubmitHandler<TResetPasswordInputDefinition> = (data) => {
+    if (data.password !== data.confirmPassword) {
+      return setError("confirmPassword", {
+        message: "Las contrasenas no concuerdan",
+      });
+    }
+    resetPassword.mutate(
       {
-        email: data.email,
+        user: data.user,
+        token: data.token,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
       },
       {
         onSuccess() {
-          setIsSubmitted(false);
+          console.log("Exito");
         },
       },
     );
@@ -51,32 +56,43 @@ export default function ResetPassword() {
     <div className="absolute inset-0 z-40 flex items-center justify-center">
       <div className="mt-24 w-96 space-y-4 rounded-lg p-8 sm:mt-36">
         <div className="flex flex-col gap-1">
-          <h2 className="text-primary dark:text-neutral mb-1 text-center text-3xl font-black">
-            Olvidaste tu contraseña?
-          </h2>
+          {user.isLoading ? (
+            <div className="flex items-center justify-center">
+              <Loader
+                size="lg"
+                variant="dots"
+                className="text-primary dark:text-neutral"
+              />
+            </div>
+          ) : (
+            <h2 className="text-primary dark:text-neutral mb-1 text-center text-3xl font-black">
+              Reset Password {user.data?.firstName} {user.data?.lastName}
+            </h2>
+          )}
           <TextInput
-            placeholder="example@email.com"
-            type="email"
-            topRightLabel="Correo Electrónico"
-            className={`input-sm ${errors.email ? "input-error" : "input-primary"}`}
-            iconLeft={
-              <EnvelopeIcon className="text-primary h-6 w-6"></EnvelopeIcon>
-            }
-            bottomLeftLabel={errors.email?.message}
-            {...register("email")}
+            placeholder="1234567"
+            type="password"
+            topRightLabel="Password"
+            className={`input-sm ${errors.password ? "input-error" : "input-primary"}`}
+            iconLeft={<KeyIcon className="text-primary h-6 w-6"></KeyIcon>}
+            bottomLeftLabel={errors.password?.message}
+            {...register("password")}
+          />
+          <TextInput
+            placeholder="1234567"
+            type="password"
+            topRightLabel="Confirm Password"
+            className={`input-sm ${errors.confirmPassword ? "input-error" : "input-primary"}`}
+            iconLeft={<KeyIcon className="text-primary h-6 w-6"></KeyIcon>}
+            bottomLeftLabel={errors.confirmPassword?.message}
+            {...register("confirmPassword")}
           />
         </div>
         <Button
-          className={`btn-sm ${isSubmitted ? "btn-disabled" : "btn-neutral"} w-full`}
-          label={isSubmitted ? "Enlace Enviado" : "Enviar"}
+          className="btn-sm btn-neutral w-full"
+          label="Enviar"
           labelSize="text-md"
-          onClick={handleSubmit(handleSumbitForgot)}
-        />
-        <Button
-          className="btn-sm btn-link text-neutral w-full"
-          label="Volver"
-          labelSize="text-md"
-          onClick={handleVolverClick}
+          onClick={handleSubmit(handleSumbit)}
         />
       </div>
     </div>

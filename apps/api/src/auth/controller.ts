@@ -1,3 +1,4 @@
+import { sendMail } from "@/email";
 import { userService } from "@/user";
 import {
   IUser,
@@ -217,27 +218,15 @@ async function forgotPassword(req: Request, res: Response) {
   const token = authService.signJWT(
     user,
     process.env.JWT_SECRET + user.password,
+    "10m",
   );
   const link = new URL(
-    `/change-password?user=${encodeURIComponent(`${user._id}`)}&token=${encodeURIComponent(token)}`,
+    `/reset-password?user=${encodeURIComponent(`${user._id}`)}&token=${encodeURIComponent(token)}`,
     process.env.CLIENT_APP_URL,
   ).href;
 
-  const nodemailer = require("nodemailer");
-
-  const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
-    auth: {
-      type: "OAuth2",
-      clientId: `${process.env.GOOGLE_CLIENT_ID}`,
-      clientSecret: `${process.env.GOOGLE_CLIENT_SECRET}`,
-    },
-  });
-
-  transporter.sendMail({
-    from: "spinspot.unimet@gmail.com",
+  sendMail({
+    from: `Spin Spot 🏓 <${process.env.EMAIL_USER}>`,
     to: `${email.email}`,
     subject: "Password Reset 🚨 SpinSpot",
     html: `
@@ -272,11 +261,6 @@ async function forgotPassword(req: Request, res: Response) {
     </body>
     </html>
   `,
-    auth: {
-      user: "spinspot.unimet@gmail.com",
-      refreshToken: `${process.env.GOOGLE_REFRESH_TOKEN}`,
-      expires: 1484314697598,
-    },
   });
 }
 
@@ -286,14 +270,13 @@ async function resetPassword(req: Request, res: Response) {
     token,
     password,
   } = resetPasswordInputDefinition.parse(req.body);
-  console.log(req.params);
 
   const user = await userService.getUser(id);
   if (!user) {
     return res.status(404).json({ status: "El usuario no exste!" });
   }
   const secret = process.env.JWT_SECRET + user.password;
-  console.log(token);
+
   if (!token) {
     return res.status(404).send("Token undefined");
   }
