@@ -1,21 +1,21 @@
-import { Button } from "@spin-spot/components";
 import { cn } from "@spin-spot/utils";
+import { Button } from "../buttons";
 
-interface cardProps {
+interface CardProps {
   labelName?: string;
   label?: string;
   className?: string;
-  labelButtom?: string;
+  labelButton?: string;
   onClick?: () => void;
 }
 
 export function Card({
   labelName,
   label,
-  labelButtom,
+  labelButton,
   onClick,
   className,
-}: cardProps) {
+}: CardProps) {
   return (
     <>
       <div className={cn("card w-72 break-all shadow-xl", className)}>
@@ -31,7 +31,7 @@ export function Card({
           <div className="card-actions justify-start">
             <Button
               className="btn-md btn-primary"
-              label={labelButtom}
+              label={labelButton}
               labelSize="text-md"
               onClick={onClick}
             />
