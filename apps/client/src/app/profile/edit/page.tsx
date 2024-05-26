@@ -79,7 +79,9 @@ export default function EditProfile() {
         <TextInput
           placeholder="First Name"
           topRightLabel="First Name"
-          iconLeft={<UserIcon className="text-primary h-6 w-6" />}
+          iconLeft={
+            <UserIcon className="text-primary dark:text-neutral h-6 w-6" />
+          }
           {...register("firstName")}
           className={errors.firstName ? "input-error" : ""}
           bottomLeftLabel={errors.firstName?.message}
@@ -87,7 +89,9 @@ export default function EditProfile() {
         <TextInput
           placeholder="Last Name"
           topRightLabel="Last Name"
-          iconLeft={<UserIcon className="text-primary h-6 w-6" />}
+          iconLeft={
+            <UserIcon className="text-primary dark:text-neutral h-6 w-6" />
+          }
           {...register("lastName")}
           className={errors.lastName ? "input-error" : ""}
           bottomLeftLabel={errors.lastName?.message}
@@ -95,7 +99,9 @@ export default function EditProfile() {
         <TextInput
           placeholder="Email"
           topRightLabel="Email"
-          iconLeft={<EnvelopeIcon className="text-primary h-6 w-6" />}
+          iconLeft={
+            <EnvelopeIcon className="text-primary dark:text-neutral h-6 w-6" />
+          }
           {...register("email")}
           className={errors.email ? "input-error" : ""}
           bottomLeftLabel={errors.email?.message}
@@ -107,20 +113,20 @@ export default function EditProfile() {
           {...register("gender")}
           className={errors.gender ? "input-error" : ""}
           bottomLeftLabel={errors.gender?.message}
-        ></SelectInput>
+        />
         <div className="mt-6 flex justify-center space-x-4">
           <Button
             className="btn-md btn-secondary w-32"
             label="Back"
             labelSize="text-md"
             onClick={handleBackClick}
-          ></Button>
+          />
           <Button
-            className="btn-md dark:btn-neutral btn-primary w-40 "
+            className="btn-md btn-neutral w-40 "
             label="Edit Profile"
             labelSize="text-md"
             onClick={handleSubmit(handleUpdateProfile)}
-          ></Button>
+          />
         </div>
       </div>
     </>

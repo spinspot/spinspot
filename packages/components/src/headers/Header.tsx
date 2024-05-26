@@ -99,7 +99,7 @@ export function Header() {
             </ul>
           </div>
         ) : (
-          <Loader size="lg"></Loader>
+          <Loader size="lg" />
         )}
       </div>
     </div>

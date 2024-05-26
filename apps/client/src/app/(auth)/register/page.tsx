@@ -60,7 +60,7 @@ export default function Register() {
             topRightLabel="Correo Electrónico"
             className={`input-sm ${errors.email ? "input-error" : "input-primary"}`}
             iconLeft={
-              <EnvelopeIcon className="text-primary h-6 w-6"></EnvelopeIcon>
+              <EnvelopeIcon className="text-primary dark:text-neutral h-6 w-6" />
             }
             bottomLeftLabel={errors.email?.message}
             {...register("email")}
@@ -70,7 +70,9 @@ export default function Register() {
             type="text"
             topRightLabel="Nombre"
             className={`input-sm ${errors.firstName ? "input-error" : "input-primary"}`}
-            iconLeft={<UserIcon className="text-primary h-6 w-6"></UserIcon>}
+            iconLeft={
+              <UserIcon className="text-primary dark:text-neutral h-6 w-6" />
+            }
             bottomLeftLabel={errors.firstName?.message}
             {...register("firstName")}
           />
@@ -79,7 +81,9 @@ export default function Register() {
             type="text"
             topRightLabel="Apellido"
             className={`input-sm ${errors.lastName ? "input-error" : "input-primary"}`}
-            iconLeft={<UserIcon className="text-primary h-6 w-6"></UserIcon>}
+            iconLeft={
+              <UserIcon className="text-primary dark:text-neutral h-6 w-6" />
+            }
             bottomLeftLabel={errors.lastName?.message}
             {...register("lastName")}
           />
@@ -88,7 +92,9 @@ export default function Register() {
             type="password"
             topRightLabel="Contraseña"
             className={`input-sm ${errors.password ? "input-error" : "input-primary"}`}
-            iconLeft={<KeyIcon className="text-primary h-6 w-6"></KeyIcon>}
+            iconLeft={
+              <KeyIcon className="text-primary dark:text-neutral h-6 w-6" />
+            }
             bottomLeftLabel={errors.password?.message}
             {...register("password")}
           />

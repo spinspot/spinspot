@@ -35,6 +35,10 @@ export default function Login() {
     router.push("/register");
   };
 
+  const handleForgotPasswordClick = () => {
+    router.push("/forgot-password");
+  };
+
   console.log(user.user);
 
   const handleSignIn: SubmitHandler<TSignInWithCredentialsInputDefinition> = (
@@ -54,8 +58,8 @@ export default function Login() {
   };
 
   return (
-    <div className="absolute inset-0 z-40 flex items-center justify-center">
-      <div className="mt-24 w-96 space-y-4 rounded-lg p-8 sm:mt-36">
+    <div className="absolute inset-0 z-40 flex flex-col items-center justify-center">
+      <div className="mt-24 w-96 space-y-4 rounded-lg px-8 pb-2 pt-8 sm:mt-36">
         <div className="flex flex-col gap-1">
           <h2 className="text-primary mb-1 text-center text-3xl font-black">
             Iniciar Sesión
@@ -66,7 +70,7 @@ export default function Login() {
             topRightLabel="Correo Electrónico"
             className={`input-sm ${errors.email ? "input-error" : "input-primary"}`}
             iconLeft={
-              <EnvelopeIcon className="text-primary h-6 w-6"></EnvelopeIcon>
+              <EnvelopeIcon className="text-primary dark:text-neutral h-6 w-6" />
             }
             bottomLeftLabel={errors.email?.message}
             {...register("email")}
@@ -76,7 +80,9 @@ export default function Login() {
             placeholder="12345678"
             className={`input-sm ${errors.password ? "input-error" : "input-primary"}`}
             topRightLabel="Contraseña"
-            iconLeft={<KeyIcon className="text-primary h-6 w-6"></KeyIcon>}
+            iconLeft={
+              <KeyIcon className="text-primary dark:text-neutral h-6 w-6" />
+            }
             bottomLeftLabel={errors.password?.message}
             {...register("password")}
           />
@@ -104,6 +110,14 @@ export default function Login() {
           label="Eres nuevo? Registrate"
           labelSize="text-md"
           onClick={handleRegisterClick}
+        />
+      </div>
+      <div className="flex flex-col gap-1">
+        <Button
+          className="btn-sm btn-link text-neutral w-full space-y-0"
+          label="Olvidaste tu contraseña?"
+          labelSize="text-md"
+          onClick={handleForgotPasswordClick}
         />
       </div>
     </div>
