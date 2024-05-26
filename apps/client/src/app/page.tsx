@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Pagination, SelectInput } from "@spin-spot/components";
+import { Alert, Button, Pagination, SelectInput } from "@spin-spot/components";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -30,6 +30,11 @@ export default function Home() {
         topRightLabel="Hola papi"
         className="select-primary"
       />
+      <Alert
+        label="Que paso papi"
+        denyButtonLabel="Cancel men"
+        acceptButtonLabel="Sii papi"
+      ></Alert>
     </div>
   );
 }
