@@ -15,10 +15,32 @@ export function ToastContextProvider({
   const toastQueue = useRef<Toast[]>([]);
   const [removingToasts, setRemovingToasts] = useState<number[]>([]);
 
-  const showToast = (toast: Omit<Toast, "id">) => {
+  const showToast = (
+    toast: Omit<Toast, "id" | "duration" | "persistent"> & {
+      duration?: number;
+      persistent?: boolean;
+      onAccept?: () => void;
+      onDeny?: () => void;
+    },
+  ) => {
     const id = toastId++;
-    const newToast: Toast = { ...toast, id };
+    const newToast: Toast = {
+      ...toast,
+      id,
+      duration: toast.duration ?? 5000,
+      persistent: !!toast.denyButtonLabel || !!toast.acceptButtonLabel,
+      onAccept: toast.onAccept,
+      onDeny: toast.onDeny,
+    };
     toastQueue.current.push(newToast);
+  };
+
+  const handleRemoveToast = (id: number) => {
+    setRemovingToasts((prev) => [...prev, id]);
+    setTimeout(() => {
+      setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
+      setRemovingToasts((prev) => prev.filter((toastId) => toastId !== id));
+    }, 500);
   };
 
   useEffect(() => {
@@ -28,17 +50,11 @@ export function ToastContextProvider({
         if (currentToast) {
           setToasts((prevToasts) => [...prevToasts, currentToast]);
 
-          setTimeout(() => {
-            setRemovingToasts((prev) => [...prev, currentToast.id]);
+          if (!currentToast.persistent) {
             setTimeout(() => {
-              setToasts((prevToasts) =>
-                prevToasts.filter((toast) => toast.id !== currentToast.id),
-              );
-              setRemovingToasts((prev) =>
-                prev.filter((id) => id !== currentToast.id),
-              );
-            }, 500);
-          }, 5000);
+              handleRemoveToast(currentToast.id);
+            }, currentToast.duration);
+          }
         }
       }
     }, 200);
@@ -49,6 +65,9 @@ export function ToastContextProvider({
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
+      {toasts.some((toast) => toast.persistent) && (
+        <div className="fixed inset-0 z-40 bg-gray-800 bg-opacity-50" />
+      )}
       <div className="fixed left-0 top-0 z-50 flex w-full flex-col items-center space-y-4 p-4">
         {toasts.map((toast) => (
           <div
@@ -64,6 +83,14 @@ export function ToastContextProvider({
               type={toast.type}
               denyButtonLabel={toast.denyButtonLabel}
               acceptButtonLabel={toast.acceptButtonLabel}
+              onDeny={() => {
+                toast.onDeny?.();
+                handleRemoveToast(toast.id);
+              }}
+              onAccept={() => {
+                toast.onAccept?.();
+                handleRemoveToast(toast.id);
+              }}
             />
           </div>
         ))}

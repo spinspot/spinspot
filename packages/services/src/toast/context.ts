@@ -7,6 +7,9 @@ export interface Toast {
   denyButtonLabel?: string;
   acceptButtonLabel?: string;
   duration?: number;
+  persistent?: boolean;
+  onAccept?: () => void;
+  onDeny?: () => void;
 }
 
 export interface ToastContextType {

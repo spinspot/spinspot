@@ -12,10 +12,18 @@ export default function Home() {
     router.push("/login");
   };
 
+  const handleOnAccept = () => {
+    console.log("Aceptaste papi");
+  };
+
   const handleClick = () => {
     showToast({
       label: "This is a warning toast!",
       type: "success",
+      duration: 5000,
+      // denyButtonLabel: "Cancel",
+      // acceptButtonLabel: "Acept",
+      // onAccept: handleOnAccept,
     });
   };
 

@@ -6,6 +6,8 @@ interface AlertProps {
   className?: string;
   denyButtonLabel?: string;
   acceptButtonLabel?: string;
+  onDeny?: () => void;
+  onAccept?: () => void;
 }
 
 const alertIcons = {
@@ -100,6 +102,8 @@ export function Alert({
   className,
   denyButtonLabel,
   acceptButtonLabel,
+  onDeny,
+  onAccept,
 }: AlertProps) {
   return (
     <div role="alert" className={cn("alert", alertColors[type], className)}>
@@ -108,10 +112,12 @@ export function Alert({
       {(denyButtonLabel || acceptButtonLabel) && (
         <div className="flex gap-2">
           {denyButtonLabel && (
-            <button className="btn btn-sm">{denyButtonLabel}</button>
+            <button className="btn btn-sm" onClick={onDeny}>
+              {denyButtonLabel}
+            </button>
           )}
           {acceptButtonLabel && (
-            <button className="btn btn-sm btn-primary">
+            <button className="btn btn-sm btn-primary" onClick={onAccept}>
               {acceptButtonLabel}
             </button>
           )}
