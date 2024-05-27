@@ -13,19 +13,19 @@ export type TGenderEnum = z.infer<typeof genderDefinition>;
 export const userTypeDefinition = z.enum(["PLAYER", "ADMIN"]);
 export type TUserTypeEnum = z.infer<typeof userTypeDefinition>;
 
-export const eventTypeDefinition = z.enum(["1v1", "2v2"]);
+export const eventTypeDefinition = z.enum(["1V1", "2V2"]);
 export type TEventTypeEnum = z.infer<typeof eventTypeDefinition>;
 export const statusTypeDefinition = z.enum([
-  "Pending",
-  "In Progress",
-  "Finished",
+  "PENDING",
+  "IN_PROGRESS",
+  "FINISHED",
 ]);
 export type TStatusTypeEnum = z.infer<typeof eventTypeDefinition>;
 
 export const statusTimeTypeDefinition = z.enum([
-  "Available",
-  "Unavailable",
-  "Booked",
+  "AVAILABLE",
+  "UNAVAILABLE",
+  "BOOKED",
 ]);
 export type TStatusTimeTypeEnum = z.infer<typeof statusTimeTypeDefinition>;
 

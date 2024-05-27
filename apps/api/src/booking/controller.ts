@@ -4,7 +4,6 @@ import {
   createBookingInputDefinition,
   getBookingParamsDefinition,
   getBookingsQueryDefinition,
-  statusTimeTypeDefinition,
   updateBookingInputDefinition,
   updateBookingParamsDefinition,
 } from "@spin-spot/models";
@@ -25,11 +24,7 @@ async function bookingWithUser(req: Request, res: Response) {
       .json({ error: "You cannot create a booking for a different user" });
   }
 
-  if (
-    !timeBlock ||
-    !timeBlock.table ||
-    timeBlock.status !== statusTimeTypeDefinition.Enum.Available
-  ) {
+  if (!timeBlock || !timeBlock.table || timeBlock.status !== "AVAILABLE") {
     return res.status(400).json({ error: "Time Block error while booking" });
   }
 
@@ -53,15 +48,13 @@ async function bookingWithUser(req: Request, res: Response) {
     table: table!._id,
   });
 
-  await timeBlockService.updateTimeBlockBooking(
-    reservationData.timeBlock,
-    booking._id.toString(),
-  );
+  await timeBlockService.updateTimeBlock(reservationData.timeBlock, {
+    booking: booking._id,
+  });
 
-  await timeBlockService.updateStatusTimeBlock(
-    reservationData.timeBlock,
-    statusTimeTypeDefinition.Enum.Booked,
-  );
+  await timeBlockService.updateTimeBlock(reservationData.timeBlock, {
+    status: "BOOKED",
+  });
   res.status(200).json(booking);
 }
 
