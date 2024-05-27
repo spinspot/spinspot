@@ -15,7 +15,6 @@ export type TUserTypeEnum = z.infer<typeof userTypeDefinition>;
 
 export const eventTypeDefinition = z.enum(["1v1", "2v2"]);
 export type TEventTypeEnum = z.infer<typeof eventTypeDefinition>;
-
 export const statusTypeDefinition = z.enum([
   "Pending",
   "In Progress",

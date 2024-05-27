@@ -38,6 +38,18 @@ async function updateStatusTimeBlock(
   return timeBlock;
 }
 
+async function updateTimeBlockBooking(
+    _id: TUpdateTimeBlockParamsDefinition["_id"],
+    bookingId: string
+  ) {
+    const timeBlock = await TimeBlock.findByIdAndUpdate(
+      _id,
+      { booking: bookingId },
+      { new: true }
+    );
+    return timeBlock;
+}
+
 async function getTimeBlock(_id: TGetTimeBlockParamsDefinition["_id"]) {
   const timeBlock = await TimeBlock.findById(_id);
   return timeBlock;
@@ -49,4 +61,5 @@ export const timeBlockService = {
   createTimeBlock,
   createTimeBlocks,
   updateStatusTimeBlock,
+  updateTimeBlockBooking
 } as const;

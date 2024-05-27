@@ -6,6 +6,10 @@ export const timeSchema = new Schema<ITimeBlock>({
     type: Schema.Types.ObjectId,
     ref: "Table",
   },
+  booking:{
+    type: Schema.Types.ObjectId,
+    ref: 'Booking'
+  },
   startTime: {
     type: Date,
     required: true,
