@@ -13,6 +13,22 @@ export type TGenderEnum = z.infer<typeof genderDefinition>;
 export const userTypeDefinition = z.enum(["PLAYER", "ADMIN"]);
 export type TUserTypeEnum = z.infer<typeof userTypeDefinition>;
 
+export const eventTypeDefinition = z.enum(["1V1", "2V2"]);
+export type TEventTypeEnum = z.infer<typeof eventTypeDefinition>;
+export const statusTypeDefinition = z.enum([
+  "PENDING",
+  "IN_PROGRESS",
+  "FINISHED",
+]);
+export type TStatusTypeEnum = z.infer<typeof eventTypeDefinition>;
+
+export const statusTimeTypeDefinition = z.enum([
+  "AVAILABLE",
+  "UNAVAILABLE",
+  "BOOKED",
+]);
+export type TStatusTimeTypeEnum = z.infer<typeof statusTimeTypeDefinition>;
+
 export const passwordDefinition = z
   .string()
   .regex(/^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9]).{6,})\S$/, {
