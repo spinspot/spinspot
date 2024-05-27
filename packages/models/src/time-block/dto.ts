@@ -4,6 +4,7 @@ import { baseModelDefinition, statusTimeTypeDefinition } from "../definitions";
 
 const timeBlockDefinition = baseModelDefinition.extend({
   table: z.instanceof(Types.ObjectId).or(z.string().refine(isValidObjectId)),
+  booking: z.instanceof(Types.ObjectId).or(z.string().refine(isValidObjectId)).optional(),
   startTime: z.coerce.date(),
   endTime: z.coerce.date(),
   status: statusTimeTypeDefinition,

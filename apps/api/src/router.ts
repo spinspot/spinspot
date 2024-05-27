@@ -9,8 +9,8 @@ const router = Router();
 
 router.use("/auth", authRouter);
 router.use("/users", userRouter);
-router.use("/table", tableRouter);
-router.use("/timeblock", timeBlockRouter);
+router.use("/tables", tableRouter);
+router.use("/time-blocks", timeBlockRouter);
 router.use("/booking", bookingRouter);
 
 export { router };

@@ -5,6 +5,6 @@ const tableRouter = Router();
 
 tableRouter.get("/", tableController.getTables);
 tableRouter.get("/:_id", tableController.getTable);
-tableRouter.post("/create-table", tableController.createTable);
+tableRouter.post("/", tableController.createTable);
 
 export { tableRouter };
