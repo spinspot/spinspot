@@ -15,7 +15,7 @@ export default function Home() {
   const handleClick = () => {
     showToast({
       label: "This is a warning toast!",
-      type: "warning",
+      type: "success",
     });
   };
 

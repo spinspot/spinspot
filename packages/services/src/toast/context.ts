@@ -6,6 +6,7 @@ export interface Toast {
   type?: "alert" | "info" | "success" | "warning" | "error";
   denyButtonLabel?: string;
   acceptButtonLabel?: string;
+  duration?: number;
 }
 
 export interface ToastContextType {
