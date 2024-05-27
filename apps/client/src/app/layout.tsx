@@ -1,6 +1,7 @@
 import {
   AuthContextProvider,
   QueryContextProvider,
+  ToastContextProvider,
 } from "@spin-spot/components";
 import { cn } from "@spin-spot/utils";
 import type { Metadata } from "next";
@@ -25,11 +26,13 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={cn("font-body", bodyFont.variable)}>
-        <QueryContextProvider>
-          <AuthContextProvider routes={{ signIn: "/login" }}>
-            {children}
-          </AuthContextProvider>
-        </QueryContextProvider>
+        <ToastContextProvider>
+          <QueryContextProvider>
+            <AuthContextProvider routes={{ signIn: "/login" }}>
+              {children}
+            </AuthContextProvider>
+          </QueryContextProvider>
+        </ToastContextProvider>
       </body>
     </html>
   );

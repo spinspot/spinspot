@@ -1,13 +1,22 @@
 "use client";
 
-import { Alert, Button, Pagination, SelectInput } from "@spin-spot/components";
+import { Button, Pagination, SelectInput } from "@spin-spot/components";
+import { useToast } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
+  const { showToast } = useToast();
 
   const handleLoginClick = () => {
     router.push("/login");
+  };
+
+  const handleClick = () => {
+    showToast({
+      label: "This is a warning toast!",
+      type: "warning",
+    });
   };
 
   return (
@@ -30,11 +39,7 @@ export default function Home() {
         topRightLabel="Hola papi"
         className="select-primary"
       />
-      <Alert
-        label="Que paso papi"
-        denyButtonLabel="Cancel men"
-        acceptButtonLabel="Sii papi"
-      ></Alert>
+      <Button label="Show Toast" onClick={handleClick}></Button>
     </div>
   );
 }

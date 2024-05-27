@@ -102,7 +102,14 @@ export function Alert({
   acceptButtonLabel,
 }: AlertProps) {
   return (
-    <div role="alert" className={cn("alert", alertColors[type], className)}>
+    <div
+      role="alert"
+      className={cn(
+        "alert transition-opacity duration-1000 ease-in-out",
+        alertColors[type],
+        className,
+      )}
+    >
       {alertIcons[type]}
       <span>{label}</span>
       {(denyButtonLabel || acceptButtonLabel) && (
