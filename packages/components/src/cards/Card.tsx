@@ -1,9 +1,24 @@
-import { Button } from "@spin-spot/components";
+import { cn } from "@spin-spot/utils";
+import { Button } from "../buttons";
 
-export function Card() {
+interface CardProps {
+  labelName?: string;
+  label?: string;
+  className?: string;
+  labelButton?: string;
+  onClick?: () => void;
+}
+
+export function Card({
+  labelName,
+  label,
+  labelButton,
+  onClick,
+  className,
+}: CardProps) {
   return (
     <>
-      <div className="carousel-item card h-90 w-72 shadow-xl">
+      <div className={cn("card w-72 break-all shadow-xl", className)}>
         <figure className="h-50">
           <img
             src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
@@ -11,13 +26,14 @@ export function Card() {
           />
         </figure>
         <div className="card-body p-5">
-          <h2 className="card-title text-2xl font-semibold">Torneo</h2>
-          <p>Card text content</p>
+          <h2 className="card-title text-2xl font-semibold">{labelName}</h2>
+          <p>{label}</p>
           <div className="card-actions justify-start">
             <Button
-              className="btn-sm btn-neutral w-25 h-10"
-              label="Ver evento"
+              className="btn-md btn-primary"
+              label={labelButton}
               labelSize="text-md"
+              onClick={onClick}
             />
           </div>
         </div>
