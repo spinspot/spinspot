@@ -1,13 +1,30 @@
 "use client";
 
 import { Button, Pagination, SelectInput } from "@spin-spot/components";
+import { useToast } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
+  const { showToast } = useToast();
 
   const handleLoginClick = () => {
     router.push("/login");
+  };
+
+  const handleOnAccept = () => {
+    console.log("Aceptaste papi");
+  };
+
+  const handleClick = () => {
+    showToast({
+      label: "This is a warning toast!",
+      type: "error",
+      duration: 5000,
+      // denyButtonLabel: "Cancel",
+      // acceptButtonLabel: "Acept",
+      // onAccept: handleOnAccept,
+    });
   };
 
   return (
@@ -30,6 +47,7 @@ export default function Home() {
         topRightLabel="Hola papi"
         className="select-primary"
       />
+      <Button label="Show Toast" onClick={handleClick}></Button>
     </div>
   );
 }
