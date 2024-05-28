@@ -10,6 +10,7 @@ import {
 import { useResetPassword, useUser } from "@spin-spot/services";
 import { useSearchParams } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useScrollLock } from "usehooks-ts";
 
 export default function ChangePassword() {
   const resetPassword = useResetPassword();
@@ -51,6 +52,8 @@ export default function ChangePassword() {
       },
     );
   };
+
+  useScrollLock();
 
   return (
     <div className="absolute inset-0 z-40 flex items-center justify-center">

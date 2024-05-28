@@ -21,6 +21,18 @@ export function Header() {
     router.push("/profile");
   };
 
+  const handleTablesClick = () => {
+    router.push("/tables");
+  };
+
+  const handleHomeClick = () => {
+    router.push("/dashboard");
+  };
+
+  const handleTournamentsClick = () => {
+    router.push("/tournaments");
+  };
+
   return (
     <div className="navbar bg-base-200">
       <div className="navbar-start">
@@ -46,13 +58,13 @@ export function Header() {
             className="menu menu-sm dropdown-content bg-base-200 rounded-box z-[1] mt-3 w-52 p-2 shadow"
           >
             <li>
-              <a>Home</a>
+              <a onClick={handleHomeClick}>Home</a>
             </li>
             <li>
-              <a>Mesas</a>
+              <a onClick={handleTablesClick}>Mesas</a>
             </li>
             <li>
-              <a>Torneos</a>
+              <a onClick={handleTournamentsClick}>Torneos</a>
             </li>
           </ul>
         </div>

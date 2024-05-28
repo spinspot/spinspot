@@ -14,6 +14,7 @@ import {
 } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useScrollLock } from "usehooks-ts";
 
 export default function Login() {
   const router = useRouter();
@@ -57,6 +58,7 @@ export default function Login() {
     );
   };
 
+  useScrollLock();
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="w-96 space-y-4 rounded-lg px-8 pb-2 pt-8">

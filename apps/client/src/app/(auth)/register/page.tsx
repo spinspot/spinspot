@@ -10,6 +10,7 @@ import {
 import { useSignUpWithCredentials } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useScrollLock } from "usehooks-ts";
 
 export default function Register() {
   const router = useRouter();
@@ -47,6 +48,7 @@ export default function Register() {
     );
   };
 
+  useScrollLock();
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="w-96 space-y-4 rounded-lg p-8">
