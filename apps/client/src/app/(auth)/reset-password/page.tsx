@@ -52,9 +52,7 @@ export default function ChangePassword() {
       },
     );
   };
-
   useScrollLock();
-
   return (
     <div className="absolute inset-0 z-40 flex items-center justify-center">
       <div className="mt-24 w-96 space-y-4 rounded-lg p-8 sm:mt-36">
