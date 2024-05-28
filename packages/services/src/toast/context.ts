@@ -8,6 +8,7 @@ export interface Toast {
   acceptButtonLabel?: string;
   duration?: number;
   persistent?: boolean;
+  isRemoving?: boolean;
   onAccept?: () => void;
   onDeny?: () => void;
 }

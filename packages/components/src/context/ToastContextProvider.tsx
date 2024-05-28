@@ -1,7 +1,7 @@
 "use client";
 
 import { Toast, ToastContext } from "@spin-spot/services";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Alert } from "../alerts"; // Ajusta la ruta según la ubicación de tu archivo
 
 let toastId = 0;
@@ -12,8 +12,7 @@ export function ToastContextProvider({
   children: React.ReactNode;
 }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const toastQueue = useRef<Toast[]>([]);
-  const [removingToasts, setRemovingToasts] = useState<number[]>([]);
+  //const [removingToasts, setRemovingToasts] = useState<number[]>([]);
 
   const showToast = (
     toast: Omit<Toast, "id" | "duration" | "persistent"> & {
@@ -31,8 +30,9 @@ export function ToastContextProvider({
       persistent: !!toast.denyButtonLabel || !!toast.acceptButtonLabel,
       onAccept: toast.onAccept,
       onDeny: toast.onDeny,
+      isRemoving: false,
     };
-    toastQueue.current.push(newToast);
+    setToasts((toasts) => [...toasts, newToast]);
 
     if (!newToast.persistent) {
       setTimeout(() => {
@@ -42,25 +42,15 @@ export function ToastContextProvider({
   };
 
   const handleRemoveToast = (id: number) => {
-    setRemovingToasts((prev) => [...prev, id]);
+    setToasts((prev) =>
+      prev.map((toast) =>
+        toast.id === id ? { ...toast, isRemoving: true } : toast,
+      ),
+    );
     setTimeout(() => {
       setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
-      setRemovingToasts((prev) => prev.filter((toastId) => toastId !== id));
     }, 500);
   };
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      if (toastQueue.current.length > 0) {
-        const currentToast = toastQueue.current.shift();
-        if (currentToast) {
-          setToasts((prevToasts) => [...prevToasts, currentToast]);
-        }
-      }
-    }, 200);
-
-    return () => clearInterval(timer);
-  }, []);
 
   return (
     <ToastContext.Provider value={{ showToast }}>
@@ -73,9 +63,7 @@ export function ToastContextProvider({
           <div
             key={toast.id}
             className={`w-full max-w-screen-xl transition-opacity duration-1000 ease-in-out ${
-              removingToasts.includes(toast.id)
-                ? "animate-fadeOutLeft"
-                : "animate-fadeInLeft"
+              toast.isRemoving ? "animate-fadeOutLeft" : "animate-fadeInLeft"
             }`}
           >
             <Alert
