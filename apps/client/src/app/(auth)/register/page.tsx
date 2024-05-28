@@ -48,8 +48,8 @@ export default function Register() {
   };
 
   return (
-    <div className="absolute inset-0 z-40 flex items-center justify-center">
-      <div className="mt-24 w-96 space-y-4 rounded-lg p-8 sm:mt-36">
+    <div className="flex flex-col items-center justify-center">
+      <div className="w-96 space-y-4 rounded-lg p-8">
         <div className="flex flex-col gap-1">
           <h2 className="text-primary mb-1 text-center text-3xl font-black">
             Registrarse

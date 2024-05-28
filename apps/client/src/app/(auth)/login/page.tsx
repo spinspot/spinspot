@@ -58,8 +58,8 @@ export default function Login() {
   };
 
   return (
-    <div className="absolute inset-0 z-40 flex flex-col items-center justify-center">
-      <div className="mt-24 w-96 space-y-4 rounded-lg px-8 pb-2 pt-8 sm:mt-36">
+    <div className="flex flex-col items-center justify-center">
+      <div className="w-96 space-y-4 rounded-lg px-8 pb-2 pt-8">
         <div className="flex flex-col gap-1">
           <h2 className="text-primary mb-1 text-center text-3xl font-black">
             Iniciar Sesión
