@@ -8,6 +8,7 @@ interface PaginationProps {
   size?: "xs" | "sm" | "md" | "lg";
   activeIndex?: number;
   className?: string;
+  onPageChange?: (label: string) => void;
 }
 
 const paginationSizes = {
@@ -22,6 +23,7 @@ export function Pagination({
   size = "md",
   activeIndex,
   className,
+  onPageChange,
 }: PaginationProps) {
   const [currentIndex, setCurrentIndex] = useState<number | null>(
     activeIndex !== undefined ? activeIndex : null,
@@ -29,6 +31,9 @@ export function Pagination({
 
   const handleClick = (index: number) => {
     setCurrentIndex(index === currentIndex ? currentIndex : index);
+    if (onPageChange) {
+      onPageChange(labels[index] as string);
+    }
   };
 
   return (
@@ -37,7 +42,7 @@ export function Pagination({
         <button
           key={index}
           className={cn(
-            "join-item btn btn-square",
+            "join-item btn btn-square px-10",
             paginationSizes[size],
             className,
             index === currentIndex ? "btn-active" : "",

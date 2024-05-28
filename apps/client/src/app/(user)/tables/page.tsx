@@ -1,101 +1,78 @@
 'use client';
 
 import { Calendar, Button, Pagination } from "@spin-spot/components";
+import { useTables, useTimeBlocks } from "@spin-spot/services";
+import { useState, useEffect } from "react";
 
+export default function Page() {
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const { data: tables, isLoading: isTablesLoading } = useTables();
+  const [selectedTable, setSelectedTable] = useState<string | undefined>(undefined);
+  const { data: timeBlocks, isLoading: isTimeBlocksLoading } = useTimeBlocks(selectedTable);
 
-export default function page() {
-
-  const reservations = {
-    "7:00": "Reservado Completo",
-    "8:30": "Reservado incompleto (unirse)",
-    "10:00": "Disponible",
-    "11:30": "Reservado por Ti",
-  };
-
-  function handleReserve(time: any) {
-    // lógica para reservar
-    console.log(`Reserva solicitada para las ${time}`);
-  }
-
-  function handleCancel(time: any) {
-    // lógica para cancelar reserva
-    console.log(`Cancelar reserva solicitada para las ${time}`);
-  }
-
-  function handleEdit(time: any) {
-    // lógica para editar reserva
-    console.log(`Editar reserva solicitada para las ${time}`);
-  }
-
-  function handleJoin(time: any) {
-    // lógica para unirse a una reserva
-    console.log(`Unirse a la reserva solicitada para las ${time}`);
-  }
-
-  const renderButton = (status: any, time: any) => {
-    switch (status) {
-      case "Disponible":
-        return (
-          <Button
-            className="btn-primary btn-sm"
-            label="Reservar"
-            labelSize="text-md"
-            onClick={() => handleReserve(time)}
-          />
-        );
-      case "Reservado por Ti":
-        return (
-          <>
-            <Button
-              className="btn-secondary btn-sm m-2"
-              label="Eliminar"
-              labelSize="text-md"
-              onClick={() => handleCancel(time)}
-            />
-            <Button
-              className="btn-sm btn-neutral m-2"
-              label="Editar"
-              labelSize="text-md"
-              onClick={() => handleEdit(time)}
-            />
-          </>
-        );
-      case "Reservado incompleto (unirse)":
-        return (
-          <Button
-            className="btn-sm btn-neutral "
-            label="Unirse"
-            labelSize="text-md"
-            onClick={() => handleJoin(time)}
-          />
-        );
-      case "Reservado Completo":
-        return <span>Reservado</span>;
-      default:
-        return null;
+  useEffect(() => {
+    if (tables?.length) {
+      setSelectedTable(tables[0]?.code); // Seleccionar la primera mesa por defecto
     }
+  }, [tables]);
+
+  function handleReserve(timeBlockId: string) {
+    console.log(`Reserva solicitada para el bloque de tiempo con ID: ${timeBlockId}`);
+  }
+
+  function handleCancel(timeBlockId: string) {
+    console.log(`Cancelar reserva solicitada para el bloque de tiempo con ID: ${timeBlockId}`);
+  }
+
+  const filterTimeBlocks = (blocks: any[]) => {
+    if (!selectedDate || !selectedTable) return [];
+    return blocks.filter(block => {
+      const blockDate = new Date(block.startTime);
+      // Filtrar por fecha y código de mesa
+      return (
+        blockDate.getDate() === selectedDate.getDate() &&
+        blockDate.getMonth() === selectedDate.getMonth() &&
+        blockDate.getFullYear() === selectedDate.getFullYear() &&
+        block.table.code === selectedTable
+      );
+    });
   };
 
   return (
-    <div className="inset-0  z-40 my-3 flex flex-col items-center justify-center">
+    <div className="inset-0 z-40 my-3 flex flex-col items-center justify-center">
       <h1 className="text-3xl font-bold mb-5">Reservas de Mesas de Ping Pong</h1>
-      <Calendar/>
+      <Calendar onDateChange={setSelectedDate} />
       <h3 className="text-xl font-bold mb-3">Mesa</h3>
-      <Pagination className="btn-neutral" labels={['1','2','3','4','5','6','7']}>
-      </Pagination>
+      <Pagination
+        className="btn-neutral"
+        labels={tables?.map(table => table.code) || []}
+        onPageChange={setSelectedTable}
+      />
       <div className="overflow-x-auto mt-2">
         <table className="table w-full justify-center items-center text-center">
           <thead>
             <tr>
               <th>Horarios</th>
-              <th>Número de Mesa</th>
+              <th>Estado</th>
+              <th>Mesa</th>
             </tr>
           </thead>
           <tbody>
-            {Object.keys(reservations).map((time) => (
-              <tr key={time}>
-                <td>{time}</td>
-                <td>{renderButton(reservations[time as keyof typeof reservations], time)}</td>
+            {filterTimeBlocks(timeBlocks || []).map((block: any) => (
+              <tr key={block._id}>
+                <td>{new Date(block.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
+                <td>
+                  {block.status === "Available" && (
+                    <Button
+                      className="btn-primary btn-sm"
+                      label="Reservar"
+                      labelSize="text-md"
+                      onClick={() => handleReserve(block._id)}
+                    />
+                  )}
+                  {block.status === "Booked" && <span>Reservado</span>}
+                </td>
+                <td>{block.table.code}</td>
               </tr>
             ))}
           </tbody>
@@ -104,3 +81,19 @@ export default function page() {
     </div>
   );
 }
+
+
+
+
+//Como abordar los filtros y los datos
+//Primero se filtran los timeblocks por dia (hecho)
+//Se filtran los timeblocks por mesa 
+//Si no hya filtro de mesa, se ponen todas y ademas se pone la mesa de cada timeblock (medio opcional)
+//Se muestra el estado del timeblock
+//Si el timeblock esta disponible, se muestra un boton para reservar (hecho)
+//Si el timeblock esta reservado y estan todos los jugares (2 pa 1v1 y 4 pa 2v2) se muestra un mensaje de reservado (hecho)
+//si el timeblock esta reservado pero hay espacio para jugadores en la reserva, poner el boton de unirse
+//Si el timeblock esta reservado y el usuario es el que reservo, poner el boton de cancelar reserva y editar reserva
+
+
+

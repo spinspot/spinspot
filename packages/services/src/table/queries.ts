@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "../api";
 
 export async function getTables() {
-  const res = await api.get("/table");
+  const res = await api.get("/tables");
   const tables: ITable[] = await res.json();
   return tables;
 }

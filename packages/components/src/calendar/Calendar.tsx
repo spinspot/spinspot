@@ -1,20 +1,28 @@
-// Calendar.tsx
 'use client';
 
 import { DayPicker } from "react-day-picker";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 
-export function Calendar() {
-  const [date, setDate] = useState<Date>();
+interface CalendarProps {
+  onDateChange: (date: Date | undefined) => void;
+}
+
+export function Calendar({ onDateChange }: CalendarProps) {
+  const [date, setDate] = useState<Date | undefined>(undefined);
+
+  const handleDateChange = (newDate: Date | undefined) => {
+    setDate(newDate);
+    onDateChange(newDate);
+  };
 
   return (
     <div className="p-4 justify-center">
       <div className="flex w-full m-2">
         <DayPicker
           mode="single"
+          onSelect={handleDateChange}
           selected={date}
-          onSelect={setDate}
           showOutsideDays
           classNames={{
             caption: "flex justify-center py-2 m-4 relative items-center",
