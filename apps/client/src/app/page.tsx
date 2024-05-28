@@ -19,7 +19,7 @@ export default function Home() {
   const handleClick = () => {
     showToast({
       label: "This is a warning toast!",
-      type: "success",
+      type: "error",
       duration: 5000,
       // denyButtonLabel: "Cancel",
       // acceptButtonLabel: "Acept",

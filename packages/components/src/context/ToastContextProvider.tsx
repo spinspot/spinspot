@@ -33,6 +33,12 @@ export function ToastContextProvider({
       onDeny: toast.onDeny,
     };
     toastQueue.current.push(newToast);
+
+    if (!newToast.persistent) {
+      setTimeout(() => {
+        handleRemoveToast(newToast.id);
+      }, newToast.duration);
+    }
   };
 
   const handleRemoveToast = (id: number) => {
@@ -49,12 +55,6 @@ export function ToastContextProvider({
         const currentToast = toastQueue.current.shift();
         if (currentToast) {
           setToasts((prevToasts) => [...prevToasts, currentToast]);
-
-          if (!currentToast.persistent) {
-            setTimeout(() => {
-              handleRemoveToast(currentToast.id);
-            }, currentToast.duration);
-          }
         }
       }
     }, 200);

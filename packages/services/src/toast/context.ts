@@ -13,7 +13,7 @@ export interface Toast {
 }
 
 export interface ToastContextType {
-  showToast: (toast: Omit<Toast, "id">) => void;
+  showToast: (_toast: Omit<Toast, "id">) => void;
 }
 
 export const ToastContext = createContext<ToastContextType | undefined>(
