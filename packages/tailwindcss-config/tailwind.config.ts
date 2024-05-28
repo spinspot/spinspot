@@ -7,18 +7,18 @@ const config: TailwindConfig = {
   theme: {
     extend: {
       keyframes: {
-        fadeInLeft: {
+        "fade-in-left": {
           "0%": { opacity: "0", transform: "translateX(-100%)" },
           "100%": { opacity: "1", transform: "translateX(0)" },
         },
-        fadeOutLeft: {
+        "fade-out-left": {
           "0%": { opacity: "1", transform: "translateX(0)" },
           "100%": { opacity: "0", transform: "translateX(-100%)" },
         },
       },
       animation: {
-        fadeInLeft: "fadeInLeft 0.5s ease-in-out",
-        fadeOutLeft: "fadeOutLeft 0.5s ease-in-out",
+        "fade-in-left": "fade-in-left 0.5s ease-in-out",
+        "fade-out-left": "fade-out-left 0.5s ease-in-out",
       },
       fontFamily: {
         sans: ["var(--font-body)", ...defaultTheme.fontFamily.sans],

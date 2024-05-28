@@ -63,7 +63,9 @@ export function ToastContextProvider({
           <div
             key={toast.id}
             className={`w-full max-w-screen-xl transition-opacity duration-1000 ease-in-out ${
-              toast.isRemoving ? "animate-fadeOutLeft" : "animate-fadeInLeft"
+              toast.isRemoving
+                ? "animate-fade-out-left"
+                : "animate-fade-in-left"
             }`}
           >
             <Alert
