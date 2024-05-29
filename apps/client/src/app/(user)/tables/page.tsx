@@ -2,17 +2,19 @@
 
 import { Calendar, Button, Pagination } from "@spin-spot/components";
 import { useTables, useTimeBlocks } from "@spin-spot/services";
+import { useAuth } from "@spin-spot/services"; 
 import { useState, useEffect } from "react";
 
 export default function Page() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
-  const { data: tables, isLoading: isTablesLoading } = useTables();
-  const [selectedTable, setSelectedTable] = useState<string | undefined>(undefined);
-  const { data: timeBlocks, isLoading: isTimeBlocksLoading } = useTimeBlocks(selectedTable);
+  const { data: tables } = useTables();
+  const [selectedTable, setSelectedTable] = useState<string | null>(null);
+  const { data: timeBlocks } = useTimeBlocks(selectedTable||undefined); //obtiene las timeblocks de las mesas, si no hay ninguna seleccionada, trae todas
+  const { user } = useAuth(); // Obtiene la información del usuario logeado
 
   useEffect(() => {
     if (tables?.length) {
-      setSelectedTable(tables[0]?.code); // Seleccionar la primera mesa por defecto
+      setSelectedTable(null); // No seleccionar ninguna mesa por defecto
     }
   }, [tables]);
 
@@ -24,17 +26,26 @@ export default function Page() {
     console.log(`Cancelar reserva solicitada para el bloque de tiempo con ID: ${timeBlockId}`);
   }
 
+  function handleEdit(timeBlockId: string) {
+    console.log(`Editar reserva solicitada para el bloque de tiempo con ID: ${timeBlockId}`);
+  }
+
+  function handleJoin(timeBlockId: string) {
+    console.log(`Unirse a la reserva solicitada para el bloque de tiempo con ID: ${timeBlockId}`);
+  }
+
   const filterTimeBlocks = (blocks: any[]) => {
-    if (!selectedDate || !selectedTable) return [];
+    if (!selectedDate) return [];
     return blocks.filter(block => {
       const blockDate = new Date(block.startTime);
-      // Filtrar por fecha y código de mesa
-      return (
+      // Filtrar por fecha y, si hay una mesa seleccionada, por el código de mesa
+      const isSameDate = (
         blockDate.getDate() === selectedDate.getDate() &&
         blockDate.getMonth() === selectedDate.getMonth() &&
-        blockDate.getFullYear() === selectedDate.getFullYear() &&
-        block.table.code === selectedTable
+        blockDate.getFullYear() === selectedDate.getFullYear()
       );
+      const isSameTable = selectedTable ? block.table.code === selectedTable : true;
+      return isSameDate && isSameTable;
     });
   };
 
@@ -46,7 +57,7 @@ export default function Page() {
       <Pagination
         className="btn-neutral"
         labels={tables?.map(table => table.code) || []}
-        onPageChange={setSelectedTable}
+        onPageChange={label => setSelectedTable(label ?? null)} // Si no hay mesa seleccionada, se pone null
       />
       <div className="overflow-x-auto mt-2">
         <table className="table w-full justify-center items-center text-center">
@@ -58,42 +69,63 @@ export default function Page() {
             </tr>
           </thead>
           <tbody>
-            {filterTimeBlocks(timeBlocks || []).map((block: any) => (
-              <tr key={block._id}>
-                <td>{new Date(block.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
-                <td>
-                  {block.status === "Available" && (
-                    <Button
-                      className="btn-primary btn-sm"
-                      label="Reservar"
-                      labelSize="text-md"
-                      onClick={() => handleReserve(block._id)}
-                    />
-                  )}
-                  {block.status === "Booked" && <span>Reservado</span>}
-                </td>
-                <td>{block.table.code}</td>
-              </tr>
-            ))}
+            {filterTimeBlocks(timeBlocks || []).map((block: any) => {
+              const playersCount = block.booking?.players?.length || 0;
+              const maxPlayers = block.booking?.eventType === "1v1" ? 2 : block.booking?.eventType === "2v2" ? 4 : 0; //Variable para ver la cantidad maxima de jugadores que puede tener un evento
+
+              return (
+                <tr key={block._id}>
+                  <td>{new Date(block.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
+                  <td>
+                    {block.status === "Available" && (
+                      <Button
+                        className="btn-primary btn-sm"
+                        label="Reservar"
+                        labelSize="text-md"
+                        onClick={() => handleReserve(block._id)}
+                      />
+                    )}
+                    {block.status === "Booked" && user?._id === block.booking?.owner && ( 
+                      <>
+                        <Button
+                          className="btn-secondary btn-sm mx-2"
+                          label="Cancelar"
+                          labelSize="text-md"
+                          onClick={() => handleCancel(block._id)}
+                        />
+                        <Button
+                          className="btn-primary btn-sm mx-2"
+                          label="Editar"
+                          labelSize="text-md"
+                          onClick={() => handleEdit(block._id)}
+                        />
+                      </>
+                    )}
+                    {block.status === "Booked" && user?._id !== block.booking?.owner && playersCount < maxPlayers && (
+                      <>
+                        <Button
+                          className="btn-primary btn-sm mx-2"
+                          label="Unirse"
+                          labelSize="text-md"
+                          onClick={() => handleJoin(block._id)}
+                        />
+                        <span>{`${playersCount}/${maxPlayers}`}</span>
+                      </>
+                    )}
+                    {block.status === "Booked" && user?._id !== block.booking?.owner && playersCount === maxPlayers && (
+                      <span>Reservado</span>
+                    )}
+                  </td>
+                  <td>{block.table.code}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
     </div>
   );
 }
-
-
-
-
-//Como abordar los filtros y los datos
-//Primero se filtran los timeblocks por dia (hecho)
-//Se filtran los timeblocks por mesa 
-//Si no hya filtro de mesa, se ponen todas y ademas se pone la mesa de cada timeblock (medio opcional)
-//Se muestra el estado del timeblock
-//Si el timeblock esta disponible, se muestra un boton para reservar (hecho)
-//Si el timeblock esta reservado y estan todos los jugares (2 pa 1v1 y 4 pa 2v2) se muestra un mensaje de reservado (hecho)
-//si el timeblock esta reservado pero hay espacio para jugadores en la reserva, poner el boton de unirse
-//Si el timeblock esta reservado y el usuario es el que reservo, poner el boton de cancelar reserva y editar reserva
 
 
 

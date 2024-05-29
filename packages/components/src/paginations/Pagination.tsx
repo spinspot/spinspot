@@ -6,9 +6,8 @@ import { useState } from "react";
 interface PaginationProps {
   labels: string[];
   size?: "xs" | "sm" | "md" | "lg";
-  activeIndex?: number;
   className?: string;
-  onPageChange?: (label: string) => void;
+  onPageChange?: (label: string | null | undefined) => void; 
 }
 
 const paginationSizes = {
@@ -21,18 +20,16 @@ const paginationSizes = {
 export function Pagination({
   labels,
   size = "md",
-  activeIndex,
   className,
   onPageChange,
 }: PaginationProps) {
-  const [currentIndex, setCurrentIndex] = useState<number | null>(
-    activeIndex !== undefined ? activeIndex : null,
-  );
+  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
   const handleClick = (index: number) => {
-    setCurrentIndex(index === currentIndex ? currentIndex : index);
+    const newIndex = index === currentIndex ? null : index;
+    setCurrentIndex(newIndex);
     if (onPageChange) {
-      onPageChange(labels[index] as string);
+      onPageChange(newIndex !== null ? labels[newIndex] : null);
     }
   };
 
