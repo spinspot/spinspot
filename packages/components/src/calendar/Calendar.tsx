@@ -5,7 +5,7 @@ import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 
 interface CalendarProps {
-  onDateChange: (date: Date | undefined) => void;
+  onDateChange: (_date: Date | undefined) => void;
 }
 
 export function Calendar({ onDateChange }: CalendarProps) {

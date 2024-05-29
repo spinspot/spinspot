@@ -77,7 +77,7 @@ export default function Page() {
                 <tr key={block._id}>
                   <td>{new Date(block.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
                   <td>
-                    {block.status === "Available" && (
+                    {block.status.toLowerCase() === "available" && (
                       <Button
                         className="btn-primary btn-sm"
                         label="Reservar"
@@ -85,7 +85,7 @@ export default function Page() {
                         onClick={() => handleReserve(block._id)}
                       />
                     )}
-                    {block.status === "Booked" && user?._id === block.booking?.owner && ( 
+                    {block.status.toLowerCase() === "booked" && user?._id === block.booking?.owner && ( 
                       <>
                         <Button
                           className="btn-secondary btn-sm mx-2"
@@ -101,7 +101,7 @@ export default function Page() {
                         />
                       </>
                     )}
-                    {block.status === "Booked" && user?._id !== block.booking?.owner && playersCount < maxPlayers && (
+                    {block.status.toLowerCase() === "booked" && user?._id !== block.booking?.owner && playersCount < maxPlayers && (
                       <>
                         <Button
                           className="btn-primary btn-sm mx-2"
@@ -112,7 +112,7 @@ export default function Page() {
                         <span>{`${playersCount}/${maxPlayers}`}</span>
                       </>
                     )}
-                    {block.status === "Booked" && user?._id !== block.booking?.owner && playersCount === maxPlayers && (
+                    {block.status.toLowerCase() === "booked" && user?._id !== block.booking?.owner && playersCount === maxPlayers && (
                       <span>Reservado</span>
                     )}
                   </td>
