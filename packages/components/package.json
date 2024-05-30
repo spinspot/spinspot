@@ -15,6 +15,7 @@
     "@spin-spot/services": "*",
     "@spin-spot/utils": "*",
     "next": "^14.2.3",
+    "react-day-picker": "^8.10.1",
     "react-hook-form": "^7.51.4",
     "usehooks-ts": "^3.1.0"
   },
