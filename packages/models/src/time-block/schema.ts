@@ -6,9 +6,9 @@ export const timeSchema = new Schema<ITimeBlock>({
     type: Schema.Types.ObjectId,
     ref: "Table",
   },
-  booking: {
+  booking:{
     type: Schema.Types.ObjectId,
-    ref: "Booking",
+    ref: 'Booking'
   },
   startTime: {
     type: Date,

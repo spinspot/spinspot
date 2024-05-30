@@ -10,3 +10,4 @@ export * from "./layouts";
 export * from "./loaders";
 export * from "./paginations";
 export * from "./text-inputs";
+export * from "./badges";
