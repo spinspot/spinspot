@@ -77,7 +77,7 @@ export function LayoutWaves({ children }: { children: React.ReactNode }) {
       </div>
       {/* Children */}
       <div className="relative flex items-center justify-center w-full my-auto">
-        <main className="mt-14 max-w-96 space-y-4 rounded-lg p-8 sm:mt-32">
+        <main className="mt-14 max-w-96 space-y-4 rounded-lg py-8 sm:mt-32">
           {children}
         </main>
       </div>
