@@ -15,12 +15,7 @@ async function createTimeBlock(req: Request, res: Response) {
 async function getTimeBlocks(req: Request, res: Response) {
   const query = getTimeBlocksQueryDefinition.parse(req.query);
   const timeBlocks = await timeBlockService.getTimeBlocks(query);
-  const populatedTimeBlocks = await Promise.all(
-    timeBlocks.map(async (timeBlock) => {
-      return await timeBlock.populate("booking");
-    }),
-  );
-  return res.status(200).json(populatedTimeBlocks);
+  return res.status(200).json(timeBlocks);
 }
 
 async function getTimeBlock(req: Request, res: Response) {

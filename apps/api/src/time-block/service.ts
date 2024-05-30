@@ -5,6 +5,7 @@ import {
   TGetTimeBlocksQueryDefinition,
   TUpdateTimeBlockInputDefinition,
   TUpdateTimeBlockParamsDefinition,
+  tableSchema,
   timeSchema,
 } from "@spin-spot/models";
 import { model } from "mongoose";
@@ -22,7 +23,18 @@ async function createTimeBlocks(data: TCreateTimeBlocksInputDefinition) {
 }
 
 async function getTimeBlocks(filter: TGetTimeBlocksQueryDefinition = {}) {
-  const timeBlocks = await TimeBlock.find(filter);
+  if (filter.table) {
+    const Table = model("Table", tableSchema);
+    const table = await Table.findById(filter.table);
+    if (table) {
+      filter.table = table._id;
+    }
+    delete filter.table;
+  }
+  const timeBlocks = await TimeBlock.find(filter).populate([
+    "table",
+    "booking",
+  ]);
   return timeBlocks;
 }
 
