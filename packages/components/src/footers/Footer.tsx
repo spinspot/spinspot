@@ -13,7 +13,7 @@ export function Footer() {
       <aside>
         <div className="flex flex-col items-center justify-center gap-7">
           <Link
-            href="/"
+            href="/dashboard"
             tabIndex={0}
             role="button"
             className="btn btn-link btn-lg avatar"

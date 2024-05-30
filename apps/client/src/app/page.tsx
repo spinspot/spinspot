@@ -12,9 +12,9 @@ export default function Home() {
     router.push("/login");
   };
 
-  const handleOnAccept = () => {
-    console.log("Aceptaste papi");
-  };
+  // const handleOnAccept = () => {
+  //   console.log("Aceptaste papi");
+  // };
 
   const handleClick = () => {
     showToast({
