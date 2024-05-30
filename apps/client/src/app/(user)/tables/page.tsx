@@ -3,7 +3,7 @@
 import { Button, Calendar, Pagination } from "@spin-spot/components";
 import { IPopulatedTimeBlock } from "@spin-spot/models";
 import { useAuth, useTables, useTimeBlocks } from "@spin-spot/services";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function Page() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -42,21 +42,20 @@ export default function Page() {
     );
   }
 
-  const filterTimeBlocks = (blocks: any[]): IPopulatedTimeBlock[] => {
-    if (!selectedDate) return [];
-    return blocks.filter((block) => {
+  const filteredTimeBlocks = useMemo<IPopulatedTimeBlock[]>(() => {
+    if (!selectedDate || !timeBlocks) return [];
+    return timeBlocks.filter(block => {
       const blockDate = new Date(block.startTime);
       // Filtrar por fecha y, si hay una mesa seleccionada, por el código de mesa
-      const isSameDate =
+      const isSameDate = (
         blockDate.getDate() === selectedDate.getDate() &&
         blockDate.getMonth() === selectedDate.getMonth() &&
-        blockDate.getFullYear() === selectedDate.getFullYear();
-      const isSameTable = selectedTable
-        ? block.table.code === selectedTable
-        : true;
+        blockDate.getFullYear() === selectedDate.getFullYear()
+      );
+      const isSameTable = selectedTable ? block.table.code === selectedTable : true;
       return isSameDate && isSameTable;
     });
-  };
+  }, [timeBlocks, selectedDate, selectedTable]);
 
   return (
     <div className="inset-0 z-40 my-3 flex flex-col items-center justify-center">
@@ -80,7 +79,7 @@ export default function Page() {
             </tr>
           </thead>
           <tbody>
-            {filterTimeBlocks(timeBlocks || []).map((block) => {
+            {filteredTimeBlocks.map((block) => {
               const playersCount = block.booking?.players?.length || 0;
               const maxPlayers =
                 block.booking?.eventType === "1V1"
