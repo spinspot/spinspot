@@ -6,8 +6,8 @@ import { useState } from "react";
 interface PaginationProps {
   labels: string[];
   size?: "xs" | "sm" | "md" | "lg";
-  activeIndex?: number;
   className?: string;
+  onPageChange?: (_label: string | null | undefined) => void;
 }
 
 const paginationSizes = {
@@ -20,15 +20,17 @@ const paginationSizes = {
 export function Pagination({
   labels,
   size = "md",
-  activeIndex,
   className,
+  onPageChange,
 }: PaginationProps) {
-  const [currentIndex, setCurrentIndex] = useState<number | null>(
-    activeIndex !== undefined ? activeIndex : null,
-  );
+  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 
   const handleClick = (index: number) => {
-    setCurrentIndex(index === currentIndex ? currentIndex : index);
+    const newIndex = index === currentIndex ? null : index;
+    setCurrentIndex(newIndex);
+    if (onPageChange) {
+      onPageChange(newIndex !== null ? labels[newIndex] : null);
+    }
   };
 
   return (
@@ -37,7 +39,7 @@ export function Pagination({
         <button
           key={index}
           className={cn(
-            "join-item btn btn-square",
+            "join-item btn btn-square px-10",
             paginationSizes[size],
             className,
             index === currentIndex ? "btn-active" : "",

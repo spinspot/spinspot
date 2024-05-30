@@ -6,7 +6,7 @@ import {
   statusTypeDefinition,
 } from "../definitions";
 
-const eventDefinition = baseModelDefinition.extend({
+export const bookingDefinition = baseModelDefinition.extend({
   eventType: eventTypeDefinition,
   owner: z
     .instanceof(Types.ObjectId)
@@ -22,31 +22,33 @@ const eventDefinition = baseModelDefinition.extend({
   status: statusTypeDefinition,
 });
 
-export type IBooking = z.infer<typeof eventDefinition>;
+export type IBooking = z.infer<typeof bookingDefinition>;
 
-export const getBookingsQueryDefinition = eventDefinition.partial();
+export const getBookingsQueryDefinition = bookingDefinition.partial();
 export type TGetBookingsQueryDefinition = z.infer<
   typeof getBookingsQueryDefinition
 >;
 
-export const getBookingParamsDefinition = eventDefinition.pick({ _id: true });
+export const getBookingParamsDefinition = bookingDefinition.pick({ _id: true });
 export type TGetBookingParamsDefinition = z.infer<
   typeof getBookingParamsDefinition
 >;
 
-export const createBookingInputDefinition = eventDefinition.omit({ _id: true });
+export const createBookingInputDefinition = bookingDefinition.omit({
+  _id: true,
+});
 export type TCreateBookingInputDefinition = z.infer<
   typeof createBookingInputDefinition
 >;
 
-export const updateBookingParamsDefinition = eventDefinition.pick({
+export const updateBookingParamsDefinition = bookingDefinition.pick({
   _id: true,
 });
 export type TUpdateBookingParamsDefinition = z.infer<
   typeof getBookingParamsDefinition
 >;
 
-export const updateBookingInputDefinition = eventDefinition.partial();
+export const updateBookingInputDefinition = bookingDefinition.partial();
 export type TUpdateBookingInputDefinition = z.infer<
   typeof updateBookingInputDefinition
 >;
