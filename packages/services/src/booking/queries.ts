@@ -1,5 +1,5 @@
 import { IBooking, TGetBookingParamsDefinition } from "@spin-spot/models";
-import { useQuery} from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { api } from "../api";
 
 export async function getBookings() {
@@ -19,5 +19,8 @@ export async function getTimeBlock(_id: TGetBookingParamsDefinition["_id"]) {
 }
 
 export function useTimeBlock(_id: TGetBookingParamsDefinition["_id"]) {
-  return useQuery({ queryKey: ["getTimeBlock", _id], queryFn: () => getTimeBlock(_id) });
+  return useQuery({
+    queryKey: ["getTimeBlock", _id],
+    queryFn: () => getTimeBlock(_id),
+  });
 }

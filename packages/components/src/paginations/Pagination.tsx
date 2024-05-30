@@ -7,7 +7,7 @@ interface PaginationProps {
   labels: string[];
   size?: "xs" | "sm" | "md" | "lg";
   className?: string;
-  onPageChange?: (_label: string | null | undefined) => void; 
+  onPageChange?: (_label: string | null | undefined) => void;
 }
 
 const paginationSizes = {

@@ -19,7 +19,8 @@ export async function getTable(_id: TGetTableParamsDefinition["_id"]) {
 }
 
 export function useTable(_id: TGetTableParamsDefinition["_id"]) {
-  return useQuery({ queryKey: ["getTable", _id], queryFn: () => getTable(_id) });
+  return useQuery({
+    queryKey: ["getTable", _id],
+    queryFn: () => getTable(_id),
+  });
 }
-
-

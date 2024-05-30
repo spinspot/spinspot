@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { DayPicker } from "react-day-picker";
-import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
+import { DayPicker } from "react-day-picker";
 
 interface CalendarProps {
   onDateChange: (_date: Date | undefined) => void;
@@ -17,8 +17,8 @@ export function Calendar({ onDateChange }: CalendarProps) {
   };
 
   return (
-    <div className="p-4 justify-center">
-      <div className="flex w-full m-2">
+    <div className="justify-center p-4">
+      <div className="m-2 flex w-full">
         <DayPicker
           mode="single"
           onSelect={handleDateChange}
@@ -32,12 +32,14 @@ export function Calendar({ onDateChange }: CalendarProps) {
             nav_button_next: "absolute right-1.5",
             table: "w-full border-collapse",
             head_row: "flex justify-around font-base w-full",
-            head_cell: "w-9 font-normal text-primary dark:text-neutral-content text-center",
+            head_cell:
+              "w-9 font-normal text-primary dark:text-neutral-content text-center",
             row: "flex justify-around w-full mt-0",
-            cell: "text-primary dark:text-neutral-content h-full w-full text-center p-0 font-normal border border-gray-600" ,
+            cell: "text-primary dark:text-neutral-content h-full w-full text-center p-0 font-normal border border-gray-600",
             day: "h-9 w-9 p-0 font-normal",
             day_range_end: "day-range-end",
-            day_selected: "bg-primary text-white hover:text-white focus:text-white",
+            day_selected:
+              "bg-primary text-white hover:text-white focus:text-white",
             day_outside: "text-gray-400 opacity-50",
             day_disabled: "text-gray-400 opacity-50",
             day_hidden: "invisible",
@@ -55,7 +57,3 @@ export function Calendar({ onDateChange }: CalendarProps) {
     </div>
   );
 }
-
-
-
-

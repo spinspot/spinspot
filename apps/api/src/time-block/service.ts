@@ -26,12 +26,15 @@ async function getTimeBlocks(filter: TGetTimeBlocksQueryDefinition = {}) {
   if (filter.table) {
     const Table = model("Table", tableSchema);
     const table = await Table.findById(filter.table);
-    if (table){
+    if (table) {
       filter.table = table._id;
     }
     delete filter.table;
   }
-  const timeBlocks = await TimeBlock.find(filter).populate('table');
+  const timeBlocks = await TimeBlock.find(filter).populate([
+    "table",
+    "booking",
+  ]);
   return timeBlocks;
 }
 
