@@ -10,8 +10,11 @@ import {
 import { useResetPassword, useUser } from "@spin-spot/services";
 import { useSearchParams } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useScrollLock } from "usehooks-ts";
 
 export default function ChangePassword() {
+  useScrollLock();
+
   const resetPassword = useResetPassword();
   const serachParams = useSearchParams();
   const user = useUser(serachParams.get("user") || "");

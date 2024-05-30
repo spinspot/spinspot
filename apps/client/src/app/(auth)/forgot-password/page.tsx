@@ -11,8 +11,11 @@ import { useForgotPassword } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useScrollLock } from "usehooks-ts";
 
 export default function ResetPassword() {
+  useScrollLock();
+
   const router = useRouter();
   const forgotPassword = useForgotPassword();
   const [isSubmitted, setIsSubmitted] = useState(false);

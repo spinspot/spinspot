@@ -65,7 +65,7 @@ export default function EditProfile() {
 
   return (
     <>
-      <div className="absolute inset-0  z-40 mb-3 flex flex-col items-center justify-center">
+      <div className="mb-3 flex flex-col items-center justify-center">
         <div className="w-90 h-32 overflow-hidden rounded-full bg-black">
           <Image
             src="/DefaultUserImage.png" // PONER PERFIL DE USUARIO
