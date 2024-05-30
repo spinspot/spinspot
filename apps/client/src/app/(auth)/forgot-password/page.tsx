@@ -14,6 +14,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useScrollLock } from "usehooks-ts";
 
 export default function ResetPassword() {
+  useScrollLock();
+
   const router = useRouter();
   const forgotPassword = useForgotPassword();
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -47,8 +49,6 @@ export default function ResetPassword() {
       },
     );
   };
-
-  useScrollLock();
 
   return (
     <div className="absolute inset-0 z-40 flex items-center justify-center">

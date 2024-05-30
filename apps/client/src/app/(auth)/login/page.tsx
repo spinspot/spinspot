@@ -8,7 +8,6 @@ import {
   signInWithCredentialsInputDefinition,
 } from "@spin-spot/models";
 import {
-  useAuth,
   useSignInWithCredentials,
   useSignInWithGoogle,
 } from "@spin-spot/services";
@@ -17,8 +16,9 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useScrollLock } from "usehooks-ts";
 
 export default function Login() {
+  useScrollLock();
+
   const router = useRouter();
-  const user = useAuth();
   const signInWithCredentials = useSignInWithCredentials();
   const signInWithGoogle = useSignInWithGoogle();
 
@@ -40,8 +40,6 @@ export default function Login() {
     router.push("/forgot-password");
   };
 
-  console.log(user.user);
-
   const handleSignIn: SubmitHandler<TSignInWithCredentialsInputDefinition> = (
     data,
   ) => {
@@ -58,7 +56,6 @@ export default function Login() {
     );
   };
 
-  useScrollLock();
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="w-96 space-y-4 rounded-lg px-8 pb-2 pt-8">

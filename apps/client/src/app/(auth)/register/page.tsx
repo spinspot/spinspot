@@ -13,6 +13,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useScrollLock } from "usehooks-ts";
 
 export default function Register() {
+  useScrollLock();
+
   const router = useRouter();
   const signUpWithCredentials = useSignUpWithCredentials();
 
@@ -48,7 +50,6 @@ export default function Register() {
     );
   };
 
-  useScrollLock();
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="w-96 space-y-4 rounded-lg p-8">
