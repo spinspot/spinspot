@@ -9,6 +9,7 @@ const timeBlockDefinition = baseModelDefinition.extend({
   booking: z
     .instanceof(Types.ObjectId)
     .or(z.string().refine(isValidObjectId))
+    .nullable()
     .optional(),
   startTime: z.coerce.date(),
   endTime: z.coerce.date(),
