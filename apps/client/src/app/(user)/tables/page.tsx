@@ -44,22 +44,23 @@ export default function Page() {
 
   const filteredTimeBlocks = useMemo<IPopulatedTimeBlock[]>(() => {
     if (!selectedDate || !timeBlocks) return [];
-    return timeBlocks.filter(block => {
+    return timeBlocks.filter((block) => {
       const blockDate = new Date(block.startTime);
       // Filtrar por fecha y, si hay una mesa seleccionada, por el código de mesa
-      const isSameDate = (
+      const isSameDate =
         blockDate.getDate() === selectedDate.getDate() &&
         blockDate.getMonth() === selectedDate.getMonth() &&
-        blockDate.getFullYear() === selectedDate.getFullYear()
-      );
-      const isSameTable = selectedTable ? block.table.code === selectedTable : true;
+        blockDate.getFullYear() === selectedDate.getFullYear();
+      const isSameTable = selectedTable
+        ? block.table.code === selectedTable
+        : true;
       return isSameDate && isSameTable;
     });
   }, [timeBlocks, selectedDate, selectedTable]);
 
   return (
     <div className="inset-0 z-40 my-3 flex flex-col items-center justify-center">
-      <h1 className="mb-5 text-3xl font-bold">
+      <h1 className="mb-5 text-center text-3xl font-bold">
         Reservas de Mesas de Ping Pong
       </h1>
       <Calendar onDateChange={setSelectedDate} />
@@ -70,7 +71,7 @@ export default function Page() {
         onPageChange={(label) => setSelectedTable(label ?? null)} // Si no hay mesa seleccionada, se pone null
       />
       <div className="mt-2 overflow-x-auto">
-        <table className="table w-full items-center justify-center text-center">
+        <table className="table-lg table w-full items-center justify-center text-center">
           <thead>
             <tr>
               <th>Horarios</th>
