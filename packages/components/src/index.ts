@@ -1,5 +1,6 @@
 export * from "./alerts";
 export * from "./auth";
+export * from "./badges";
 export * from "./buttons";
 export * from "./calendar";
 export * from "./cards";
@@ -11,4 +12,3 @@ export * from "./layouts";
 export * from "./loaders";
 export * from "./paginations";
 export * from "./text-inputs";
-export * from "./badges";

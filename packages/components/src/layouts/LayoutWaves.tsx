@@ -1,9 +1,9 @@
 // Layout component que contiene los SVGs
 export function LayoutWaves({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative min-h-dvh flex">
+    <div className="relative flex min-h-dvh">
       {/* SVGs para pantallas pequeñas */}
-      <div className="sm:hidden absolute inset-0">
+      <div className="absolute inset-0 sm:hidden">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 411 168"
@@ -39,9 +39,7 @@ export function LayoutWaves({ children }: { children: React.ReactNode }) {
         </svg>
       </div>
       {/* SVGs para pantallas grandes */}
-      <div className="hidden sm:block absolute inset-0">
-        
-        
+      <div className="absolute inset-0 hidden sm:block">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1280 228"
@@ -52,7 +50,8 @@ export function LayoutWaves({ children }: { children: React.ReactNode }) {
             d="M1276.01 407.441C1275.73 411.297 1272.38 414.197 1268.52 413.92L-97.0175 315.52C-100.874 315.242 -103.774 311.891 -103.496 308.035L-81.803 6.98607C-81.3264 0.372895 -72.778 -1.93352 -69.0398 3.54249L-40.563 45.2569C24.8608 141.093 142.311 187.071 255.41 161.119L659.865 68.3136V68.3136C853.989 30.04 1053.93 32.2812 1247.14 74.8966L1295.49 85.5603C1297.59 86.0229 1299.03 87.9539 1298.88 90.0959L1276.01 407.441Z"
             fill="currentColor"
           />
-        </svg><svg
+        </svg>
+        <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1280 603"
           fill="none"
@@ -76,7 +75,7 @@ export function LayoutWaves({ children }: { children: React.ReactNode }) {
         </svg>
       </div>
       {/* Children */}
-      <div className="relative flex items-center justify-center w-full my-auto">
+      <div className="relative my-auto flex w-full items-center justify-center">
         <main className="mt-14 max-w-96 space-y-4 rounded-lg py-8 sm:mt-32">
           {children}
         </main>
