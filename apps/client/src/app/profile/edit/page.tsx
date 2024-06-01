@@ -75,7 +75,7 @@ export default function EditProfile() {
   return (
     <>
       <div className="mb-3 flex flex-col items-center justify-center">
-        <div className="w-90 h-32 overflow-hidden rounded-full bg-black">
+        <div className="w-90 mb-2 h-32 overflow-hidden rounded-full bg-black">
           <Image
             src="/DefaultUserImage.png" // PONER PERFIL DE USUARIO
             alt="Jane Doe"
