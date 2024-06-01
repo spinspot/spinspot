@@ -1,7 +1,7 @@
 import { cn } from "@spin-spot/utils";
 interface BadgeProps {
   labelName?: string;
-  label?: string;
+  label?: string | React.ReactNode;
   leftIcon?: React.ReactNode;
   className?: string;
 }

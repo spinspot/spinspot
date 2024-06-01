@@ -3,6 +3,7 @@
 import { Button, Calendar, Loader, Pagination } from "@spin-spot/components";
 import { IPopulatedTimeBlock } from "@spin-spot/models";
 import { useAuth, useTables, useTimeBlocks } from "@spin-spot/services";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 export default function Page() {
@@ -16,6 +17,7 @@ export default function Page() {
     selectedTable || undefined,
   ); // obtiene las timeblocks de las mesas, si no hay ninguna seleccionada, trae todas
   const { user } = useAuth(); // Obtiene la información del usuario logeado
+  const router = useRouter();
 
   useEffect(() => {
     if (tables?.length) {
@@ -24,6 +26,7 @@ export default function Page() {
   }, [tables]);
 
   function handleReserve(timeBlockId: string) {
+    router.push(`/reserve/${timeBlockId}`);
     console.log(
       `Reserva solicitada para el bloque de tiempo con ID: ${timeBlockId}`,
     );
