@@ -70,13 +70,13 @@ export default function Page() {
         labels={tables?.map((table) => table.code) || []}
         onPageChange={(label) => setSelectedTable(label ?? null)} // Si no hay mesa seleccionada, se pone null
       />
-      <div className="mt-2 overflow-x-auto">
+      <div className="mt-2 w-full overflow-x-auto p-4">
         <table className="table-lg table w-full items-center justify-center text-center">
           <thead>
             <tr>
-              <th>Horarios</th>
+              <th className="w-[125px]">Horarios</th>
               <th>Estado</th>
-              <th>Mesa</th>
+              <th className="w-[125px]">Mesa</th>
             </tr>
           </thead>
           <tbody>
