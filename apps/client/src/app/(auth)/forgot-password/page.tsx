@@ -7,7 +7,7 @@ import {
   TForgotPasswordInputDefinition,
   forgotPasswordInputDefinition,
 } from "@spin-spot/models";
-import { useForgotPassword } from "@spin-spot/services";
+import { useForgotPassword, useToast } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -15,6 +15,7 @@ import { useScrollLock } from "usehooks-ts";
 
 export default function ResetPassword() {
   useScrollLock();
+  const { showToast } = useToast();
 
   const router = useRouter();
   const forgotPassword = useForgotPassword();
@@ -44,7 +45,13 @@ export default function ResetPassword() {
       },
       {
         onSuccess() {
+          console.log("Exito!");
           setIsSubmitted(false);
+          showToast({
+            label: "Se ha enviado un enlace a su correo!",
+            type: "success",
+            duration: 3000,
+          });
         },
       },
     );
