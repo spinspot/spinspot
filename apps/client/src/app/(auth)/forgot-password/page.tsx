@@ -2,7 +2,7 @@
 
 import { EnvelopeIcon } from "@heroicons/react/16/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, TextInput } from "@spin-spot/components";
+import { Button, Loader, TextInput } from "@spin-spot/components";
 import {
   TForgotPasswordInputDefinition,
   forgotPasswordInputDefinition,
@@ -20,6 +20,7 @@ export default function ResetPassword() {
   const router = useRouter();
   const forgotPassword = useForgotPassword();
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
   const {
     register,
@@ -38,18 +39,26 @@ export default function ResetPassword() {
   const handleSumbit: SubmitHandler<TForgotPasswordInputDefinition> = (
     data,
   ) => {
-    setIsSubmitted(true);
+    setIsSending(true);
     forgotPassword.mutate(
       {
         email: data.email,
       },
       {
         onSuccess() {
-          console.log("Exito!");
-          setIsSubmitted(false);
+          setIsSending(false);
+          setIsSubmitted(true);
           showToast({
             label: "Se ha enviado un enlace a su correo!",
             type: "success",
+            duration: 3000,
+          });
+        },
+        onError() {
+          setIsSending(false);
+          showToast({
+            label: "Error al enviar el enlace.",
+            type: "error",
             duration: 3000,
           });
         },
@@ -77,8 +86,18 @@ export default function ResetPassword() {
           />
         </div>
         <Button
-          className={`btn-sm ${isSubmitted ? "btn-disabled" : "btn-neutral"} w-full`}
-          label={isSubmitted ? "Enlace Enviado" : "Enviar"}
+          className={`btn-sm ${isSubmitted || isSending ? "btn-disabled" : "btn-neutral"} w-full`}
+          label={
+            isSubmitted ? (
+              "Enlace Enviado"
+            ) : isSending ? (
+              <span className="flex items-center justify-center gap-2">
+                <Loader size="sm" /> Enviando...
+              </span>
+            ) : (
+              "Enviar"
+            )
+          }
           labelSize="text-md"
           onClick={handleSubmit(handleSumbit)}
         />

@@ -7,7 +7,9 @@ export const baseModelDefinition = z.object({
   updatedAt: z.date().optional(),
 });
 
-export const genderDefinition = z.enum(["MALE", "FEMALE", "OTHER"]);
+export const genderDefinition = z.enum(["MALE", "FEMALE", "OTHER"], {
+  message: "Debe seleccionar una opción",
+});
 export type TGenderEnum = z.infer<typeof genderDefinition>;
 
 export const userTypeDefinition = z.enum(["PLAYER", "ADMIN"]);
