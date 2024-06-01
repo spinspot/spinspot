@@ -44,15 +44,16 @@ export default function Page() {
 
   const filteredTimeBlocks = useMemo<IPopulatedTimeBlock[]>(() => {
     if (!selectedDate || !timeBlocks) return [];
-    return timeBlocks.filter(block => {
+    return timeBlocks.filter((block) => {
       const blockDate = new Date(block.startTime);
       // Filtrar por fecha y, si hay una mesa seleccionada, por el código de mesa
-      const isSameDate = (
+      const isSameDate =
         blockDate.getDate() === selectedDate.getDate() &&
         blockDate.getMonth() === selectedDate.getMonth() &&
-        blockDate.getFullYear() === selectedDate.getFullYear()
-      );
-      const isSameTable = selectedTable ? block.table.code === selectedTable : true;
+        blockDate.getFullYear() === selectedDate.getFullYear();
+      const isSameTable = selectedTable
+        ? block.table.code === selectedTable
+        : true;
       return isSameDate && isSameTable;
     });
   }, [timeBlocks, selectedDate, selectedTable]);

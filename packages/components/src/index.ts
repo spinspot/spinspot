@@ -1,5 +1,6 @@
 export * from "./alerts";
 export * from "./auth";
+export * from "./badges";
 export * from "./buttons";
 export * from "./calendar";
 export * from "./cards";
