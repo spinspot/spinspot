@@ -3,10 +3,12 @@
 import { Button, Pagination, SelectInput } from "@spin-spot/components";
 import {
   TCreateBookingInputDefinition,
+  TCreateTimeBlockInputDefinition,
   TUpdateBookingInputDefinition,
 } from "@spin-spot/models";
 import {
   useCreateBooking,
+  useCreateTimeBlock,
   useToast,
   useUpdateBooking,
 } from "@spin-spot/services";
@@ -21,6 +23,7 @@ export default function Home() {
 
   const { mutate: createBooking } = useCreateBooking();
   const { mutate: updateBooking } = useUpdateBooking();
+  const { mutate: createTimeBlock } = useCreateTimeBlock();
 
   const handleLoginClick = () => {
     router.push("/login");
@@ -31,6 +34,31 @@ export default function Home() {
       label: "This is a warning toast!",
       type: "error",
       duration: 5000,
+    });
+  };
+
+  const handleCreateTimeBlock = () => {
+    const startTime = new Date("2024-06-01T19:00:00-04:00");
+    const endTime = new Date("2024-06-01T20:30:00-04:00");
+
+    const newTimeBlock: TCreateTimeBlockInputDefinition = {
+      table: "665213fa379bfd2db7c0df6f",
+      startTime: startTime,
+      endTime: endTime,
+      status: "AVAILABLE", // Puede ser "Available", "Booked", "Pending", etc.
+    };
+
+    createTimeBlock(newTimeBlock, {
+      onSuccess: () => {
+        showToast({
+          label: "Se ha generado el TimeBlock!",
+          type: "success",
+          duration: 3000,
+        });
+      },
+      onError: () => {
+        console.error("Failed to create time block");
+      },
     });
   };
 
@@ -122,7 +150,7 @@ export default function Home() {
       <Button label="Show Toast" onClick={handleShowToast}></Button>
       <Button label="Create Booking" onClick={handleCreateBooking}></Button>
       <Button label="Update Booking" onClick={initiateUpdateBooking}></Button>
-      <Button label="Create TimeBlock"></Button>
+      <Button label="Create TimeBlock" onClick={handleCreateTimeBlock}></Button>
     </div>
   );
 }
