@@ -6,7 +6,7 @@ interface BadgeProps {
   className?: string;
 }
 
-export function Badges({ labelName, label, leftIcon, className }: BadgeProps) {
+export function Badge({ labelName, label, leftIcon, className }: BadgeProps) {
   return (
     <div
       className={cn(
