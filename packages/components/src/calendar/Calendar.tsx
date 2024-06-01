@@ -9,11 +9,13 @@ interface CalendarProps {
 }
 
 export function Calendar({ onDateChange }: CalendarProps) {
-  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [date, setDate] = useState<Date | undefined>(new Date());
 
   const handleDateChange = (newDate: Date | undefined) => {
-    setDate(newDate);
-    onDateChange(newDate);
+    if (newDate && newDate.getTime() !== (date?.getTime() || 0)) {
+      setDate(newDate);
+      onDateChange(newDate);
+    }
   };
 
   return (
