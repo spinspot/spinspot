@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  Badges,
+  Badge,
   Button,
   GoogleIcon,
   Pagination,
@@ -30,22 +30,22 @@ export default function Reserve() {
 
       <div className="flex w-full justify-center">
         <div className="grid grid-cols-2 gap-x-8 gap-y-4">
-          <Badges
+          <Badge
             labelName="Fecha"
             label="2024-05-12"
             leftIcon={<GoogleIcon />}
           />
-          <Badges
+          <Badge
             labelName="Horario"
             label="8:30 -> 10:00"
             leftIcon={<GoogleIcon />}
           />
-          <Badges
+          <Badge
             labelName="Deporte"
             label="Ping-Pong"
             leftIcon={<GoogleIcon />}
           />
-          <Badges labelName="Mesa" label="3" leftIcon={<GoogleIcon />} />
+          <Badge labelName="Mesa" label="3" leftIcon={<GoogleIcon />} />
         </div>
       </div>
 
@@ -66,10 +66,7 @@ export default function Reserve() {
       <div className="mt-6 flex flex-col items-center justify-center">
         <span className=" text-lg">Filtro de busqueda para jugadores:</span>
         <TextInput placeholder="Type here" className="mt-2" />
-        <>
-          {eventType === null ? (
-            <></>
-          ) : (
+          {eventType !== null && (
             <div className="mt-10">
               {eventType === "Single 1 Vs 1" ? (
                 <div>
@@ -106,7 +103,6 @@ export default function Reserve() {
               )}
             </div>
           )}
-        </>
       </div>
 
       <div className="font-body mt-10 flex flex-col items-center">
