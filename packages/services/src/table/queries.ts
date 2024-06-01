@@ -13,7 +13,7 @@ export function useTables() {
 }
 
 export async function getTable(_id: TGetTableParamsDefinition["_id"]) {
-  const res = await api.get("/table/" + encodeURIComponent(`${_id}`));
+  const res = await api.get("/tables/" + encodeURIComponent(`${_id}`));
   const table: ITable = await res.json();
   return table;
 }

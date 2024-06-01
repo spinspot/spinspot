@@ -1,11 +1,19 @@
 "use client";
 
 import { Button, Pagination, SelectInput } from "@spin-spot/components";
-import { useToast } from "@spin-spot/services";
+import {
+  TCreateBookingInputDefinition,
+  TCreateTimeBlockInputDefinition,
+  TUpdateBookingInputDefinition,
+} from "@spin-spot/models";
+import {
+  useCreateBooking,
+  useCreateTimeBlock,
+  useToast,
+  useUpdateBooking,
+} from "@spin-spot/services";
 import { useRouter } from "next/navigation";
-import { useCreateBooking, useUpdateBooking } from "@spin-spot/services";
-import { useState, useEffect } from "react";
-import { TCreateBookingInputDefinition, TUpdateBookingInputDefinition } from "@spin-spot/models";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const router = useRouter();
@@ -15,6 +23,7 @@ export default function Home() {
 
   const { mutate: createBooking } = useCreateBooking();
   const { mutate: updateBooking } = useUpdateBooking();
+  const { mutate: createTimeBlock } = useCreateTimeBlock();
 
   const handleLoginClick = () => {
     router.push("/login");
@@ -28,8 +37,34 @@ export default function Home() {
     });
   };
 
+  const handleCreateTimeBlock = () => {
+    const startTime = new Date("2024-06-01T19:00:00-04:00");
+    const endTime = new Date("2024-06-01T20:30:00-04:00");
+
+    const newTimeBlock: TCreateTimeBlockInputDefinition = {
+      table: "665213fa379bfd2db7c0df6f",
+      startTime: startTime,
+      endTime: endTime,
+      status: "AVAILABLE", // Puede ser "Available", "Booked", "Pending", etc.
+    };
+
+    createTimeBlock(newTimeBlock, {
+      onSuccess: () => {
+        showToast({
+          label: "Se ha generado el TimeBlock!",
+          type: "success",
+          duration: 3000,
+        });
+      },
+      onError: () => {
+        console.error("Failed to create time block");
+      },
+    });
+  };
+
   const handleCreateBooking = () => {
-    const newBooking: TCreateBookingInputDefinition = {  //Esto solo lo pongo aqui para no tener que ponerle un poco de inputs
+    const newBooking: TCreateBookingInputDefinition = {
+      //Esto solo lo pongo aqui para no tener que ponerle un poco de inputs
       eventType: "1V1", // Debe ser 1V1 o 2V2
       owner: "664e51c4814d7dd13fd0db5f",
       table: "6652192d3fd0ad8d090d21f0",
@@ -49,7 +84,8 @@ export default function Home() {
     });
   };
 
-  useEffect(() => { //Esto es solo para que funcione bien el update despues
+  useEffect(() => {
+    //Esto es solo para que funcione bien el update despues
     if (pendingUpdate && bookingId) {
       handleUpdateBooking();
     }
@@ -61,28 +97,34 @@ export default function Home() {
       return;
     }
 
-    const updatedBooking: TUpdateBookingInputDefinition = { //Esto es para no tener que usar yo los inputs, pero tu lo haces desde el front que creaste
-      eventType: "2V2", 
+    const updatedBooking: TUpdateBookingInputDefinition = {
+      //Esto es para no tener que usar yo los inputs, pero tu lo haces desde el front que creaste
+      eventType: "2V2",
       status: "FINISHED",
     };
 
-    updateBooking(//Asi es que tu vas a usar realmente el Update, obtienes el ID de la Reserva (por ejemplo si abres el boton de editar desde el timeblock
-    //Puedes obtener el id del booking con timeblock.booking._id y ya despues le pasas los parametros que quieras actualizar
+    updateBooking(
+      //Asi es que tu vas a usar realmente el Update, obtienes el ID de la Reserva (por ejemplo si abres el boton de editar desde el timeblock
+      //Puedes obtener el id del booking con timeblock.booking._id y ya despues le pasas los parametros que quieras actualizar
       { _id: bookingId, ...updatedBooking },
       {
         onSuccess: () => {
-          showToast({ label: "Booking updated successfully!", type: "success" });
+          showToast({
+            label: "Booking updated successfully!",
+            type: "success",
+          });
         },
         onError: () => {
           showToast({ label: "Failed to update booking", type: "error" });
         },
-      }
+      },
     );
   };
 
-  const initiateUpdateBooking = () => { //Esto es solo para que funcione bien el update 
+  const initiateUpdateBooking = () => {
+    //Esto es solo para que funcione bien el update
     setPendingUpdate(true);
-    setBookingId('665936975e60876f1abb8c4d');
+    setBookingId("665936975e60876f1abb8c4d");
   };
 
   return (
@@ -108,9 +150,7 @@ export default function Home() {
       <Button label="Show Toast" onClick={handleShowToast}></Button>
       <Button label="Create Booking" onClick={handleCreateBooking}></Button>
       <Button label="Update Booking" onClick={initiateUpdateBooking}></Button>
+      <Button label="Create TimeBlock" onClick={handleCreateTimeBlock}></Button>
     </div>
   );
 }
-
-
-
