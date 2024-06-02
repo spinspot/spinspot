@@ -7,7 +7,7 @@ import {
   TSignUpWithCredentialsInputDefinition,
   signUpWithCredentialsInputDefinition,
 } from "@spin-spot/models";
-import { useSignUpWithCredentials } from "@spin-spot/services";
+import { useSignUpWithCredentials, useToast } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useScrollLock } from "usehooks-ts";
@@ -16,6 +16,7 @@ export default function Register() {
   useScrollLock();
 
   const router = useRouter();
+  const { showToast } = useToast();
   const signUpWithCredentials = useSignUpWithCredentials();
 
   const {
@@ -44,6 +45,11 @@ export default function Register() {
       },
       {
         onSuccess() {
+          showToast({
+            label: "Te has registrado con exito!",
+            type: "success",
+            duration: 3000,
+          });
           router.push("/tables");
         },
       },

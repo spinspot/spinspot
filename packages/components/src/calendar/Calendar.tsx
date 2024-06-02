@@ -9,11 +9,18 @@ interface CalendarProps {
 }
 
 export function Calendar({ onDateChange }: CalendarProps) {
-  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [date, setDate] = useState<Date | undefined>(new Date());
 
   const handleDateChange = (newDate: Date | undefined) => {
-    setDate(newDate);
-    onDateChange(newDate);
+    if (newDate && newDate.getTime() !== (date?.getTime() || 0)) {
+      setDate(newDate);
+      onDateChange(newDate);
+    }
+  };
+
+  const disablePastDates = (date: Date): boolean => {
+    const today = new Date();
+    return date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
   };
 
   return (
@@ -24,6 +31,7 @@ export function Calendar({ onDateChange }: CalendarProps) {
           onSelect={handleDateChange}
           selected={date}
           showOutsideDays
+          disabled={disablePastDates} // Deshabilitar fechas pasadas
           classNames={{
             caption: "flex justify-center py-2 m-4 relative items-center",
             caption_label: "text-lg font-bold",

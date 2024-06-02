@@ -225,7 +225,7 @@ async function forgotPassword(req: Request, res: Response) {
     process.env.CLIENT_APP_URL,
   ).href;
 
-  sendMail({
+  await sendMail({
     from: `Spin Spot 🏓 <${process.env.EMAIL_USER}>`,
     to: `${email.email}`,
     subject: "Password Reset 🚨 SpinSpot",
@@ -262,6 +262,8 @@ async function forgotPassword(req: Request, res: Response) {
     </html>
   `,
   });
+
+  return res.status(200).end();
 }
 
 async function resetPassword(req: Request, res: Response) {

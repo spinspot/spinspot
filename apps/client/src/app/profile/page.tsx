@@ -1,11 +1,14 @@
 "use client";
 
+import { MapPinIcon } from "@heroicons/react/24/outline";
 import { Button } from "@spin-spot/components";
 import { useAuth } from "@spin-spot/services";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useScrollLock } from "usehooks-ts";
 
 export default function Profile() {
+  useScrollLock();
   const router = useRouter();
   const { user, isLoading: isAuthLoading } = useAuth();
 
@@ -43,10 +46,13 @@ export default function Profile() {
         <h1 className="mt-4 text-center text-xl font-bold text-purple-700">
           {user ? userFullName : "Jane Doe"}
         </h1>
-        <p className="mt-2 text-center text-gray-600">
-          {"Universidad Metropolitana"}
-        </p>
-        <div className="mt-4 flex justify-center space-x-4">
+        <div className="flex items-center justify-center gap-2">
+          <MapPinIcon className="h-6 w-6 text-gray-600"></MapPinIcon>
+          <p className="mt-2 text-center text-gray-600">
+            Universidad Metropolitana
+          </p>
+        </div>
+        <div className="mt-4 flex justify-center gap-6">
           <div className="text-center">
             <p className="text-lg font-semibold text-gray-700">{0}</p>
             <p className="text-sm text-gray-500">Reservas</p>
@@ -64,7 +70,7 @@ export default function Profile() {
             onClick={handleBackClick}
           />
           <Button
-            className="btn-sm dark:btn-neutral btn-primary w-30"
+            className="btn-sm dark:btn-neutral btn-primary"
             label="Edit Profile"
             labelSize="text-md"
             onClick={handleEditClick}

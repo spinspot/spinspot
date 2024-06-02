@@ -39,7 +39,7 @@ export function Pagination({
         <button
           key={index}
           className={cn(
-            "join-item btn btn-square px-10",
+            "join-item btn btn-square",
             paginationSizes[size],
             className,
             index === currentIndex ? "btn-active" : "",

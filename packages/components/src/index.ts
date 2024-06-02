@@ -11,4 +11,5 @@ export * from "./headers";
 export * from "./layouts";
 export * from "./loaders";
 export * from "./paginations";
+export * from "./reserves";
 export * from "./text-inputs";

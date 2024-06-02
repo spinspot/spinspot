@@ -9,18 +9,18 @@ export async function getBookings() {
 }
 
 export function useBookings() {
-  return useQuery({ queryKey: ["getTimeBlocks"], queryFn: getBookings });
+  return useQuery({ queryKey: ["getBookings"], queryFn: getBookings });
 }
 
-export async function getTimeBlock(_id: TGetBookingParamsDefinition["_id"]) {
-  const res = await api.get(`/timeblock/${encodeURIComponent(`${_id}`)}`);
-  const timeBlock: IBooking = await res.json();
-  return timeBlock;
+export async function getBooking(_id: TGetBookingParamsDefinition["_id"]) {
+  const res = await api.get(`/booking/${encodeURIComponent(`${_id}`)}`);
+  const booking: IBooking = await res.json();
+  return booking;
 }
 
-export function useTimeBlock(_id: TGetBookingParamsDefinition["_id"]) {
+export function useBooking(_id: TGetBookingParamsDefinition["_id"]) {
   return useQuery({
-    queryKey: ["getTimeBlock", _id],
-    queryFn: () => getTimeBlock(_id),
+    queryKey: ["getBooking", _id],
+    queryFn: () => getBooking(_id),
   });
 }

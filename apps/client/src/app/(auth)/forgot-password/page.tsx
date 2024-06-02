@@ -2,23 +2,22 @@
 
 import { EnvelopeIcon } from "@heroicons/react/16/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, TextInput } from "@spin-spot/components";
+import { Button, Loader, TextInput } from "@spin-spot/components";
 import {
   TForgotPasswordInputDefinition,
   forgotPasswordInputDefinition,
 } from "@spin-spot/models";
-import { useForgotPassword } from "@spin-spot/services";
+import { useForgotPassword, useToast } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useScrollLock } from "usehooks-ts";
 
 export default function ResetPassword() {
   useScrollLock();
+  const { showToast } = useToast();
 
   const router = useRouter();
   const forgotPassword = useForgotPassword();
-  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const {
     register,
@@ -37,14 +36,24 @@ export default function ResetPassword() {
   const handleSumbit: SubmitHandler<TForgotPasswordInputDefinition> = (
     data,
   ) => {
-    setIsSubmitted(true);
     forgotPassword.mutate(
       {
         email: data.email,
       },
       {
         onSuccess() {
-          setIsSubmitted(false);
+          showToast({
+            label: "Se ha enviado un enlace a su correo!",
+            type: "success",
+            duration: 3000,
+          });
+        },
+        onError() {
+          showToast({
+            label: "Error al enviar el enlace.",
+            type: "error",
+            duration: 3000,
+          });
         },
       },
     );
@@ -70,8 +79,18 @@ export default function ResetPassword() {
           />
         </div>
         <Button
-          className={`btn-sm ${isSubmitted ? "btn-disabled" : "btn-neutral"} w-full`}
-          label={isSubmitted ? "Enlace Enviado" : "Enviar"}
+          className={`btn-sm ${forgotPassword.isSuccess || forgotPassword.isPending ? "btn-disabled" : "btn-neutral"} w-full`}
+          label={
+            forgotPassword.isSuccess ? (
+              "Enlace Enviado"
+            ) : forgotPassword.isPending ? (
+              <span className="flex items-center justify-center gap-2">
+                <Loader size="sm" /> Enviando...
+              </span>
+            ) : (
+              "Enviar"
+            )
+          }
           labelSize="text-md"
           onClick={handleSubmit(handleSumbit)}
         />
