@@ -238,7 +238,7 @@ export default function Reserve({ params }: { params: ReserveProps }) {
           label="Cancelar"
           labelSize="text-sm"
           className="btn-lg btn-secondary"
-          onClick={() => window.history.back()}
+          onClick={() => router.back()}
         />
         <Button
           label="Reservar"
