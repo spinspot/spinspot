@@ -38,8 +38,8 @@ export default function Home() {
   };
 
   const handleCreateTimeBlock = () => {
-    const startTime = new Date("2024-06-01T19:00:00-04:00");
-    const endTime = new Date("2024-06-01T20:30:00-04:00");
+    const startTime = new Date("2024-06-25T13:00:00-04:00");
+    const endTime = new Date("2024-06-25T14:30:00-04:00");
 
     const newTimeBlock: TCreateTimeBlockInputDefinition = {
       table: "665213fa379bfd2db7c0df6f",

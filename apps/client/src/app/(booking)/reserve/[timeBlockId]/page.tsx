@@ -151,7 +151,9 @@ export default function Reserve({ params }: { params: ReserveProps }) {
             value={searchTexts[i] || ""}
             onChange={(e) => handleSearch(i, e.target.value)}
             bottomLeftLabel={
-              (searchTexts[i]?.length ?? 0) >= 1 && suggestions[i]?.length === 0
+              selectedUsers[i] === null &&
+              (searchTexts[i]?.length ?? 0) >= 1 &&
+              suggestions[i]?.length === 0
                 ? "No hay jugadores encontrados"
                 : ""
             }
@@ -162,7 +164,7 @@ export default function Reserve({ params }: { params: ReserveProps }) {
                 {suggestions[i]?.map((user, index) => (
                   <li
                     key={index}
-                    className="hover:bg-secondary hover:text-primary cursor-pointer p-2"
+                    className="hover:bg-secondary cursor-pointer p-2 text-white"
                     onClick={() => handleSelectUser(i, user)}
                   >
                     {user.firstName} {user.lastName}
@@ -184,7 +186,7 @@ export default function Reserve({ params }: { params: ReserveProps }) {
       user._id,
     ];
 
-    try {
+    const finalizeReserve = async () => {
       createBooking(
         {
           eventType: eventType as "1V1" | "2V2",
@@ -211,12 +213,30 @@ export default function Reserve({ params }: { params: ReserveProps }) {
           },
         },
       );
-    } catch (error) {
-      console.error("Error al crear la reserva:", error);
+    };
+
+    if (
+      (eventType === "1V1" && validPlayers.length !== 2) ||
+      (eventType === "2V2" && validPlayers.length !== 4)
+    ) {
       showToast({
-        label: "Error al crear la reserva",
-        type: "error",
+        label:
+          "¿Seguro que quieres realizar la reserva sin completar los jugadores?",
+        type: "warning",
+        acceptButtonLabel: "Sí",
+        denyButtonLabel: "No",
+        onAccept() {
+          finalizeReserve();
+        },
+        onDeny() {
+          showToast({
+            label: "Reserva no realizada",
+            type: "error",
+          });
+        },
       });
+    } else {
+      finalizeReserve();
     }
   };
 
@@ -225,7 +245,6 @@ export default function Reserve({ params }: { params: ReserveProps }) {
       <div className="font-title pb-12 text-center">
         <h1 className="text-3xl font-bold">Datos de la reserva</h1>
       </div>
-
       <div className="flex w-full justify-center">
         <div className="grid grid-cols-2 gap-x-8 gap-y-4">
           <Badge
@@ -274,14 +293,13 @@ export default function Reserve({ params }: { params: ReserveProps }) {
           />
         </div>
       </div>
-
       <h3 className="mt-9 flex justify-center text-xl">
         {" "}
         <span className="mr-1">Reservado por: </span>{" "}
         <span className="font-bold">
           {user?.firstName} {user?.lastName}
         </span>
-      </h3>
+      </h3>{" "}
       <div className="mt-6 flex flex-col items-center">
         <h3 className="mr-1 text-lg">Seleccione modalidad: </h3>
         <Pagination

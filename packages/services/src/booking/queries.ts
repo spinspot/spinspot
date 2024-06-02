@@ -9,7 +9,7 @@ export async function getBookings() {
 }
 
 export function useBookings() {
-  return useQuery({ queryKey: ["getTimeBlocks"], queryFn: getBookings });
+  return useQuery({ queryKey: ["getBookings"], queryFn: getBookings });
 }
 
 export async function getBooking(_id: TGetBookingParamsDefinition["_id"]) {

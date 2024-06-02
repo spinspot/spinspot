@@ -9,7 +9,6 @@ import {
 } from "@spin-spot/models";
 import { useForgotPassword, useToast } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useScrollLock } from "usehooks-ts";
 
@@ -19,8 +18,6 @@ export default function ResetPassword() {
 
   const router = useRouter();
   const forgotPassword = useForgotPassword();
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isSending, setIsSending] = useState(false);
 
   const {
     register,
@@ -39,15 +36,12 @@ export default function ResetPassword() {
   const handleSumbit: SubmitHandler<TForgotPasswordInputDefinition> = (
     data,
   ) => {
-    setIsSending(true);
     forgotPassword.mutate(
       {
         email: data.email,
       },
       {
         onSuccess() {
-          setIsSending(false);
-          setIsSubmitted(true);
           showToast({
             label: "Se ha enviado un enlace a su correo!",
             type: "success",
@@ -55,7 +49,6 @@ export default function ResetPassword() {
           });
         },
         onError() {
-          setIsSending(false);
           showToast({
             label: "Error al enviar el enlace.",
             type: "error",
@@ -86,11 +79,11 @@ export default function ResetPassword() {
           />
         </div>
         <Button
-          className={`btn-sm ${isSubmitted || isSending ? "btn-disabled" : "btn-neutral"} w-full`}
+          className={`btn-sm ${forgotPassword.isSuccess || forgotPassword.isPending ? "btn-disabled" : "btn-neutral"} w-full`}
           label={
-            isSubmitted ? (
+            forgotPassword.isSuccess ? (
               "Enlace Enviado"
-            ) : isSending ? (
+            ) : forgotPassword.isPending ? (
               <span className="flex items-center justify-center gap-2">
                 <Loader size="sm" /> Enviando...
               </span>
