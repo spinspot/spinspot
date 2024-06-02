@@ -1,4 +1,3 @@
-import React from "react";
 import { Pagination } from "../paginations";
 
 interface SelectionSectionProps {
@@ -6,9 +5,9 @@ interface SelectionSectionProps {
   optinosNo: string[];
   eventType: string | null;
   indumentary: string | null;
-  setEventType: (eventType: string | null) => void;
-  setIndumentary: (indumentary: string | null) => void;
-  resetInputs: (length: number) => void;
+  setEventType: (_eventType: string | null) => void;
+  setIndumentary: (_indumentary: string | null) => void;
+  resetInputs: (_length: number) => void;
 }
 
 export const SelectionSection: React.FC<SelectionSectionProps> = ({

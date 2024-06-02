@@ -3,7 +3,6 @@ import {
   ClockIcon,
   QuestionMarkCircleIcon,
 } from "@heroicons/react/24/outline";
-import React from "react";
 import { Badge } from "../badges";
 import { PingPongIcon } from "../extra-icons";
 
