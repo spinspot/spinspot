@@ -42,6 +42,10 @@ async function bookingWithUser(req: Request, res: Response) {
     return res.status(400).json({ error: "Table error while booking" });
   }
 
+  if (req.body.player.includes(user?._id?.toString())) {
+    return res.status(400).json({ error: "The owner is already included" });
+  }
+
   const booking = await bookingService.createBooking({
     ...reservationData,
     owner: user!._id,
@@ -73,8 +77,27 @@ async function getBooking(req: Request, res: Response) {
 async function updateBooking(req: Request, res: Response) {
   const params = updateBookingParamsDefinition.parse(req.params);
   const input = updateBookingInputDefinition.parse(req.body);
-  const user = await bookingService.updateBooking(params._id, input);
-  return res.status(200).json(user);
+  const booking = await bookingService.updateBooking(params._id, input);
+  return res.status(200).json(booking);
+}
+
+async function cancelBooking(req: Request, res: Response) {
+  const params = updateBookingParamsDefinition.parse(req.params);
+
+  const booking = await bookingService.updateBooking(params._id, {
+    status: 'FINISHED',
+  });
+
+  if (booking?.timeBlock) {
+    await timeBlockService.updateTimeBlock(booking.timeBlock, {
+      booking: null,
+      status: 'AVAILABLE',
+    });
+  } else {
+    console.error('booking.timeBlock is undefined');
+  }
+
+  return res.status(200).json(booking);
 }
 
 export const bookingController = {
@@ -82,4 +105,5 @@ export const bookingController = {
   getBookings,
   getBooking,
   updateBooking,
+  cancelBooking
 } as const;
