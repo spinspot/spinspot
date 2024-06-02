@@ -2,12 +2,12 @@
 
 import { Button, Calendar, Loader, Pagination } from "@spin-spot/components";
 import { IPopulatedTimeBlock } from "@spin-spot/models";
-import { useAuth, useTables, useTimeBlocks } from "@spin-spot/services";
+import { useAuth, useTables, useTimeBlocks, useToast, useUpdateBooking, useUpdateTimeBlock } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 export default function Page() {
-  // Inicializa la fecha seleccionada con la fecha actual
+
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
     new Date(),
   );
@@ -15,9 +15,54 @@ export default function Page() {
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
   const { data: timeBlocks, isLoading } = useTimeBlocks(
     selectedTable || undefined,
-  ); // obtiene las timeblocks de las mesas, si no hay ninguna seleccionada, trae todas
-  const { user } = useAuth(); // Obtiene la información del usuario logeado
+  ); 
+  const { user } = useAuth(); 
   const router = useRouter();
+  const {showToast} = useToast();
+  const {mutate: updateBooking} = useUpdateBooking();
+  const {mutate: updateTimeBlock} = useUpdateTimeBlock();
+
+  const handleShowCancelationToast = (timeBlockId: string, bookingId: string) => { 
+    showToast({
+      label: "¿Seguro que quieres cancelar la reserva?",
+      type: "info",
+      acceptButtonLabel: "Sí",
+      denyButtonLabel: "No",
+      onAccept() {
+        handleCancelReservation(timeBlockId, bookingId); 
+      },
+      onDeny() {
+        showToast({
+          label: "Reserva no cancelada",
+          type: "error",
+        });
+      },
+    });
+    };
+
+    const handleCancelReservation = async (timeBlockId: string, bookingId: string) => {
+      try {
+        updateBooking({
+          _id: bookingId,
+          status: "FINISHED"
+        });
+        updateTimeBlock({
+          _id: timeBlockId,
+          status: "AVAILABLE",
+          booking: null
+        });
+        showToast({
+          label: "Reserva cancelada",
+          type: "success",
+        });
+      } catch (error) {
+        console.error("Error al cancelar la reserva:", error);
+        showToast({
+          label: "Error al cancelar la reserva",
+          type: "error",
+        });
+      }
+    };
 
   useEffect(() => {
     if (tables?.length) {
@@ -32,11 +77,6 @@ export default function Page() {
     );
   }
 
-  function handleCancel(timeBlockId: string) {
-    console.log(
-      `Cancelar reserva solicitada para el bloque de tiempo con ID: ${timeBlockId}`,
-    );
-  }
 
   function handleEdit(timeBlockId: string) {
     console.log(
@@ -130,7 +170,7 @@ export default function Page() {
                               className="btn-secondary btn-sm mx-2"
                               label="Cancelar"
                               labelSize="text-md"
-                              onClick={() => handleCancel(`${block._id}`)}
+                              onClick={() => handleShowCancelationToast(block._id.toString(), block.booking?._id.toString())}
                             />
                             <Button
                               className="btn-primary btn-sm mx-2"

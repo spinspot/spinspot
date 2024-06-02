@@ -6,11 +6,13 @@ import {
   GoogleIcon,
   Loader,
   Pagination,
-  SelectInput,
   TextInput,
 } from "@spin-spot/components";
 import { getTable, getTimeBlock, getUsers, useAuth } from "@spin-spot/services";
 import { useEffect, useState } from "react";
+import { useCreateBooking } from "@spin-spot/services";
+import { useToast } from "@spin-spot/services";
+import { useRouter } from "next/navigation";
 
 interface ReserveProps {
   timeBlockId: string;
@@ -18,18 +20,24 @@ interface ReserveProps {
 
 export default function Reserve({ params }: { params: ReserveProps }) {
   const { user } = useAuth();
-  const options = ["Single 1 Vs 1", "Double 2 Vs 2"];
+  const { showToast } = useToast();
+  const options = ["1V1", "2V2"];
   const optinosNo = ["NO", "Si"];
   const [isLoading, setIsLoading] = useState(false);
   const [startTime, setStartTime] = useState<string>("");
   const [endTime, setEndTime] = useState<string>("");
   const [dateReserve, setDateReserve] = useState<string>("");
   const [tableCode, setTableCode] = useState<string>("");
+  const [tableId, setTableId] = useState<string>("");
   const [users, setUsers] = useState<any[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
-  const [searchText, setSearchText] = useState("");
+  const [searchTexts, setSearchTexts] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<any[][]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<(string | null)[]>([]);
   const [eventType, setEventType] = useState<string | null>(null);
   const [indumentary, setIndumentary] = useState<string | null>(null);
+  const router = useRouter();
+
+  const { mutate: createBooking } = useCreateBooking();
 
   useEffect(() => {
     const fetchTimeBlocks = async () => {
@@ -42,14 +50,14 @@ export default function Reserve({ params }: { params: ReserveProps }) {
           new Date(startTime).toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
-          }),
+          })
         );
 
         setEndTime(
           new Date(endTime).toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
-          }),
+          })
         );
 
         setDateReserve(
@@ -59,22 +67,17 @@ export default function Reserve({ params }: { params: ReserveProps }) {
               month: "2-digit",
               day: "2-digit",
             })
-            .replace(/\//g, "-"),
+            .replace(/\//g, "-")
         );
 
         const tableData = await getTable(table);
         setTableCode(tableData.code);
-
+        setTableId(tableData._id.toString());
         const fetchedUsers = await getUsers();
         setUsers(fetchedUsers);
-        setFilteredUsers(fetchedUsers);
-
         setIsLoading(false);
       } catch (error) {
-        console.error(
-          "Error al obtener los datos de los bloques de tiempo:",
-          error,
-        );
+        console.error("Error al obtener los datos de los bloques de tiempo:", error);
         setIsLoading(false);
       }
     };
@@ -82,14 +85,114 @@ export default function Reserve({ params }: { params: ReserveProps }) {
     fetchTimeBlocks();
   }, [params.timeBlockId]);
 
-  const handleSearch = (text: string) => {
-    setSearchText(text);
-    const filtered = users.filter(
-      (user) =>
-        user.firstName.toLowerCase().includes(text.toLowerCase()) ||
-        user.lastName.toLowerCase().includes(text.toLowerCase()),
-    );
-    setFilteredUsers(filtered);
+  const handleSearch = (index: number, text: string) => {
+    const newSearchTexts = [...searchTexts];
+    newSearchTexts[index] = text;
+    setSearchTexts(newSearchTexts);
+
+    const newSelectedUsers = [...selectedUsers];
+    newSelectedUsers[index] = null;
+    setSelectedUsers(newSelectedUsers);
+
+    if (text.length >= 4) {
+      const filtered = users.filter(
+        (user) =>
+          user.firstName.toLowerCase().includes(text.toLowerCase()) ||
+          user.lastName.toLowerCase().includes(text.toLowerCase())
+      );
+      const newSuggestions = [...suggestions];
+      newSuggestions[index] = filtered;
+      setSuggestions(newSuggestions);
+    } else {
+      const newSuggestions = [...suggestions];
+      newSuggestions[index] = [];
+      setSuggestions(newSuggestions);
+    }
+  };
+
+  const handleSelectUser = (index: number, user: any) => {
+    const newSearchTexts = [...searchTexts];
+    newSearchTexts[index] = `${user.firstName} ${user.lastName}`;
+    setSearchTexts(newSearchTexts);
+
+    const newSuggestions = [...suggestions];
+    newSuggestions[index] = [];
+    setSuggestions(newSuggestions);
+
+    const newSelectedUsers = [...selectedUsers];
+    newSelectedUsers[index] = user._id;
+    setSelectedUsers(newSelectedUsers);
+  };
+
+  const renderPlayerInputs = () => {
+    const inputCount = eventType === "1V1" ? 2 : 4;
+    const playerInputs = [];
+    for (let i = 0; i < inputCount; i++) {
+      playerInputs.push(
+        <div key={i} className="mb-6 mt-2">
+          <TextInput
+            placeholder="Type here"
+            value={searchTexts[i] || ""}
+            onChange={(e) => handleSearch(i, e.target.value)}
+          />
+          {(searchTexts[i]?.length ?? 0) >= 4 && (
+            <ul className="bg-primary border rounded-md border-primary mt-1 max-h-40 overflow-y-auto">
+              {suggestions[i]?.map((user, index) => (
+                <li
+                  key={index}
+                  className="p-2 cursor-pointer hover:bg-secondary hover:text-primary"
+                  onClick={() => handleSelectUser(i, user)}
+                >
+                  {user.firstName} {user.lastName}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      );
+    }
+    return playerInputs;
+  };
+
+  const handleReserve = async () => {
+    if (!eventType || !indumentary || !user) return;
+
+    const validPlayers = selectedUsers.filter((player) => player !== null) as string[];
+
+    try {
+      createBooking(
+        {
+          eventType: eventType as "1V1" | "2V2",
+          owner: user._id,
+          table: tableId,
+          players: validPlayers,
+          timeBlock: params.timeBlockId,
+          status: "PENDING",
+        },
+        {
+          onSuccess: () => {
+            showToast({
+              label: "Reserva creada exitosamente",
+              type: "success",
+            })
+            router.push("/dashboard");
+          },
+          onError: (error) => {
+            console.error("Error al crear la reserva:", error);
+            showToast({
+              label: "Error al crear la reserva",
+              type: "error",
+            });
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Error al crear la reserva:", error);
+      showToast({
+        label: "Error al crear la reserva",
+        type: "error",
+      });
+    }
   };
 
   return (
@@ -159,89 +262,34 @@ export default function Reserve({ params }: { params: ReserveProps }) {
         <Pagination
           labels={options}
           size="sm"
-          onPageChange={(label) => setEventType(label ?? null)}
+          onPageChange={(label) => {
+            setEventType(label ?? null);
+            setSearchTexts(Array(label === "1V1" ? 2 : 4).fill(""));
+            setSuggestions(Array(label === "1V1" ? 2 : 4).fill([]));
+            setSelectedUsers(Array(label === "1V1" ? 2 : 4).fill(null));
+          }}
           className="btn-neutral mt-2 min-w-28 text-nowrap"
         />
       </div>
-      <div className="mt-6 flex flex-col items-center justify-center">
-        {eventType ? (
-          <div className="">
-            <span className="text-lg">Filtro de busqueda para jugadores:</span>
-            <TextInput
-              placeholder="Type here"
-              className="mb-6 mt-2"
-              value={searchText}
-              onChange={(e) => handleSearch(e.target.value)}
-            />
-            {eventType === "Single 1 Vs 1" ? (
-              filteredUsers.length > 0 ? (
-                <SelectInput
-                  options={filteredUsers.map(
-                    (user) => `${user.firstName} ${user.lastName}`,
-                  )}
-                  defaultOption="Pick one option"
-                  disabled={false}
-                  className="select-primary my-3"
-                />
-              ) : (
-                <div className="text-error flex items-center justify-center">
-                  No se encontraron jugadores.
-                </div>
-              )
-            ) : filteredUsers.length > 0 ? (
-              <div>
-                <SelectInput
-                  options={filteredUsers.map(
-                    (user) => `${user.firstName} ${user.lastName}`,
-                  )}
-                  defaultOption="Pick one option"
-                  disabled={false}
-                  className="select-primary my-3"
-                />
-                <SelectInput
-                  options={filteredUsers.map(
-                    (user) => `${user.firstName} ${user.lastName}`,
-                  )}
-                  defaultOption="Pick one option"
-                  disabled={false}
-                  className="select-primary my-3"
-                />
-                <SelectInput
-                  options={filteredUsers.map(
-                    (user) => `${user.firstName} ${user.lastName}`,
-                  )}
-                  defaultOption="Pick one option"
-                  disabled={false}
-                  className="select-primary my-3"
-                />
-              </div>
-            ) : (
-              <div className="text-error flex items-center justify-center">
-                No se encontraron jugadores.
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className=" text-error flex items-center justify-center">
-            No se ha seleccionado una modalidad!
-          </div>
-        )}
-      </div>
-
-      <div className="font-body mt-7 flex flex-col items-center">
-        <span className="">¿Posee raquetas y pelotas?</span>
+      <div className="mt-6 flex flex-col items-center">
+        <h3 className="mr-1 text-lg">Indumentaria: </h3>
         <Pagination
           labels={optinosNo}
           size="sm"
           onPageChange={(label) => setIndumentary(label ?? null)}
-          className="btn-neutral mt-2 text-nowrap px-5"
+          className="btn-neutral mt-2 min-w-28 text-nowrap"
         />
+      </div>
+
+      <div className="mx-auto mt-8 max-w-md">
+        {eventType && renderPlayerInputs()}
       </div>
       <div className="mt-14 flex flex-row justify-center gap-x-6">
         <Button
           label="Cancelar"
           labelSize="text-sm"
           className="btn-lg btn-secondary"
+          onClick={() => window.history.back()}
         />
         <Button
           label="Reservar"
@@ -249,10 +297,15 @@ export default function Reserve({ params }: { params: ReserveProps }) {
           className={
             eventType != null && indumentary != null
               ? "btn-lg btn-primary"
-              : " btn-primary btn-lg btn-disabled"
+              : "btn-primary btn-lg btn-disabled"
           }
+          onClick={handleReserve}
         />
       </div>
     </div>
   );
 }
+
+
+
+
