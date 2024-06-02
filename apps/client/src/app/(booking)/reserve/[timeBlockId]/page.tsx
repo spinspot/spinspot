@@ -1,20 +1,19 @@
 "use client";
 
 import {
-  Badge,
   Button,
-  GoogleIcon,
   Loader,
-  Pagination,
-  TextInput,
+  PlayerInput,
+  ReservationInfo,
 } from "@spin-spot/components";
+import SelectionSection from "@spin-spot/components/reserves/SelectionSection";
 import {
   useAuth,
   useCreateBooking,
+  useTable,
+  useTimeBlock,
   useToast,
-  useTimeBlock, 
-  useTable, 
-  useUsers
+  useUsers,
 } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -42,10 +41,13 @@ export default function Reserve({ params }: { params: ReserveProps }) {
   const [indumentary, setIndumentary] = useState<string | null>(null);
   const router = useRouter();
 
-  const { data: timeBlockData, isLoading: isTimeBlockLoading } = useTimeBlock(params.timeBlockId);
-  const { data: tableData, isLoading: isTableLoading } = useTable(timeBlockData?.table || "");
+  const { data: timeBlockData, isLoading: isTimeBlockLoading } = useTimeBlock(
+    params.timeBlockId,
+  );
+  const { data: tableData, isLoading: isTableLoading } = useTable(
+    timeBlockData?.table || "",
+  );
   const { data: fetchedUsers, isLoading: isUsersLoading } = useUsers();
-
   const { mutate: createBooking } = useCreateBooking();
 
   useEffect(() => {
@@ -56,14 +58,14 @@ export default function Reserve({ params }: { params: ReserveProps }) {
         new Date(startTime).toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
-        })
+        }),
       );
 
       setEndTime(
         new Date(endTime).toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
-        })
+        }),
       );
 
       setDateReserve(
@@ -73,7 +75,7 @@ export default function Reserve({ params }: { params: ReserveProps }) {
             month: "2-digit",
             day: "2-digit",
           })
-          .replace(/\//g, "-")
+          .replace(/\//g, "-"),
       );
 
       setTableCode(tableData.code);
@@ -126,46 +128,10 @@ export default function Reserve({ params }: { params: ReserveProps }) {
     setSelectedUsers(newSelectedUsers);
   };
 
-  const renderPlayerInputs = () => {
-    const inputCount = eventType === "1V1" ? 1 : 3;
-    const playerInputs = [];
-    for (let i = 0; i < inputCount; i++) {
-      playerInputs.push(
-        <div
-          key={i}
-          className="mb-6 mt-2 flex w-full flex-col items-center justify-center"
-        >
-          <TextInput
-            placeholder="Type here"
-            topLeftLabel="Ingrese nombre del otro jugador:"
-            value={searchTexts[i] || ""}
-            onChange={(e) => handleSearch(i, e.target.value)}
-            bottomLeftLabel={
-              selectedUsers[i] === null &&
-              (searchTexts[i]?.length ?? 0) >= 1 &&
-              suggestions[i]?.length === 0
-                ? "No hay jugadores encontrados"
-                : ""
-            }
-          />
-          {(searchTexts[i]?.length ?? 0) >= 1 &&
-            suggestions[i]?.length !== 0 && (
-              <ul className="bg-primary border-primary mt-2 w-3/4 rounded-md border">
-                {suggestions[i]?.map((user, index) => (
-                  <li
-                    key={index}
-                    className="hover:bg-secondary cursor-pointer p-2 text-white"
-                    onClick={() => handleSelectUser(i, user)}
-                  >
-                    {user.firstName} {user.lastName}
-                  </li>
-                ))}
-              </ul>
-            )}
-        </div>,
-      );
-    }
-    return playerInputs;
+  const resetInputs = (length: number) => {
+    setSearchTexts(Array(length).fill(""));
+    setSuggestions(Array(length).fill([]));
+    setSelectedUsers(Array(length).fill(null));
   };
 
   const handleReserve = async () => {
@@ -232,7 +198,7 @@ export default function Reserve({ params }: { params: ReserveProps }) {
 
   if (isLoading || isTimeBlockLoading || isTableLoading || isUsersLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex h-screen items-center justify-center">
         <Loader size="lg" variant="dots" className="text-primary" />
       </div>
     );
@@ -240,64 +206,32 @@ export default function Reserve({ params }: { params: ReserveProps }) {
 
   return (
     <div className="font-body flex-grow py-32">
-      <div className="font-title pb-12 text-center">
-        <h1 className="text-3xl font-bold">Datos de la reserva</h1>
-      </div>
-      <div className="flex w-full justify-center">
-        <div className="grid grid-cols-2 gap-x-8 gap-y-4">
-          <Badge
-            labelName="Fecha"
-            label={dateReserve}
-            leftIcon={<GoogleIcon />}
-          />
-          <Badge
-            labelName="Horario"
-            label={`${startTime} to ${endTime}`}
-            leftIcon={<GoogleIcon />}
-          />
-          <Badge
-            labelName="Deporte"
-            label="Ping-Pong"
-            leftIcon={<GoogleIcon />}
-          />
-          <Badge
-            labelName="Mesa"
-            label={tableCode}
-            leftIcon={<GoogleIcon />}
-          />
-        </div>
-      </div>
-      <h3 className="mt-12 text-center text-lg">
-        Responable de la reserva:{" "}
-        <span className="font-bold">
-          {user?.firstName} {user?.lastName}
-        </span>
-      </h3>
-      <div className="mt-6 flex flex-col items-center">
-        <h3 className="mr-1 text-lg">Seleccione modalidad: </h3>
-        <Pagination
-          labels={options}
-          size="sm"
-          onPageChange={(label) => {
-            setEventType(label ?? null);
-            setSearchTexts(Array(label === "1V1" ? 2 : 4).fill(""));
-            setSuggestions(Array(label === "1V1" ? 2 : 4).fill([]));
-            setSelectedUsers(Array(label === "1V1" ? 2 : 4).fill(null));
-          }}
-          className="btn-neutral mt-2 min-w-28 text-nowrap"
-        />
-      </div>
-      <div className="mt-6 flex flex-col items-center">
-        <h3 className="mr-1 text-lg">Indumentaria: </h3>
-        <Pagination
-          labels={optinosNo}
-          size="sm"
-          onPageChange={(label) => setIndumentary(label ?? null)}
-          className="btn-neutral mt-2 min-w-28 text-nowrap"
-        />
-      </div>
+      <ReservationInfo
+        dateReserve={dateReserve}
+        startTime={startTime}
+        endTime={endTime}
+        tableCode={tableCode}
+        user={user}
+      />
+      <SelectionSection
+        options={options}
+        optinosNo={optinosNo}
+        eventType={eventType}
+        indumentary={indumentary}
+        setEventType={setEventType}
+        setIndumentary={setIndumentary}
+        resetInputs={resetInputs}
+      />
       <div className="mt-8 flex w-full flex-col items-center justify-center">
-        {eventType && renderPlayerInputs()}
+        {eventType && (
+          <PlayerInput
+            searchTexts={searchTexts}
+            suggestions={suggestions}
+            selectedUsers={selectedUsers}
+            handleSearch={handleSearch}
+            handleSelectUser={handleSelectUser}
+          />
+        )}
       </div>
       <div className="mt-10 flex flex-row justify-center gap-x-6">
         <Button
