@@ -44,4 +44,28 @@ import {
       },
     });
   }
+
+  export async function cancelBooking(_id: TUpdateBookingParamsDefinition["_id"]) {
+    const res = await api.post(`/booking/${encodeURIComponent(`${_id}`)}/cancel`);
+    const booking: IBooking = await res.json();
+    return booking;
+  }
+  
+  export function useCancelBooking() {
+    const queryClient = useQueryClient();
+    const { user } = useAuth();
+  
+    return useMutation({
+      mutationKey: ["cancelBooking"],
+      mutationFn: cancelBooking,
+      onSuccess(data) {
+        if (data.owner === user?._id) {
+          queryClient.invalidateQueries({ queryKey: ["currentBooking"] });
+        }
+        queryClient.invalidateQueries({ queryKey: ["getBooking", data._id] });
+        queryClient.invalidateQueries({ queryKey: ["getBookings"] });
+        queryClient.invalidateQueries({ queryKey: ["getTimeBlocks"] });
+      },
+    });
+  }
   
