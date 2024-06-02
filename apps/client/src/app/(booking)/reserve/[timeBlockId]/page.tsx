@@ -9,12 +9,12 @@ import {
   TextInput,
 } from "@spin-spot/components";
 import {
-  getTable,
-  getTimeBlock,
-  getUsers,
   useAuth,
   useCreateBooking,
   useToast,
+  useTimeBlock, 
+  useTable, 
+  useUsers
 } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -42,56 +42,46 @@ export default function Reserve({ params }: { params: ReserveProps }) {
   const [indumentary, setIndumentary] = useState<string | null>(null);
   const router = useRouter();
 
+  const { data: timeBlockData, isLoading: isTimeBlockLoading } = useTimeBlock(params.timeBlockId);
+  const { data: tableData, isLoading: isTableLoading } = useTable(timeBlockData?.table || "");
+  const { data: fetchedUsers, isLoading: isUsersLoading } = useUsers();
+
   const { mutate: createBooking } = useCreateBooking();
 
   useEffect(() => {
-    const fetchTimeBlocks = async () => {
-      setIsLoading(true);
-      try {
-        const timeBlockData = await getTimeBlock(params.timeBlockId);
-        const { startTime, endTime, table } = timeBlockData;
+    if (timeBlockData && tableData && fetchedUsers) {
+      const { startTime, endTime } = timeBlockData;
 
-        setStartTime(
-          new Date(startTime).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-        );
+      setStartTime(
+        new Date(startTime).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      );
 
-        setEndTime(
-          new Date(endTime).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-        );
+      setEndTime(
+        new Date(endTime).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      );
 
-        setDateReserve(
-          new Date(startTime)
-            .toLocaleDateString([], {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-            })
-            .replace(/\//g, "-"),
-        );
+      setDateReserve(
+        new Date(startTime)
+          .toLocaleDateString([], {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          })
+          .replace(/\//g, "-")
+      );
 
-        const tableData = await getTable(table);
-        setTableCode(tableData.code);
-        setTableId(tableData._id.toString());
-        const fetchedUsers = await getUsers();
-        setUsers(fetchedUsers);
-        setIsLoading(false);
-      } catch (error) {
-        console.error(
-          "Error al obtener los datos de los bloques de tiempo:",
-          error,
-        );
-        setIsLoading(false);
-      }
-    };
-
-    fetchTimeBlocks();
-  }, [params.timeBlockId]);
+      setTableCode(tableData.code);
+      setTableId(tableData._id.toString());
+      setUsers(fetchedUsers);
+      setIsLoading(false);
+    }
+  }, [timeBlockData, tableData, fetchedUsers]);
 
   const handleSearch = (index: number, text: string) => {
     const newSearchTexts = [...searchTexts];
@@ -147,7 +137,7 @@ export default function Reserve({ params }: { params: ReserveProps }) {
         >
           <TextInput
             placeholder="Type here"
-            topLeftLabel="Ingrese nombre del jugador:"
+            topLeftLabel="Ingrese nombre del otro jugador:"
             value={searchTexts[i] || ""}
             onChange={(e) => handleSearch(i, e.target.value)}
             bottomLeftLabel={
@@ -240,6 +230,14 @@ export default function Reserve({ params }: { params: ReserveProps }) {
     }
   };
 
+  if (isLoading || isTimeBlockLoading || isTableLoading || isUsersLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Loader size="lg" variant="dots" className="text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="font-body flex-grow py-32">
       <div className="font-title pb-12 text-center">
@@ -249,57 +247,32 @@ export default function Reserve({ params }: { params: ReserveProps }) {
         <div className="grid grid-cols-2 gap-x-8 gap-y-4">
           <Badge
             labelName="Fecha"
-            label={
-              isLoading ? (
-                <Loader size="md" variant="dots" className="text-primary" />
-              ) : (
-                `${dateReserve}`
-              )
-            }
+            label={dateReserve}
             leftIcon={<GoogleIcon />}
           />
           <Badge
             labelName="Horario"
-            label={
-              isLoading ? (
-                <Loader size="md" variant="dots" className="text-primary" />
-              ) : (
-                `${startTime} to ${endTime}`
-              )
-            }
+            label={`${startTime} to ${endTime}`}
             leftIcon={<GoogleIcon />}
           />
           <Badge
             labelName="Deporte"
-            label={
-              isLoading ? (
-                <Loader size="md" variant="dots" className="text-primary" />
-              ) : (
-                "Ping-Pong"
-              )
-            }
+            label="Ping-Pong"
             leftIcon={<GoogleIcon />}
           />
           <Badge
             labelName="Mesa"
-            label={
-              isLoading ? (
-                <Loader size="md" variant="dots" className="text-primary" />
-              ) : (
-                `${tableCode}`
-              )
-            }
+            label={tableCode}
             leftIcon={<GoogleIcon />}
           />
         </div>
       </div>
-      <h3 className="mt-9 flex justify-center text-xl">
-        {" "}
-        <span className="mr-1">Reservado por: </span>{" "}
+      <h3 className="mt-12 text-center text-lg">
+        Responable de la reserva:{" "}
         <span className="font-bold">
           {user?.firstName} {user?.lastName}
         </span>
-      </h3>{" "}
+      </h3>
       <div className="mt-6 flex flex-col items-center">
         <h3 className="mr-1 text-lg">Seleccione modalidad: </h3>
         <Pagination
