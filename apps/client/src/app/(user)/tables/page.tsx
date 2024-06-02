@@ -2,12 +2,18 @@
 
 import { Button, Calendar, Loader, Pagination } from "@spin-spot/components";
 import { IPopulatedTimeBlock } from "@spin-spot/models";
-import { useAuth, useTables, useTimeBlocks, useToast, useUpdateBooking, useUpdateTimeBlock } from "@spin-spot/services";
+import {
+  useAuth,
+  useTables,
+  useTimeBlocks,
+  useToast,
+  useUpdateBooking,
+  useUpdateTimeBlock,
+} from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 export default function Page() {
-
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
     new Date(),
   );
@@ -15,21 +21,24 @@ export default function Page() {
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
   const { data: timeBlocks, isLoading } = useTimeBlocks(
     selectedTable || undefined,
-  ); 
-  const { user } = useAuth(); 
+  );
+  const { user } = useAuth();
   const router = useRouter();
-  const {showToast} = useToast();
-  const {mutate: updateBooking} = useUpdateBooking();
-  const {mutate: updateTimeBlock} = useUpdateTimeBlock();
+  const { showToast } = useToast();
+  const { mutate: updateBooking } = useUpdateBooking();
+  const { mutate: updateTimeBlock } = useUpdateTimeBlock();
 
-  const handleShowCancelationToast = (timeBlockId: string, bookingId: string) => { 
+  const handleShowCancelationToast = (
+    timeBlockId: string,
+    bookingId: string,
+  ) => {
     showToast({
       label: "¿Seguro que quieres cancelar la reserva?",
-      type: "info",
+      type: "warning",
       acceptButtonLabel: "Sí",
       denyButtonLabel: "No",
       onAccept() {
-        handleCancelReservation(timeBlockId, bookingId); 
+        handleCancelReservation(timeBlockId, bookingId);
       },
       onDeny() {
         showToast({
@@ -38,31 +47,34 @@ export default function Page() {
         });
       },
     });
-    };
+  };
 
-    const handleCancelReservation = async (timeBlockId: string, bookingId: string) => {
-      try {
-        updateBooking({
-          _id: bookingId,
-          status: "FINISHED"
-        });
-        updateTimeBlock({
-          _id: timeBlockId,
-          status: "AVAILABLE",
-          booking: null
-        });
-        showToast({
-          label: "Reserva cancelada",
-          type: "success",
-        });
-      } catch (error) {
-        console.error("Error al cancelar la reserva:", error);
-        showToast({
-          label: "Error al cancelar la reserva",
-          type: "error",
-        });
-      }
-    };
+  const handleCancelReservation = async (
+    timeBlockId: string,
+    bookingId: string,
+  ) => {
+    try {
+      updateBooking({
+        _id: bookingId,
+        status: "FINISHED",
+      });
+      updateTimeBlock({
+        _id: timeBlockId,
+        status: "AVAILABLE",
+        booking: null,
+      });
+      showToast({
+        label: "Reserva cancelada",
+        type: "success",
+      });
+    } catch (error) {
+      console.error("Error al cancelar la reserva:", error);
+      showToast({
+        label: "Error al cancelar la reserva",
+        type: "error",
+      });
+    }
+  };
 
   useEffect(() => {
     if (tables?.length) {
@@ -76,7 +88,6 @@ export default function Page() {
       `Reserva solicitada para el bloque de tiempo con ID: ${timeBlockId}`,
     );
   }
-
 
   function handleEdit(timeBlockId: string) {
     console.log(
@@ -165,20 +176,25 @@ export default function Page() {
                       )}
                       {block.status.toLowerCase() === "booked" &&
                         user?._id === block.booking?.owner && (
-                          <>
+                          <div className="flex flex-col items-center justify-center gap-2">
                             <Button
                               className="btn-secondary btn-sm mx-2"
                               label="Cancelar"
                               labelSize="text-md"
-                              onClick={() => handleShowCancelationToast(block._id.toString(), block.booking?._id.toString())}
+                              onClick={() =>
+                                handleShowCancelationToast(
+                                  block._id.toString(),
+                                  block.booking?._id.toString(),
+                                )
+                              }
                             />
                             <Button
-                              className="btn-primary btn-sm mx-2"
+                              className="btn-primary btn-sm mx-2 w-20"
                               label="Editar"
                               labelSize="text-md"
                               onClick={() => handleEdit(`${block._id}`)}
                             />
-                          </>
+                          </div>
                         )}
                       {block.status === "BOOKED" &&
                         user?._id !== block.booking?.owner &&

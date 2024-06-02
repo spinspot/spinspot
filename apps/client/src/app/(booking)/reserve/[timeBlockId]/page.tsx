@@ -8,11 +8,16 @@ import {
   Pagination,
   TextInput,
 } from "@spin-spot/components";
-import { getTable, getTimeBlock, getUsers, useAuth } from "@spin-spot/services";
-import { useEffect, useState } from "react";
-import { useCreateBooking } from "@spin-spot/services";
-import { useToast } from "@spin-spot/services";
+import {
+  getTable,
+  getTimeBlock,
+  getUsers,
+  useAuth,
+  useCreateBooking,
+  useToast,
+} from "@spin-spot/services";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface ReserveProps {
   timeBlockId: string;
@@ -50,14 +55,14 @@ export default function Reserve({ params }: { params: ReserveProps }) {
           new Date(startTime).toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
-          })
+          }),
         );
 
         setEndTime(
           new Date(endTime).toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
-          })
+          }),
         );
 
         setDateReserve(
@@ -67,7 +72,7 @@ export default function Reserve({ params }: { params: ReserveProps }) {
               month: "2-digit",
               day: "2-digit",
             })
-            .replace(/\//g, "-")
+            .replace(/\//g, "-"),
         );
 
         const tableData = await getTable(table);
@@ -77,7 +82,10 @@ export default function Reserve({ params }: { params: ReserveProps }) {
         setUsers(fetchedUsers);
         setIsLoading(false);
       } catch (error) {
-        console.error("Error al obtener los datos de los bloques de tiempo:", error);
+        console.error(
+          "Error al obtener los datos de los bloques de tiempo:",
+          error,
+        );
         setIsLoading(false);
       }
     };
@@ -94,12 +102,16 @@ export default function Reserve({ params }: { params: ReserveProps }) {
     newSelectedUsers[index] = null;
     setSelectedUsers(newSelectedUsers);
 
-    if (text.length >= 4) {
-      const filtered = users.filter(
-        (user) =>
-          user.firstName.toLowerCase().includes(text.toLowerCase()) ||
-          user.lastName.toLowerCase().includes(text.toLowerCase())
-      );
+    if (text.length >= 1) {
+      const lowerCaseText = text.toLowerCase();
+      const filtered = users.filter((user) => {
+        const fullName = `${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}`;
+        return (
+          user.firstName.toLowerCase().includes(lowerCaseText) ||
+          user.lastName.toLowerCase().includes(lowerCaseText) ||
+          fullName.includes(lowerCaseText)
+        );
+      });
       const newSuggestions = [...suggestions];
       newSuggestions[index] = filtered;
       setSuggestions(newSuggestions);
@@ -125,30 +137,40 @@ export default function Reserve({ params }: { params: ReserveProps }) {
   };
 
   const renderPlayerInputs = () => {
-    const inputCount = eventType === "1V1" ? 2 : 4;
+    const inputCount = eventType === "1V1" ? 1 : 3;
     const playerInputs = [];
     for (let i = 0; i < inputCount; i++) {
       playerInputs.push(
-        <div key={i} className="mb-6 mt-2">
+        <div
+          key={i}
+          className="mb-6 mt-2 flex w-full flex-col items-center justify-center"
+        >
           <TextInput
             placeholder="Type here"
+            topLeftLabel="Ingrese nombre del jugador:"
             value={searchTexts[i] || ""}
             onChange={(e) => handleSearch(i, e.target.value)}
+            bottomLeftLabel={
+              (searchTexts[i]?.length ?? 0) >= 1 && suggestions[i]?.length === 0
+                ? "No hay jugadores encontrados"
+                : ""
+            }
           />
-          {(searchTexts[i]?.length ?? 0) >= 4 && (
-            <ul className="bg-primary border rounded-md border-primary mt-1 max-h-40 overflow-y-auto">
-              {suggestions[i]?.map((user, index) => (
-                <li
-                  key={index}
-                  className="p-2 cursor-pointer hover:bg-secondary hover:text-primary"
-                  onClick={() => handleSelectUser(i, user)}
-                >
-                  {user.firstName} {user.lastName}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+          {(searchTexts[i]?.length ?? 0) >= 1 &&
+            suggestions[i]?.length !== 0 && (
+              <ul className="bg-primary border-primary mt-2 w-3/4 rounded-md border">
+                {suggestions[i]?.map((user, index) => (
+                  <li
+                    key={index}
+                    className="hover:bg-secondary hover:text-primary cursor-pointer p-2"
+                    onClick={() => handleSelectUser(i, user)}
+                  >
+                    {user.firstName} {user.lastName}
+                  </li>
+                ))}
+              </ul>
+            )}
+        </div>,
       );
     }
     return playerInputs;
@@ -157,7 +179,10 @@ export default function Reserve({ params }: { params: ReserveProps }) {
   const handleReserve = async () => {
     if (!eventType || !indumentary || !user) return;
 
-    const validPlayers = selectedUsers.filter((player) => player !== null) as string[];
+    const validPlayers = [
+      ...(selectedUsers.filter((player) => player !== null) as string[]),
+      user._id,
+    ];
 
     try {
       createBooking(
@@ -174,8 +199,8 @@ export default function Reserve({ params }: { params: ReserveProps }) {
             showToast({
               label: "Reserva creada exitosamente",
               type: "success",
-            })
-            router.push("/dashboard");
+            });
+            router.push("/tables");
           },
           onError: (error) => {
             console.error("Error al crear la reserva:", error);
@@ -184,7 +209,7 @@ export default function Reserve({ params }: { params: ReserveProps }) {
               type: "error",
             });
           },
-        }
+        },
       );
     } catch (error) {
       console.error("Error al crear la reserva:", error);
@@ -280,11 +305,10 @@ export default function Reserve({ params }: { params: ReserveProps }) {
           className="btn-neutral mt-2 min-w-28 text-nowrap"
         />
       </div>
-
-      <div className="mx-auto mt-8 max-w-md">
+      <div className="mt-8 flex w-full flex-col items-center justify-center">
         {eventType && renderPlayerInputs()}
       </div>
-      <div className="mt-14 flex flex-row justify-center gap-x-6">
+      <div className="mt-10 flex flex-row justify-center gap-x-6">
         <Button
           label="Cancelar"
           labelSize="text-sm"
@@ -305,7 +329,3 @@ export default function Reserve({ params }: { params: ReserveProps }) {
     </div>
   );
 }
-
-
-
-
