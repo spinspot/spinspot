@@ -4,8 +4,8 @@ interface PlayerInputProps {
   searchTexts: string[];
   suggestions: any[][];
   selectedUsers: (string | null)[];
-  handleSearch: (_index: number, text: string) => void;
-  handleSelectUser: (_index: number, user: any) => void;
+  handleSearch: (_index: number, _text: string) => void;
+  handleSelectUser: (_index: number, _user: any) => void;
 }
 
 export const PlayerInput: React.FC<PlayerInputProps> = ({
