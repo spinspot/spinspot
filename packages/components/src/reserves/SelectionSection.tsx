@@ -11,11 +11,9 @@ interface SelectionSectionProps {
   resetInputs: (length: number) => void;
 }
 
-const SelectionSection: React.FC<SelectionSectionProps> = ({
+export const SelectionSection: React.FC<SelectionSectionProps> = ({
   options,
   optinosNo,
-  eventType,
-  indumentary,
   setEventType,
   setIndumentary,
   resetInputs,
@@ -28,7 +26,7 @@ const SelectionSection: React.FC<SelectionSectionProps> = ({
         size="sm"
         onPageChange={(label) => {
           setEventType(label ?? null);
-          resetInputs(label === "1V1" ? 2 : 4);
+          resetInputs(label === "1V1" ? 1 : 3);
         }}
         className="btn-neutral mt-2 min-w-28 text-nowrap"
       />
@@ -44,5 +42,3 @@ const SelectionSection: React.FC<SelectionSectionProps> = ({
     </div>
   </div>
 );
-
-export default SelectionSection;

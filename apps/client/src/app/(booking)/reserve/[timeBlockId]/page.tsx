@@ -5,8 +5,8 @@ import {
   Loader,
   PlayerInput,
   ReservationInfo,
+  SelectionSection,
 } from "@spin-spot/components";
-import SelectionSection from "@spin-spot/components/reserves/SelectionSection";
 import {
   useAuth,
   useCreateBooking,
@@ -26,7 +26,7 @@ export default function Reserve({ params }: { params: ReserveProps }) {
   const { user } = useAuth();
   const { showToast } = useToast();
   const options = ["1V1", "2V2"];
-  const optinosNo = ["NO", "Si"];
+  const optinosNo = ["NO", "SI"];
   const [isLoading, setIsLoading] = useState(false);
   const [startTime, setStartTime] = useState<string>("");
   const [endTime, setEndTime] = useState<string>("");

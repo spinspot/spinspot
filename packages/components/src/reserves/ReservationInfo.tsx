@@ -1,6 +1,11 @@
+import {
+  CalendarDaysIcon,
+  ClockIcon,
+  QuestionMarkCircleIcon,
+} from "@heroicons/react/24/outline";
 import React from "react";
 import { Badge } from "../badges";
-import { GoogleIcon } from "../extra-icons";
+import { PingPongIcon } from "../extra-icons";
 
 interface ReservationInfoProps {
   dateReserve: string;
@@ -26,19 +31,27 @@ export const ReservationInfo: React.FC<ReservationInfoProps> = ({
         <Badge
           labelName="Fecha"
           label={dateReserve}
-          leftIcon={<GoogleIcon />}
+          leftIcon={
+            <CalendarDaysIcon className="text-neutral h-[36px] w-[36px]" />
+          }
         />
         <Badge
           labelName="Horario"
           label={`${startTime} to ${endTime}`}
-          leftIcon={<GoogleIcon />}
+          leftIcon={<ClockIcon className="text-neutral h-[36px] w-[36px]" />}
         />
         <Badge
           labelName="Deporte"
           label="Ping-Pong"
-          leftIcon={<GoogleIcon />}
+          leftIcon={<PingPongIcon className="h-[36px] w-[36px]" />}
         />
-        <Badge labelName="Mesa" label={tableCode} leftIcon={<GoogleIcon />} />
+        <Badge
+          labelName="Mesa"
+          label={tableCode}
+          leftIcon={
+            <QuestionMarkCircleIcon className="text-neutral h-[36px] w-[36px]" />
+          }
+        />
       </div>
     </div>
     <h3 className="mt-12 text-center text-lg">

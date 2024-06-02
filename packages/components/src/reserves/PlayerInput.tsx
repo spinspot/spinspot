@@ -18,7 +18,7 @@ export const PlayerInput: React.FC<PlayerInputProps> = ({
 }) => {
   const inputCount = searchTexts.length;
   const playerInputs = [];
-  for (let i = 1; i < inputCount; i++) {
+  for (let i = 0; i < inputCount; i++) {
     playerInputs.push(
       <div
         key={i}
@@ -38,7 +38,7 @@ export const PlayerInput: React.FC<PlayerInputProps> = ({
           }
         />
         {(searchTexts[i]?.length ?? 0) >= 1 && suggestions[i]?.length !== 0 && (
-          <ul className="bg-primary border-primary mt-2 w-3/4 rounded-md border">
+          <ul className="bg-primary border-primary animate-slide-down mt-2 w-3/4 rounded-md border">
             {suggestions[i]?.map((user, index) => (
               <li
                 key={index}
