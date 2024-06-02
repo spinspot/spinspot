@@ -90,6 +90,7 @@ export default function Page() {
   }
 
   function handleEdit(timeBlockId: string) {
+    router.push(`/edit-reserve/${timeBlockId}`);
     console.log(
       `Editar reserva solicitada para el bloque de tiempo con ID: ${timeBlockId}`,
     );
