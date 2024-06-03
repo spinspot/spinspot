@@ -18,7 +18,7 @@ async function bookingWithUser(req: Request, res: Response) {
     reservationData.timeBlock,
   );
 
-  if (user?._id?.toString() !== req.body.owner) {
+  if (user?._id?.toString() !== reservationData.owner) {
     return res
       .status(401)
       .json({ error: "You cannot create a booking for a different user" });
@@ -38,12 +38,16 @@ async function bookingWithUser(req: Request, res: Response) {
 
   const table = await tableService.getTable(timeBlock.table);
 
-  if (!table || !table.isActive || req.body.table !== table.id.toString()) {
+  if (!table || !table.isActive || reservationData.table !== `${table._id}`) {
     return res.status(400).json({ error: "Table error while booking" });
   }
 
-  if (req.body.player.includes(user?._id?.toString())) {
-    return res.status(400).json({ error: "The owner is already included" });
+  const uniquePlayers =
+    new Set(reservationData.players?.map((player) => `${player}`)).size ===
+    reservationData.players?.length;
+
+  if (!uniquePlayers) {
+    return res.status(400).json({ error: "Hay jugadores repetidos" });
   }
 
   const booking = await bookingService.createBooking({
@@ -85,16 +89,16 @@ async function cancelBooking(req: Request, res: Response) {
   const params = updateBookingParamsDefinition.parse(req.params);
 
   const booking = await bookingService.updateBooking(params._id, {
-    status: 'FINISHED',
+    status: "FINISHED",
   });
 
   if (booking?.timeBlock) {
     await timeBlockService.updateTimeBlock(booking.timeBlock, {
       booking: null,
-      status: 'AVAILABLE',
+      status: "AVAILABLE",
     });
   } else {
-    console.error('booking.timeBlock is undefined');
+    console.error("booking.timeBlock is undefined");
   }
 
   return res.status(200).json(booking);
@@ -105,5 +109,5 @@ export const bookingController = {
   getBookings,
   getBooking,
   updateBooking,
-  cancelBooking
+  cancelBooking,
 } as const;
