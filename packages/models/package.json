@@ -12,15 +12,16 @@
   },
   "dependencies": {
     "@spin-spot/utils": "*",
+    "lodash.foreach": "^4.5.0",
+    "lodash.get": "^4.4.2",
+    "lodash.merge": "^4.6.2",
     "mongoose": "^8.3.4",
-    "mongoose-unique-validator": "^5.0.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@spin-spot/eslint-config": "*",
     "@spin-spot/typescript-config": "*",
     "@types/eslint": "^8.56.5",
-    "@types/mongoose-unique-validator": "^1.0.9",
     "@types/node": "^20.11.24",
     "eslint": "^8.57.0",
     "tsup": "^8.0.2",
