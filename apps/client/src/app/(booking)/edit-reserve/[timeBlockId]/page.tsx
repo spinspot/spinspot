@@ -28,13 +28,12 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
   const { showToast } = useToast();
   const options = ["1V1", "2V2"];
   const optinosNo = ["NO", "SI"];
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
   const [startTime, setStartTime] = useState<string>("");
   const [endTime, setEndTime] = useState<string>("");
   const [dateReserve, setDateReserve] = useState<string>("");
   const [tableCode, setTableCode] = useState<string>("");
   const [tableId, setTableId] = useState<string>("");
-  const [users, setUsers] = useState<any[]>([]);
   const [searchTexts, setSearchTexts] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<any[][]>([]);
   const [selectedUsers, setSelectedUsers] = useState<(string | null)[]>([]);
@@ -83,32 +82,28 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
           .replace(/\//g, "-"),
       );
 
-      setSelectedUsers(
-        bookingData.players
-          ? bookingData.players
-              .map((player) => String(player))
-              .slice(0, bookingData.eventType === "1V1" ? 1 : 3)
-          : [],
-      );
+      const playersWithoutOwner = bookingData.players?.slice(0, -1).map(player => player.toString()) ?? [];
+      const maxPlayers = bookingData.eventType === "1V1" ? 1 : 3;
 
-      setSearchTexts(
-        bookingData.players
-          ? bookingData.players
-              .map(
-                (player, _index) =>
-                  `${fetchedUsers.find((u) => u._id === player)?.firstName || ""} ${
-                    fetchedUsers.find((u) => u._id === player)?.lastName || ""
-                  }`,
-              )
-              .slice(0, bookingData.eventType === "1V1" ? 1 : 3)
-          : [],
-      );
+      const initialSelectedUsers: (string | null)[] = playersWithoutOwner.slice(0, maxPlayers);
+      const initialSearchTexts = initialSelectedUsers.map(playerId => {
+        const user = fetchedUsers.find(u => u._id === playerId);
+        return user ? `${user.firstName} ${user.lastName}` : "";
+      });
 
+      while (initialSearchTexts.length < maxPlayers) {
+        initialSearchTexts.push("");
+        initialSelectedUsers.push(null);
+      }
+
+      setSearchTexts(initialSearchTexts);
+      setSelectedUsers(initialSelectedUsers);
       setEventType(bookingData.eventType);
       setTableCode(tableData.code);
-      setTableId(tableData._id.toString()); // Asegúrate de que `tableId` esté definido
+      setTableId(tableData._id.toString());
     }
   }, [timeBlockData, tableData, fetchedUsers, bookingData]);
+  
 
   const handleSearch = (index: number, text: string) => {
     const newSearchTexts = [...searchTexts];
@@ -173,7 +168,7 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
           _id: bookingData?._id,
           eventType: eventType as "1V1" | "2V2",
           owner: user._id,
-          table: tableId, // Aquí se pasa `tableId`
+          table: tableId, 
           players: validPlayers,
           timeBlock: params.timeBlockId,
           status: "PENDING",
@@ -287,3 +282,4 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
     </div>
   );
 }
+
