@@ -8,49 +8,48 @@ interface PlayerInputProps {
   handleSelectUser: (_index: number, _user: any) => void;
 }
 
-export const PlayerInput: React.FC<PlayerInputProps> = ({
+export function PlayerInput({
   searchTexts,
   suggestions,
   selectedUsers,
   handleSearch,
   handleSelectUser,
-}) => {
+}: PlayerInputProps) {
   return (
     <>
-      {searchTexts.map((searchTexts, _index) => (
+      {searchTexts.map((text, i) => (
         <div
-          key={_index}
-          className="mb-6 mt-2 flex w-full flex-col items-center justify-center"
+          key={i}
+          className="mt-2 flex w-full flex-col items-center justify-center"
         >
           <TextInput
             placeholder="Type here"
             topLeftLabel="Ingrese nombre del otro jugador:"
-            value={searchTexts[_index] || ""}
-            onChange={(e) => handleSearch(_index, e.target.value)}
+            value={text || ""}
+            onChange={(e) => handleSearch(i, e.target.value)}
             bottomLeftLabel={
-              selectedUsers[_index] === null &&
-              (searchTexts[_index]?.length ?? 0) >= 1 &&
-              suggestions[_index]?.length === 0
+              selectedUsers[i] === null &&
+              (text?.length ?? 0) >= 1 &&
+              suggestions[i]?.length === 0
                 ? "No hay jugadores encontrados"
                 : ""
             }
           />
-          {(searchTexts[_index]?.length ?? 0) >= 1 &&
-            suggestions[_index]?.length !== 0 && (
-              <ul className="bg-primary border-primary animate-slide-down mt-2 w-3/4 rounded-md border">
-                {suggestions[_index]?.map((_user, _index) => (
-                  <li
-                    key={_index}
-                    className="hover:bg-secondary cursor-pointer p-2 text-white"
-                    onClick={() => handleSelectUser(_index, _user)}
-                  >
-                    {_user.firstName} {_user.lastName}
-                  </li>
-                ))}
-              </ul>
-            )}
+          {(text?.length ?? 0) >= 1 && suggestions[i]?.length !== 0 && (
+            <ul className="bg-primary animate-slide-down mt-2 w-3/4 rounded-md">
+              {suggestions[i]?.map((user, index) => (
+                <li
+                  key={index}
+                  className="hover:bg-secondary cursor-pointer p-2 text-white"
+                  onClick={() => handleSelectUser(i, user)}
+                >
+                  {user.firstName} {user.lastName}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       ))}
     </>
   );
-};
+}

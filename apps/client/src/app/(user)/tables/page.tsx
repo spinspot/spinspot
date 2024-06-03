@@ -7,8 +7,8 @@ import {
   useTables,
   useTimeBlocks,
   useToast,
-  useUpdateBooking,
   useUpdateTimeBlock,
+  useCancelBooking
 } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -25,8 +25,8 @@ export default function Page() {
   const { user } = useAuth();
   const router = useRouter();
   const { showToast } = useToast();
-  const { mutate: updateBooking } = useUpdateBooking();
   const { mutate: updateTimeBlock } = useUpdateTimeBlock();
+  const { mutate: cancelBooking} = useCancelBooking();
 
   const handleShowCancelationToast = (
     timeBlockId: string,
@@ -54,18 +54,25 @@ export default function Page() {
     bookingId: string,
   ) => {
     try {
-      updateBooking({
-        _id: bookingId,
-        status: "FINISHED",
-      });
-      updateTimeBlock({
-        _id: timeBlockId,
-        status: "AVAILABLE",
-        booking: null,
-      });
-      showToast({
-        label: "Reserva cancelada",
-        type: "success",
+      cancelBooking(bookingId, {
+        onSuccess: () => {
+          updateTimeBlock({
+            _id: timeBlockId,
+            status: "AVAILABLE",
+            booking: null,
+          });
+          showToast({
+            label: "Reserva cancelada",
+            type: "success",
+          });
+        },
+        onError: (error) => {
+          console.error("Error al cancelar la reserva:", error);
+          showToast({
+            label: "Error al cancelar la reserva",
+            type: "error",
+          });
+        },
       });
     } catch (error) {
       console.error("Error al cancelar la reserva:", error);
@@ -90,6 +97,7 @@ export default function Page() {
   }
 
   function handleEdit(timeBlockId: string) {
+    router.push(`/edit-reserve/${timeBlockId}`);
     console.log(
       `Editar reserva solicitada para el bloque de tiempo con ID: ${timeBlockId}`,
     );

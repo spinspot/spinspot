@@ -9,10 +9,11 @@ import {
 } from "@spin-spot/components";
 import {
   useAuth,
-  useCreateBooking,
+  useBooking,
   useTable,
   useTimeBlock,
   useToast,
+  useUpdateBooking,
   useUsers,
 } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
@@ -22,7 +23,7 @@ interface ReserveProps {
   timeBlockId: string;
 }
 
-export default function Reserve({ params }: { params: ReserveProps }) {
+export default function EditReserve({ params }: { params: ReserveProps }) {
   const { user } = useAuth();
   const { showToast } = useToast();
   const options = ["1V1", "2V2"];
@@ -48,10 +49,14 @@ export default function Reserve({ params }: { params: ReserveProps }) {
     timeBlockData?.table || "",
   );
   const { data: fetchedUsers, isLoading: isUsersLoading } = useUsers();
-  const { mutate: createBooking } = useCreateBooking();
+  const { data: bookingData, isLoading: isBookingLoading } = useBooking(
+    timeBlockData?.booking || "",
+  );
+
+  const { mutate: updateBooking } = useUpdateBooking();
 
   useEffect(() => {
-    if (timeBlockData && tableData && fetchedUsers) {
+    if (timeBlockData && tableData && fetchedUsers && bookingData) {
       const { startTime, endTime } = timeBlockData;
 
       setStartTime(
@@ -78,12 +83,32 @@ export default function Reserve({ params }: { params: ReserveProps }) {
           .replace(/\//g, "-"),
       );
 
+      setSelectedUsers(
+        bookingData.players
+          ? bookingData.players
+              .map((player) => String(player))
+              .slice(0, bookingData.eventType === "1V1" ? 1 : 3)
+          : [],
+      );
+
+      setSearchTexts(
+        bookingData.players
+          ? bookingData.players
+              .map(
+                (player, _index) =>
+                  `${fetchedUsers.find((u) => u._id === player)?.firstName || ""} ${
+                    fetchedUsers.find((u) => u._id === player)?.lastName || ""
+                  }`,
+              )
+              .slice(0, bookingData.eventType === "1V1" ? 1 : 3)
+          : [],
+      );
+
+      setEventType(bookingData.eventType);
       setTableCode(tableData.code);
-      setTableId(tableData._id.toString());
-      setUsers(fetchedUsers);
-      setIsLoading(false);
+      setTableId(tableData._id.toString()); // Asegúrate de que `tableId` esté definido
     }
-  }, [timeBlockData, tableData, fetchedUsers]);
+  }, [timeBlockData, tableData, fetchedUsers, bookingData]);
 
   const handleSearch = (index: number, text: string) => {
     const newSearchTexts = [...searchTexts];
@@ -96,7 +121,7 @@ export default function Reserve({ params }: { params: ReserveProps }) {
 
     if (text.length >= 1) {
       const lowerCaseText = text.toLowerCase();
-      const filtered = users.filter((user) => {
+      const filtered = fetchedUsers?.filter((user) => {
         const fullName = `${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}`;
         return (
           user.firstName.toLowerCase().includes(lowerCaseText) ||
@@ -105,7 +130,7 @@ export default function Reserve({ params }: { params: ReserveProps }) {
         );
       });
       const newSuggestions = [...suggestions];
-      newSuggestions[index] = filtered;
+      newSuggestions[index] = filtered ?? [];
       setSuggestions(newSuggestions);
     } else {
       const newSuggestions = [...suggestions];
@@ -134,20 +159,21 @@ export default function Reserve({ params }: { params: ReserveProps }) {
     setSelectedUsers(Array(length).fill(null));
   };
 
-  const handleReserve = async () => {
-    if (!eventType || !indumentary || !user) return;
+  const handleUpdate = async () => {
+    if (!eventType || !indumentary || !user || !bookingData || !tableId) return;
 
     const validPlayers = [
       ...(selectedUsers.filter((player) => player !== null) as string[]),
       user._id,
     ];
 
-    const finalizeReserve = async () => {
-      createBooking(
+    const finalizeUpdate = async () => {
+      updateBooking(
         {
+          _id: bookingData?._id,
           eventType: eventType as "1V1" | "2V2",
           owner: user._id,
-          table: tableId,
+          table: tableId, // Aquí se pasa `tableId`
           players: validPlayers,
           timeBlock: params.timeBlockId,
           status: "PENDING",
@@ -155,15 +181,15 @@ export default function Reserve({ params }: { params: ReserveProps }) {
         {
           onSuccess: () => {
             showToast({
-              label: "Reserva creada exitosamente",
+              label: "Reserva actualizada exitosamente",
               type: "success",
             });
             router.push("/tables");
           },
           onError: (error) => {
-            console.error("Error al crear la reserva:", error);
+            console.error("Error al actualizar la reserva:", error);
             showToast({
-              label: "Error al crear la reserva",
+              label: "Error al actualizar la reserva",
               type: "error",
             });
           },
@@ -177,26 +203,32 @@ export default function Reserve({ params }: { params: ReserveProps }) {
     ) {
       showToast({
         label:
-          "¿Seguro que quieres realizar la reserva sin completar los jugadores?",
+          "¿Seguro que quieres actualizar la reserva sin completar los jugadores?",
         type: "warning",
         acceptButtonLabel: "Sí",
         denyButtonLabel: "No",
         onAccept() {
-          finalizeReserve();
+          finalizeUpdate();
         },
         onDeny() {
           showToast({
-            label: "Reserva no realizada",
+            label: "Actualización no realizada",
             type: "error",
           });
         },
       });
     } else {
-      finalizeReserve();
+      finalizeUpdate();
     }
   };
 
-  if (isLoading || isTimeBlockLoading || isTableLoading || isUsersLoading) {
+  if (
+    isLoading ||
+    isTimeBlockLoading ||
+    isTableLoading ||
+    isUsersLoading ||
+    isBookingLoading
+  ) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader size="lg" variant="dots" className="text-primary" />
@@ -221,6 +253,7 @@ export default function Reserve({ params }: { params: ReserveProps }) {
         setEventType={setEventType}
         setIndumentary={setIndumentary}
         resetInputs={resetInputs}
+        initialActive={eventType === "1V1" ? 0 : 1}
       />
       <div className="mt-8 flex w-full flex-col items-center justify-center">
         {eventType && (
@@ -233,7 +266,7 @@ export default function Reserve({ params }: { params: ReserveProps }) {
           />
         )}
       </div>
-      <div className="mt-6 flex flex-row justify-center gap-x-6">
+      <div className="mt-10 flex flex-row justify-center gap-x-6">
         <Button
           label="Cancelar"
           labelSize="text-sm"
@@ -241,14 +274,14 @@ export default function Reserve({ params }: { params: ReserveProps }) {
           onClick={() => router.back()}
         />
         <Button
-          label="Reservar"
+          label="Editar"
           labelSize="text-sm"
           className={
             eventType != null && indumentary != null
-              ? "btn-lg btn-primary"
-              : "btn-primary btn-lg btn-disabled"
+              ? "btn-lg btn-primary w-[102px]"
+              : "btn-primary btn-lg btn-disabled w-[102px]"
           }
-          onClick={handleReserve}
+          onClick={handleUpdate}
         />
       </div>
     </div>

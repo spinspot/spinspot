@@ -143,7 +143,11 @@ export default function Home() {
         className="btn-primary"
         onClick={handleLoginClick}
       />
-      <Pagination labels={["1", "2", "3", "4", "5"]} className="btn-neutral" />
+      <Pagination
+        labels={["1", "2", "3", "4", "5"]}
+        className="btn-neutral"
+        initialActiveIndex={1}
+      />
       <SelectInput
         options={[
           "Harry Potter",
