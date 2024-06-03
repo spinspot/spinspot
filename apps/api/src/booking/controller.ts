@@ -8,6 +8,7 @@ import {
   updateBookingParamsDefinition,
 } from "@spin-spot/models";
 import { Request, Response } from "express";
+import { startSession } from "mongoose";
 import { bookingService } from "./service";
 
 async function bookingWithUser(req: Request, res: Response) {
@@ -50,19 +51,23 @@ async function bookingWithUser(req: Request, res: Response) {
     return res.status(400).json({ error: "Hay jugadores repetidos" });
   }
 
-  const booking = await bookingService.createBooking({
-    ...reservationData,
-    owner: user!._id,
-    table: table!._id,
+  const session = await startSession();
+
+  const booking = await session.withTransaction(async () => {
+    const booking = await bookingService.createBooking({
+      ...reservationData,
+      owner: user!._id,
+      table: table!._id,
+    });
+
+    await timeBlockService.updateTimeBlock(reservationData.timeBlock, {
+      booking: booking._id,
+      status: "BOOKED",
+    });
+
+    return booking;
   });
 
-  await timeBlockService.updateTimeBlock(reservationData.timeBlock, {
-    booking: booking._id,
-  });
-
-  await timeBlockService.updateTimeBlock(reservationData.timeBlock, {
-    status: "BOOKED",
-  });
   res.status(200).json(booking);
 }
 
@@ -88,18 +93,24 @@ async function updateBooking(req: Request, res: Response) {
 async function cancelBooking(req: Request, res: Response) {
   const params = updateBookingParamsDefinition.parse(req.params);
 
-  const booking = await bookingService.updateBooking(params._id, {
-    status: "FINISHED",
-  });
+  const session = await startSession();
 
-  if (booking?.timeBlock) {
-    await timeBlockService.updateTimeBlock(booking.timeBlock, {
-      booking: null,
-      status: "AVAILABLE",
+  const booking = await session.withTransaction(async () => {
+    const booking = await bookingService.updateBooking(params._id, {
+      status: "FINISHED",
     });
-  } else {
-    console.error("booking.timeBlock is undefined");
-  }
+
+    if (booking?.timeBlock) {
+      await timeBlockService.updateTimeBlock(booking.timeBlock, {
+        booking: null,
+        status: "AVAILABLE",
+      });
+    } else {
+      console.error("booking.timeBlock is undefined");
+    }
+
+    return booking;
+  });
 
   return res.status(200).json(booking);
 }
