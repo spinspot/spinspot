@@ -8,6 +8,7 @@ import {
   updateBookingParamsDefinition,
 } from "@spin-spot/models";
 import { Request, Response } from "express";
+import { startSession } from "mongoose";
 import { bookingService } from "./service";
 
 async function bookingWithUser(req: Request, res: Response) {
@@ -18,7 +19,7 @@ async function bookingWithUser(req: Request, res: Response) {
     reservationData.timeBlock,
   );
 
-  if (user?._id?.toString() !== req.body.owner) {
+  if (user?._id?.toString() !== reservationData.owner) {
     return res
       .status(401)
       .json({ error: "You cannot create a booking for a different user" });
@@ -38,23 +39,35 @@ async function bookingWithUser(req: Request, res: Response) {
 
   const table = await tableService.getTable(timeBlock.table);
 
-  if (!table || !table.isActive || req.body.table !== table.id.toString()) {
+  if (!table || !table.isActive || reservationData.table !== `${table._id}`) {
     return res.status(400).json({ error: "Table error while booking" });
   }
 
-  const booking = await bookingService.createBooking({
-    ...reservationData,
-    owner: user!._id,
-    table: table!._id,
+  const uniquePlayers =
+    new Set(reservationData.players?.map((player) => `${player}`)).size ===
+    reservationData.players?.length;
+
+  if (!uniquePlayers) {
+    return res.status(400).json({ error: "Hay jugadores repetidos" });
+  }
+
+  const session = await startSession();
+
+  const booking = await session.withTransaction(async () => {
+    const booking = await bookingService.createBooking({
+      ...reservationData,
+      owner: user!._id,
+      table: table!._id,
+    });
+
+    await timeBlockService.updateTimeBlock(reservationData.timeBlock, {
+      booking: booking._id,
+      status: "BOOKED",
+    });
+
+    return booking;
   });
 
-  await timeBlockService.updateTimeBlock(reservationData.timeBlock, {
-    booking: booking._id,
-  });
-
-  await timeBlockService.updateTimeBlock(reservationData.timeBlock, {
-    status: "BOOKED",
-  });
   res.status(200).json(booking);
 }
 
@@ -73,8 +86,33 @@ async function getBooking(req: Request, res: Response) {
 async function updateBooking(req: Request, res: Response) {
   const params = updateBookingParamsDefinition.parse(req.params);
   const input = updateBookingInputDefinition.parse(req.body);
-  const user = await bookingService.updateBooking(params._id, input);
-  return res.status(200).json(user);
+  const booking = await bookingService.updateBooking(params._id, input);
+  return res.status(200).json(booking);
+}
+
+async function cancelBooking(req: Request, res: Response) {
+  const params = updateBookingParamsDefinition.parse(req.params);
+
+  const session = await startSession();
+
+  const booking = await session.withTransaction(async () => {
+    const booking = await bookingService.updateBooking(params._id, {
+      status: "FINISHED",
+    });
+
+    if (booking?.timeBlock) {
+      await timeBlockService.updateTimeBlock(booking.timeBlock, {
+        booking: null,
+        status: "AVAILABLE",
+      });
+    } else {
+      console.error("booking.timeBlock is undefined");
+    }
+
+    return booking;
+  });
+
+  return res.status(200).json(booking);
 }
 
 export const bookingController = {
@@ -82,4 +120,5 @@ export const bookingController = {
   getBookings,
   getBooking,
   updateBooking,
+  cancelBooking,
 } as const;
