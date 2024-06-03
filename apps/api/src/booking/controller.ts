@@ -1,6 +1,7 @@
 import { tableService } from "@/table";
 import { timeBlockService } from "@/time-block";
 import {
+  ApiError,
   createBookingInputDefinition,
   getBookingParamsDefinition,
   getBookingsQueryDefinition,
@@ -26,21 +27,27 @@ async function bookingWithUser(req: Request, res: Response) {
   }
 
   if (!timeBlock || !timeBlock.table || timeBlock.status !== "AVAILABLE") {
-    return res.status(400).json({ error: "Time Block error while booking" });
+    throw new ApiError({
+      status: 400,
+      errors: [{ message: "El horario seleccionado no está disponible" }],
+    });
   }
 
   const currentTime = new Date();
   if (currentTime > timeBlock.startTime) {
-    return res.status(400).json({
-      error:
-        "Current time cannot be after the start time of the selected time block",
+    throw new ApiError({
+      status: 400,
+      errors: [{ message: "El horario seleccionado ya pasó" }],
     });
   }
 
   const table = await tableService.getTable(timeBlock.table);
 
   if (!table || !table.isActive || reservationData.table !== `${table._id}`) {
-    return res.status(400).json({ error: "Table error while booking" });
+    throw new ApiError({
+      status: 400,
+      errors: [{ message: "La mesa seleccionada no está disponible" }],
+    });
   }
 
   const uniquePlayers =
@@ -48,7 +55,10 @@ async function bookingWithUser(req: Request, res: Response) {
     reservationData.players?.length;
 
   if (!uniquePlayers) {
-    return res.status(400).json({ error: "Hay jugadores repetidos" });
+    throw new ApiError({
+      status: 400,
+      errors: [{ message: "Hay jugadores repetidos en la reserva" }],
+    });
   }
 
   const session = await startSession();

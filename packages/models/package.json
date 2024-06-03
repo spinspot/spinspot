@@ -12,6 +12,9 @@
   },
   "dependencies": {
     "@spin-spot/utils": "*",
+    "lodash.foreach": "^4.5.0",
+    "lodash.get": "^4.4.2",
+    "lodash.merge": "^4.6.2",
     "mongoose": "^8.3.4",
     "zod": "^3.23.8"
   },

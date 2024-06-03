@@ -37,5 +37,5 @@ export const timeBlockController = {
   createTimeBlock,
   getTimeBlock,
   getTimeBlocks,
-  updateTimeBlock
+  updateTimeBlock,
 } as const;
