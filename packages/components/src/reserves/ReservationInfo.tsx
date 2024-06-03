@@ -27,7 +27,7 @@ export function ReservationInfo({
         <h1 className="text-3xl font-bold">Datos de la reserva</h1>
       </div>
       <div className="flex w-full justify-center">
-        <div className="grid grid-cols-2 gap-x-8 gap-y-4">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-4 md:gap-x-8">
           <Badge
             labelName="Fecha"
             label={dateReserve}
