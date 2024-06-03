@@ -233,7 +233,7 @@ export default function Reserve({ params }: { params: ReserveProps }) {
           />
         )}
       </div>
-      <div className="mt-10 flex flex-row justify-center gap-x-6">
+      <div className="mt-6 flex flex-row justify-center gap-x-6">
         <Button
           label="Cancelar"
           labelSize="text-sm"

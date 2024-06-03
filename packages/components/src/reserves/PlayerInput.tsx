@@ -20,7 +20,7 @@ export function PlayerInput({
       {searchTexts.map((text, i) => (
         <div
           key={i}
-          className="mb-6 mt-2 flex w-full flex-col items-center justify-center"
+          className="mt-2 flex w-full flex-col items-center justify-center"
         >
           <TextInput
             placeholder="Type here"
@@ -36,7 +36,7 @@ export function PlayerInput({
             }
           />
           {(text?.length ?? 0) >= 1 && suggestions[i]?.length !== 0 && (
-            <ul className="bg-primary border-primary animate-slide-down mt-2 w-3/4 rounded-md border">
+            <ul className="bg-primary animate-slide-down mt-2 w-3/4 rounded-md">
               {suggestions[i]?.map((user, index) => (
                 <li
                   key={index}

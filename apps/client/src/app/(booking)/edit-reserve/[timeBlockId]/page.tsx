@@ -13,8 +13,8 @@ import {
   useTable,
   useTimeBlock,
   useToast,
-  useUsers,
   useUpdateBooking,
+  useUsers,
 } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -58,21 +58,21 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
   useEffect(() => {
     if (timeBlockData && tableData && fetchedUsers && bookingData) {
       const { startTime, endTime } = timeBlockData;
-  
+
       setStartTime(
         new Date(startTime).toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
-        })
+        }),
       );
-  
+
       setEndTime(
         new Date(endTime).toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
-        })
+        }),
       );
-  
+
       setDateReserve(
         new Date(startTime)
           .toLocaleDateString([], {
@@ -80,30 +80,30 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
             month: "2-digit",
             day: "2-digit",
           })
-          .replace(/\//g, "-")
+          .replace(/\//g, "-"),
       );
-  
+
       setSelectedUsers(
         bookingData.players
           ? bookingData.players
               .map((player) => String(player))
               .slice(0, bookingData.eventType === "1V1" ? 1 : 3)
-          : []
+          : [],
       );
-  
+
       setSearchTexts(
         bookingData.players
           ? bookingData.players
               .map(
                 (player, _index) =>
-                  `${fetchedUsers.find((u) => u._id === player)?.firstName || ''} ${
-                    fetchedUsers.find((u) => u._id === player)?.lastName || ''
-                  }`
+                  `${fetchedUsers.find((u) => u._id === player)?.firstName || ""} ${
+                    fetchedUsers.find((u) => u._id === player)?.lastName || ""
+                  }`,
               )
               .slice(0, bookingData.eventType === "1V1" ? 1 : 3)
-          : []
+          : [],
       );
-  
+
       setEventType(bookingData.eventType);
       setTableCode(tableData.code);
       setTableId(tableData._id.toString()); // Asegúrate de que `tableId` esté definido
@@ -161,12 +161,12 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
 
   const handleUpdate = async () => {
     if (!eventType || !indumentary || !user || !bookingData || !tableId) return;
-  
+
     const validPlayers = [
       ...(selectedUsers.filter((player) => player !== null) as string[]),
       user._id,
     ];
-  
+
     const finalizeUpdate = async () => {
       updateBooking(
         {
@@ -193,16 +193,17 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
               type: "error",
             });
           },
-        }
+        },
       );
     };
-  
+
     if (
       (eventType === "1V1" && validPlayers.length !== 2) ||
       (eventType === "2V2" && validPlayers.length !== 4)
     ) {
       showToast({
-        label: "¿Seguro que quieres actualizar la reserva sin completar los jugadores?",
+        label:
+          "¿Seguro que quieres actualizar la reserva sin completar los jugadores?",
         type: "warning",
         acceptButtonLabel: "Sí",
         denyButtonLabel: "No",
@@ -220,9 +221,14 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
       finalizeUpdate();
     }
   };
-  
 
-  if (isLoading || isTimeBlockLoading || isTableLoading || isUsersLoading || isBookingLoading) {
+  if (
+    isLoading ||
+    isTimeBlockLoading ||
+    isTableLoading ||
+    isUsersLoading ||
+    isBookingLoading
+  ) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader size="lg" variant="dots" className="text-primary" />
@@ -272,8 +278,8 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
           labelSize="text-sm"
           className={
             eventType != null && indumentary != null
-              ? "btn-lg btn-primary"
-              : "btn-primary btn-lg btn-disabled"
+              ? "btn-lg btn-primary w-[102px]"
+              : "btn-primary btn-lg btn-disabled w-[102px]"
           }
           onClick={handleUpdate}
         />
@@ -281,5 +287,3 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
     </div>
   );
 }
-
-
