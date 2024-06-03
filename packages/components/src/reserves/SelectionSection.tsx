@@ -8,6 +8,7 @@ interface SelectionSectionProps {
   setEventType: (_eventType: string | null) => void;
   setIndumentary: (_indumentary: string | null) => void;
   resetInputs: (_length: number) => void;
+  initialActive?: number | null;
 }
 
 export function SelectionSection({
@@ -16,6 +17,7 @@ export function SelectionSection({
   setEventType,
   setIndumentary,
   resetInputs,
+  initialActive,
 }: SelectionSectionProps) {
   return (
     <div>
@@ -23,6 +25,7 @@ export function SelectionSection({
         <h3 className="mr-1 text-lg">Seleccione modalidad: </h3>
         <Pagination
           labels={options}
+          initialActiveIndex={initialActive ?? null}
           size="sm"
           onPageChange={(label) => {
             setEventType(label ?? null);
