@@ -8,7 +8,7 @@ import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
 import { authController } from "./auth";
-import { errorHandler } from "./error-handler";
+import { errorHandler } from "./errors";
 import { router } from "./router";
 
 declare global {

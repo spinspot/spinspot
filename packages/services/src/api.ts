@@ -1,6 +1,8 @@
+import { ApiError } from "@spin-spot/models";
+
 type ApiRequestInit = Omit<RequestInit, "body"> & { body?: any };
 
-function fetchApi(input: string | URL, init?: ApiRequestInit) {
+async function fetchApi(input: string | URL, init?: ApiRequestInit) {
   const url = new URL(input, process.env.NEXT_PUBLIC_API_URL);
   const headers: HeadersInit = {};
 
@@ -8,18 +10,30 @@ function fetchApi(input: string | URL, init?: ApiRequestInit) {
     const body = JSON.stringify(init?.body);
     headers["Content-Type"] = "application/json";
 
-    return fetch(url.href, {
+    const res = await fetch(url.href, {
       ...init,
       headers,
       body,
       credentials: "include",
     });
+
+    if (!res.ok) {
+      throw new ApiError(await res.json());
+    }
+
+    return res;
   } else {
-    return fetch(url.href, {
+    const res = await fetch(url.href, {
       ...init,
       headers,
       credentials: "include",
     });
+
+    if (!res.ok) {
+      throw new ApiError(await res.json());
+    }
+
+    return res;
   }
 }
 
