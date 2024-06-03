@@ -1,4 +1,5 @@
 import {
+  ApiError,
   createUserInputDefinition,
   getUserParamsDefinition,
   getUsersQueryDefinition,
@@ -34,7 +35,10 @@ async function updateUser(req: Request, res: Response) {
     req.user?._id.toString() !== params._id &&
     req.user?.userType !== "ADMIN"
   ) {
-    return res.status(401).end();
+    throw new ApiError({
+      status: 401,
+      errors: [{ message: "Usuario no autorizado" }],
+    });
   }
 
   const user = await userService.updateUser(params._id, input);

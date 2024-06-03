@@ -2,6 +2,7 @@
 
 import { Button, Pagination, SelectInput } from "@spin-spot/components";
 import {
+  ApiError,
   TCreateBookingInputDefinition,
   TCreateTimeBlockInputDefinition,
   TUpdateBookingInputDefinition,
@@ -56,8 +57,15 @@ export default function Home() {
           duration: 3000,
         });
       },
-      onError: () => {
-        console.error("Failed to create time block");
+      onError: (err) => {
+        if (err instanceof ApiError)
+          err.errors.forEach((error) =>
+            showToast({
+              label: error.message,
+              type: "error",
+              duration: 3000,
+            }),
+          );
       },
     });
   };

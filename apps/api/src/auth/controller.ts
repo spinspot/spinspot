@@ -1,6 +1,7 @@
 import { sendMail } from "@/email";
 import { userService } from "@/user";
 import {
+  ApiError,
   IUser,
   forgotPasswordInputDefinition,
   resetPasswordInputDefinition,
@@ -112,7 +113,10 @@ function signInWithCredentials(
         return next(err);
       }
       if (!user) {
-        throw "Correo electrónico o contraseña inválidos";
+        throw new ApiError({
+          status: 401,
+          errors: [{ message: "Correo electrónico o contraseña inválidos" }],
+        });
       }
 
       const jwt = authService.signJWT(user);
@@ -148,7 +152,10 @@ function signInWithGoogleCallback(
         return next(err);
       }
       if (!user) {
-        throw "Autenticación con Google fallida";
+        throw new ApiError({
+          status: 401,
+          errors: [{ message: "Autenticación con Google fallida" }],
+        });
       }
 
       const jwt = authService.signJWT(user);
@@ -185,7 +192,10 @@ function refresh(req: Request, res: Response, next: NextFunction) {
         return next(err);
       }
       if (!user) {
-        throw "Token inválido";
+        throw new ApiError({
+          status: 401,
+          errors: [{ message: "Token de autenticación inválido" }],
+        });
       }
 
       const jwt = authService.signJWT(user);
@@ -212,7 +222,10 @@ async function forgotPassword(req: Request, res: Response) {
 
   const users = await userService.getUsers(email);
   if (users.length !== 1) {
-    return res.status(404).send("El usuario no existe!");
+    throw new ApiError({
+      status: 404,
+      errors: [{ message: "El usuario no existe" }],
+    });
   }
   const user = users[0]!;
   const token = authService.signJWT(
@@ -275,18 +288,30 @@ async function resetPassword(req: Request, res: Response) {
 
   const user = await userService.getUser(id);
   if (!user) {
-    return res.status(404).json({ status: "El usuario no exste!" });
+    throw new ApiError({
+      status: 404,
+      errors: [{ message: "El usuario no existe" }],
+    });
   }
   const secret = process.env.JWT_SECRET + user.password;
 
   if (!token) {
-    return res.status(404).send("Token undefined");
+    throw new ApiError({
+      status: 401,
+      errors: [{ message: "Enlace de recuperación inválido" }],
+    });
   }
   const verifyUser: any = verify(token, secret);
   if (verifyUser && verifyUser?._id === `${user._id}`) {
     await userService.updateUser(user._id, { password });
+
+    return res.status(200).end();
   }
-  return res.status(401).json({ status: "Usted no esta autorizado" });
+
+  throw new ApiError({
+    status: 401,
+    errors: [{ message: "Usuario no autorizado" }],
+  });
 }
 
 export const authController = {

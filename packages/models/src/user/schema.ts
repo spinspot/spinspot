@@ -1,4 +1,5 @@
 import { Schema } from "mongoose";
+import mongooseUniqueValidator from "mongoose-unique-validator";
 import { IUser } from "./dto";
 
 export const userSchema = new Schema<IUser>(
@@ -29,3 +30,4 @@ export const userSchema = new Schema<IUser>(
   },
   { timestamps: true },
 );
+userSchema.plugin(mongooseUniqueValidator);
