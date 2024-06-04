@@ -42,7 +42,7 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
     if (timeBlock.isSuccess) {
       setSelectedUsers(
         timeBlock.data.booking.players
-          .map((player) => String(player))
+          .map((player) => `${player._id}`)
           .slice(0, timeBlock.data?.booking.eventType === "1V1" ? 1 : 3) || [],
       );
 
@@ -54,7 +54,7 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
 
       setEventType(timeBlock.data?.booking.eventType);
     }
-  }, [timeBlock]);
+  }, [timeBlock.status]);
 
   const handleSearch = (index: number, text: string) => {
     const newSearchTexts = [...searchTexts];
@@ -229,6 +229,7 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
         setEventType={setEventType}
         setIndumentary={setIndumentary}
         resetInputs={resetInputs}
+        initialActive={eventType === "1V1" ? 0 : 1}
       />
       <div className="mt-8 flex w-full flex-col items-center justify-center">
         {eventType && (
