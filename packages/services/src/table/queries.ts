@@ -18,9 +18,10 @@ export async function getTable(_id: TGetTableParamsDefinition["_id"]) {
   return table;
 }
 
-export function useTable(_id: TGetTableParamsDefinition["_id"]) {
+export function useTable(_id?: TGetTableParamsDefinition["_id"]) {
   return useQuery({
     queryKey: ["getTable", _id],
-    queryFn: () => getTable(_id),
+    queryFn: () => getTable(_id || ""),
+    enabled: Boolean(_id),
   });
 }

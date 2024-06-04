@@ -9,8 +9,6 @@ import {
 } from "@spin-spot/components";
 import {
   useAuth,
-  useBooking,
-  useTable,
   useTimeBlock,
   useToast,
   useUpdateBooking,
@@ -28,13 +26,6 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
   const { showToast } = useToast();
   const options = ["1V1", "2V2"];
   const optinosNo = ["NO", "SI"];
-  const [isLoading, setIsLoading] = useState(false);
-  const [startTime, setStartTime] = useState<string>("");
-  const [endTime, setEndTime] = useState<string>("");
-  const [dateReserve, setDateReserve] = useState<string>("");
-  const [tableCode, setTableCode] = useState<string>("");
-  const [tableId, setTableId] = useState<string>("");
-  const [users, setUsers] = useState<any[]>([]);
   const [searchTexts, setSearchTexts] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<any[][]>([]);
   const [selectedUsers, setSelectedUsers] = useState<(string | null)[]>([]);
@@ -42,73 +33,28 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
   const [indumentary, setIndumentary] = useState<string | null>(null);
   const router = useRouter();
 
-  const { data: timeBlockData, isLoading: isTimeBlockLoading } = useTimeBlock(
-    params.timeBlockId,
-  );
-  const { data: tableData, isLoading: isTableLoading } = useTable(
-    timeBlockData?.table || "",
-  );
-  const { data: fetchedUsers, isLoading: isUsersLoading } = useUsers();
-  const { data: bookingData, isLoading: isBookingLoading } = useBooking(
-    timeBlockData?.booking || "",
-  );
+  const timeBlock = useTimeBlock(params.timeBlockId);
+  const users = useUsers();
 
-  const { mutate: updateBooking } = useUpdateBooking();
+  const updateBooking = useUpdateBooking();
 
   useEffect(() => {
-    if (timeBlockData && tableData && fetchedUsers && bookingData) {
-      const { startTime, endTime } = timeBlockData;
-
-      setStartTime(
-        new Date(startTime).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      );
-
-      setEndTime(
-        new Date(endTime).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      );
-
-      setDateReserve(
-        new Date(startTime)
-          .toLocaleDateString([], {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          })
-          .replace(/\//g, "-"),
-      );
-
+    if (timeBlock.isSuccess) {
       setSelectedUsers(
-        bookingData.players
-          ? bookingData.players
-              .map((player) => String(player))
-              .slice(0, bookingData.eventType === "1V1" ? 1 : 3)
-          : [],
+        timeBlock.data.booking.players
+          .map((player) => String(player))
+          .slice(0, timeBlock.data?.booking.eventType === "1V1" ? 1 : 3) || [],
       );
 
       setSearchTexts(
-        bookingData.players
-          ? bookingData.players
-              .map(
-                (player, _index) =>
-                  `${fetchedUsers.find((u) => u._id === player)?.firstName || ""} ${
-                    fetchedUsers.find((u) => u._id === player)?.lastName || ""
-                  }`,
-              )
-              .slice(0, bookingData.eventType === "1V1" ? 1 : 3)
-          : [],
+        timeBlock.data.booking.players
+          .map((player, _index) => `${player.firstName} ${player.lastName}`)
+          .slice(0, timeBlock.data?.booking.eventType === "1V1" ? 1 : 3) || [],
       );
 
-      setEventType(bookingData.eventType);
-      setTableCode(tableData.code);
-      setTableId(tableData._id.toString()); // Asegúrate de que `tableId` esté definido
+      setEventType(timeBlock.data?.booking.eventType);
     }
-  }, [timeBlockData, tableData, fetchedUsers, bookingData]);
+  }, [timeBlock]);
 
   const handleSearch = (index: number, text: string) => {
     const newSearchTexts = [...searchTexts];
@@ -121,7 +67,7 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
 
     if (text.length >= 1) {
       const lowerCaseText = text.toLowerCase();
-      const filtered = fetchedUsers?.filter((user) => {
+      const filtered = users.data?.filter((user) => {
         const fullName = `${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}`;
         return (
           user.firstName.toLowerCase().includes(lowerCaseText) ||
@@ -160,7 +106,14 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
   };
 
   const handleUpdate = async () => {
-    if (!eventType || !indumentary || !user || !bookingData || !tableId) return;
+    if (
+      !eventType ||
+      !indumentary ||
+      !user ||
+      !timeBlock.data?.booking ||
+      !timeBlock.data.table._id
+    )
+      return;
 
     const validPlayers = [
       ...(selectedUsers.filter((player) => player !== null) as string[]),
@@ -168,12 +121,12 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
     ];
 
     const finalizeUpdate = async () => {
-      updateBooking(
+      updateBooking.mutate(
         {
-          _id: bookingData?._id,
+          _id: timeBlock.data?.booking._id,
           eventType: eventType as "1V1" | "2V2",
           owner: user._id,
-          table: tableId, // Aquí se pasa `tableId`
+          table: timeBlock.data.table._id, // Aquí se pasa `tableId`
           players: validPlayers,
           timeBlock: params.timeBlockId,
           status: "PENDING",
@@ -222,13 +175,22 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
     }
   };
 
-  if (
-    isLoading ||
-    isTimeBlockLoading ||
-    isTableLoading ||
-    isUsersLoading ||
-    isBookingLoading
-  ) {
+  useEffect(() => {
+    if (
+      ![timeBlock.status, users.status].some(
+        (status) => status === "pending",
+      ) &&
+      [timeBlock.status, users.status].some((status) => status === "error")
+    ) {
+      showToast({
+        label: "Error de conexión",
+        type: "error",
+      });
+      router.back();
+    }
+  }, [timeBlock.status, users.status]);
+
+  if (timeBlock.isLoading || users.isLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader size="lg" variant="dots" className="text-primary" />
@@ -238,13 +200,27 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
 
   return (
     <div className="font-body flex-grow py-32">
-      <ReservationInfo
-        dateReserve={dateReserve}
-        startTime={startTime}
-        endTime={endTime}
-        tableCode={tableCode}
-        user={user}
-      />
+      {timeBlock.isSuccess && (
+        <ReservationInfo
+          dateReserve={new Date(timeBlock.data.startTime)
+            .toLocaleDateString([], {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            })
+            .replace(/\//g, "-")}
+          startTime={new Date(timeBlock.data.startTime).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+          endTime={new Date(timeBlock.data.endTime).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+          tableCode={timeBlock.data.table.code}
+          user={user}
+        />
+      )}
       <SelectionSection
         options={options}
         optinosNo={optinosNo}
@@ -253,7 +229,6 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
         setEventType={setEventType}
         setIndumentary={setIndumentary}
         resetInputs={resetInputs}
-        initialActive={eventType === "1V1" ? 0 : 1}
       />
       <div className="mt-8 flex w-full flex-col items-center justify-center">
         {eventType && (

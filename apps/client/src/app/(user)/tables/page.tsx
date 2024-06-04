@@ -4,11 +4,11 @@ import { Button, Calendar, Loader, Pagination } from "@spin-spot/components";
 import { IPopulatedTimeBlock } from "@spin-spot/models";
 import {
   useAuth,
+  useCancelBooking,
   useTables,
   useTimeBlocks,
   useToast,
   useUpdateTimeBlock,
-  useCancelBooking
 } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -26,7 +26,7 @@ export default function Page() {
   const router = useRouter();
   const { showToast } = useToast();
   const { mutate: updateTimeBlock } = useUpdateTimeBlock();
-  const { mutate: cancelBooking} = useCancelBooking();
+  const { mutate: cancelBooking } = useCancelBooking();
 
   const handleShowCancelationToast = (
     timeBlockId: string,

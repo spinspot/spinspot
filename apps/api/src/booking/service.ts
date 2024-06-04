@@ -11,12 +11,22 @@ import { model } from "mongoose";
 const Booking = model("Booking", bookingSchema);
 
 async function getBookings(filter: TGetBookingsQueryDefinition = {}) {
-  const bookings = await Booking.find(filter);
+  const bookings = await Booking.find(filter).populate([
+    "owner",
+    "players",
+    "table",
+    "timeBlock",
+  ]);
   return bookings;
 }
 
 async function getBooking(_id: TGetBookingParamsDefinition["_id"]) {
-  const booking = await Booking.findById(_id);
+  const booking = await Booking.findById(_id).populate([
+    "owner",
+    "players",
+    "table",
+    "timeBlock",
+  ]);
   return booking;
 }
 

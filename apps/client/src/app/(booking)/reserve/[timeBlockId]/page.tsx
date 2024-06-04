@@ -18,22 +18,15 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface ReserveProps {
+interface ReserveParams {
   timeBlockId: string;
 }
 
-export default function Reserve({ params }: { params: ReserveProps }) {
+export default function Reserve({ params }: { params: ReserveParams }) {
   const { user } = useAuth();
   const { showToast } = useToast();
   const options = ["1V1", "2V2"];
   const optinosNo = ["NO", "SI"];
-  const [isLoading, setIsLoading] = useState(false);
-  const [startTime, setStartTime] = useState<string>("");
-  const [endTime, setEndTime] = useState<string>("");
-  const [dateReserve, setDateReserve] = useState<string>("");
-  const [tableCode, setTableCode] = useState<string>("");
-  const [tableId, setTableId] = useState<string>("");
-  const [users, setUsers] = useState<any[]>([]);
   const [searchTexts, setSearchTexts] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<any[][]>([]);
   const [selectedUsers, setSelectedUsers] = useState<(string | null)[]>([]);
@@ -42,44 +35,9 @@ export default function Reserve({ params }: { params: ReserveProps }) {
   const router = useRouter();
 
   const timeBlock = useTimeBlock(params.timeBlockId);
-  const table = useTable(timeBlock.data?.table || "");
-  const fetchedUsers = useUsers();
+  const table = useTable(timeBlock.data?.table._id);
+  const users = useUsers();
   const createBooking = useCreateBooking();
-
-  useEffect(() => {
-    if (timeBlock.data && table.data && fetchedUsers.data) {
-      const { startTime, endTime } = timeBlock.data;
-
-      setStartTime(
-        new Date(startTime).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      );
-
-      setEndTime(
-        new Date(endTime).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      );
-
-      setDateReserve(
-        new Date(startTime)
-          .toLocaleDateString([], {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          })
-          .replace(/\//g, "-"),
-      );
-
-      setTableCode(table.data.code);
-      setTableId(table.data._id.toString());
-      setUsers(fetchedUsers.data);
-      setIsLoading(false);
-    }
-  }, [timeBlock.data, table.data, fetchedUsers.data]);
 
   const handleSearch = (index: number, text: string) => {
     const newSearchTexts = [...searchTexts];
@@ -92,14 +50,15 @@ export default function Reserve({ params }: { params: ReserveProps }) {
 
     if (text.length >= 1) {
       const lowerCaseText = text.toLowerCase();
-      const filtered = users.filter((user) => {
-        const fullName = `${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}`;
-        return (
-          user.firstName.toLowerCase().includes(lowerCaseText) ||
-          user.lastName.toLowerCase().includes(lowerCaseText) ||
-          fullName.includes(lowerCaseText)
-        );
-      });
+      const filtered =
+        users.data?.filter((user) => {
+          const fullName = `${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}`;
+          return (
+            user.firstName.toLowerCase().includes(lowerCaseText) ||
+            user.lastName.toLowerCase().includes(lowerCaseText) ||
+            fullName.includes(lowerCaseText)
+          );
+        }) || [];
       const newSuggestions = [...suggestions];
       newSuggestions[index] = filtered;
       setSuggestions(newSuggestions);
@@ -131,7 +90,7 @@ export default function Reserve({ params }: { params: ReserveProps }) {
   };
 
   const handleReserve = async () => {
-    if (!eventType || !indumentary || !user) return;
+    if (!eventType || !indumentary || !user || !timeBlock.isSuccess) return;
 
     const validPlayers = [
       ...(selectedUsers.filter((player) => player !== null) as string[]),
@@ -143,7 +102,7 @@ export default function Reserve({ params }: { params: ReserveProps }) {
         {
           eventType: eventType as "1V1" | "2V2",
           owner: user._id,
-          table: tableId,
+          table: timeBlock.data?.table._id,
           players: validPlayers,
           timeBlock: params.timeBlockId,
           status: "PENDING",
@@ -194,10 +153,10 @@ export default function Reserve({ params }: { params: ReserveProps }) {
 
   useEffect(() => {
     if (
-      ![timeBlock.status, table.status, fetchedUsers.status].some(
+      ![timeBlock.status, table.status, users.status].some(
         (status) => status === "pending",
       ) &&
-      [timeBlock.status, table.status, fetchedUsers.status].some(
+      [timeBlock.status, table.status, users.status].some(
         (status) => status === "error",
       )
     ) {
@@ -207,14 +166,9 @@ export default function Reserve({ params }: { params: ReserveProps }) {
       });
       router.back();
     }
-  }, [timeBlock.status, table.status, fetchedUsers.status]);
+  }, [timeBlock.status, table.status, users.status]);
 
-  if (
-    isLoading ||
-    timeBlock.isLoading ||
-    table.isLoading ||
-    fetchedUsers.isLoading
-  ) {
+  if (timeBlock.isLoading || table.isLoading || users.isLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader size="lg" variant="dots" className="text-primary" />
@@ -224,13 +178,27 @@ export default function Reserve({ params }: { params: ReserveProps }) {
 
   return (
     <div className="font-body flex-grow py-32">
-      <ReservationInfo
-        dateReserve={dateReserve}
-        startTime={startTime}
-        endTime={endTime}
-        tableCode={tableCode}
-        user={user}
-      />
+      {timeBlock.isSuccess && (
+        <ReservationInfo
+          dateReserve={new Date(timeBlock.data.startTime)
+            .toLocaleDateString([], {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            })
+            .replace(/\//g, "-")}
+          startTime={new Date(timeBlock.data.startTime).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+          endTime={new Date(timeBlock.data.endTime).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+          tableCode={timeBlock.data.table.code}
+          user={user}
+        />
+      )}
       <SelectionSection
         options={options}
         optinosNo={optinosNo}
