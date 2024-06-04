@@ -60,7 +60,7 @@ export default function Register() {
     <div className="flex flex-col items-center justify-center">
       <div className="w-96 space-y-4 rounded-lg p-8">
         <div className="flex flex-col gap-1">
-          <h2 className="text-primary mb-1 text-center text-3xl font-black">
+          <h2 className="text-primary dark:text-base-300 mb-1 text-center text-3xl font-black">
             Registrarse
           </h2>
           <TextInput
@@ -115,7 +115,7 @@ export default function Register() {
           onClick={handleSubmit(handleSignUp)}
         />
         <Button
-          className="btn-sm btn-link text-neutral w-full"
+          className="btn-sm btn-link text-neutral dark:text-base-300 w-full"
           label="Ya tienes cuenta? Inicia Sesión"
           labelSize="text-md"
           onClick={handleRegisterClick}

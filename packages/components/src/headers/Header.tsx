@@ -76,7 +76,7 @@ export function Header() {
           role="button"
           className="btn btn-link btn-lg avatar"
         >
-          <SpinSpotIcon />
+          <SpinSpotIcon className="dark:text-base-100" />
         </Link>
       </div>
       <div className="navbar-end">

@@ -60,7 +60,7 @@ export default function Login() {
     <div className="flex flex-col items-center justify-center">
       <div className="w-96 space-y-4 rounded-lg px-8 pb-2 pt-8">
         <div className="flex flex-col gap-1">
-          <h2 className="text-primary mb-1 text-center text-3xl font-black">
+          <h2 className="text-primary dark:text-base-300 mb-1 text-center text-3xl font-black">
             Iniciar Sesión
           </h2>
           <TextInput
@@ -105,7 +105,7 @@ export default function Login() {
           }
         />
         <Button
-          className="btn-sm btn-link text-neutral w-full"
+          className="btn-sm btn-link text-neutral dark:text-base-300 w-full"
           label="Eres nuevo? Registrate"
           labelSize="text-md"
           onClick={handleRegisterClick}
@@ -113,7 +113,7 @@ export default function Login() {
       </div>
       <div className="flex flex-col gap-1">
         <Button
-          className="btn-sm btn-link text-neutral w-full space-y-0"
+          className="btn-sm btn-link text-neutral dark:text-base-300 w-full space-y-0"
           label="Olvidaste tu contraseña?"
           labelSize="text-md"
           onClick={handleForgotPasswordClick}
