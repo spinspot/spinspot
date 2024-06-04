@@ -40,16 +40,24 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
 
   useEffect(() => {
     if (timeBlock.isSuccess) {
+      const maxPlayers = timeBlock.data?.booking.eventType === "1V1" ? 1 : 3;
+      const emptyPlayers =
+        maxPlayers - timeBlock.data.booking.players.length + 1;
+
       setSelectedUsers(
         timeBlock.data.booking.players
+          .slice(0, -1)
           .map((player) => `${player._id}`)
-          .slice(0, timeBlock.data?.booking.eventType === "1V1" ? 1 : 3) || [],
+          .concat(new Array(emptyPlayers).fill(null))
+          .slice(0, maxPlayers) || [],
       );
 
       setSearchTexts(
         timeBlock.data.booking.players
+          .slice(0, -1)
           .map((player, _index) => `${player.firstName} ${player.lastName}`)
-          .slice(0, timeBlock.data?.booking.eventType === "1V1" ? 1 : 3) || [],
+          .concat(new Array(emptyPlayers).fill(""))
+          .slice(0, maxPlayers) || [],
       );
 
       setEventType(timeBlock.data?.booking.eventType);
