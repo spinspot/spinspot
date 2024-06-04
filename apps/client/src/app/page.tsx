@@ -1,53 +1,49 @@
 "use client";
 
-import { Button, Pagination, SelectInput } from "@spin-spot/components";
-import { useToast } from "@spin-spot/services";
+import {
+  Button,
+  LayoutWaves,
+  Loader,
+  SpinSpotIcon,
+} from "@spin-spot/components";
+import { useCurrentUser } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Home() {
   const router = useRouter();
-  const { showToast } = useToast();
+
+  const currentUser = useCurrentUser();
+
+  useEffect(() => {
+    if (currentUser.data) {
+      router.push("/dashboard");
+    }
+  }, [currentUser.data]);
 
   const handleLoginClick = () => {
     router.push("/login");
   };
 
-  // const handleOnAccept = () => {
-  //   console.log("Aceptaste papi");
-  // };
-
-  const handleClick = () => {
-    showToast({
-      label: "This is a warning toast!",
-      type: "error",
-      duration: 5000,
-      // denyButtonLabel: "Cancel",
-      // acceptButtonLabel: "Acept",
-      // onAccept: handleOnAccept,
-    });
-  };
-
   return (
-    <div className="flex h-screen flex-col items-center justify-center gap-5 text-lg font-bold">
-      HomePage 🚧
-      <Button
-        label="Login"
-        className="btn-primary"
-        onClick={handleLoginClick}
-      />
-      <Pagination labels={["1", "2", "3", "4", "5"]} className="btn-neutral" />
-      <SelectInput
-        options={[
-          "Harry Potter",
-          "Planeta De los Simios",
-          "StarTrek",
-          "Star Wars",
-        ]}
-        defaultOption="Pick A Movie!"
-        topRightLabel="Hola papi"
-        className="select-primary"
-      />
-      <Button label="Show Toast" onClick={handleClick}></Button>
-    </div>
+    <LayoutWaves>
+      <div className="w-96 space-y-4 rounded-lg px-12 pb-2 pt-8">
+        <div className="flex flex-col items-center justify-center gap-9 pb-20">
+          <SpinSpotIcon />
+          <h2 className="dark:text-base-300 mb-1 text-center text-xl font-light  ">
+            La nueva pagina de reservas de los unimetanos
+          </h2>
+          {currentUser.isLoading && <Loader variant="spinner" />}
+          {(currentUser.isError || currentUser.data === null) && (
+            <Button
+              className=" btn-lg btn-neutral"
+              onClick={handleLoginClick}
+              label="Ingresar"
+              labelSize="text-md"
+            />
+          )}
+        </div>
+      </div>
+    </LayoutWaves>
   );
 }

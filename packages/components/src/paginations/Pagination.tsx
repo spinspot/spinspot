@@ -1,13 +1,14 @@
 "use client";
 
 import { cn } from "@spin-spot/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface PaginationProps {
   labels: string[];
   size?: "xs" | "sm" | "md" | "lg";
   className?: string;
   onPageChange?: (_label: string | null | undefined) => void;
+  initialActiveIndex?: number | null; // Nueva prop para el índice activo inicial
 }
 
 const paginationSizes = {
@@ -22,8 +23,19 @@ export function Pagination({
   size = "md",
   className,
   onPageChange,
+  initialActiveIndex = null, // Valor por defecto de la nueva prop
 }: PaginationProps) {
-  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+  const [currentIndex, setCurrentIndex] = useState<number | null>(
+    initialActiveIndex,
+  );
+
+  useEffect(() => {
+    if (initialActiveIndex !== null && initialActiveIndex !== currentIndex) {
+      setCurrentIndex(initialActiveIndex);
+    } else if (initialActiveIndex === null) {
+      setCurrentIndex(null);
+    }
+  }, [initialActiveIndex]);
 
   const handleClick = (index: number) => {
     const newIndex = index === currentIndex ? null : index;
@@ -39,7 +51,7 @@ export function Pagination({
         <button
           key={index}
           className={cn(
-            "join-item btn btn-square px-10",
+            "join-item btn btn-square",
             paginationSizes[size],
             className,
             index === currentIndex ? "btn-active" : "",

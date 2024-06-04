@@ -1,7 +1,7 @@
 import { cn } from "@spin-spot/utils";
 
 interface ButtonProps {
-  label?: string;
+  label?: string | React.ReactNode;
   className?: string;
   onClick?: () => void;
   leftIcon?: React.ReactNode; // Propiedad para el ícono izquierdo como componente

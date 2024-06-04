@@ -33,7 +33,12 @@ async function getTimeBlocks(filter: TGetTimeBlocksQueryDefinition = {}) {
   }
   const timeBlocks = await TimeBlock.find(filter).populate([
     "table",
-    "booking",
+    {
+      path: "booking",
+      populate: {
+        path: "players",
+      },
+    },
   ]);
   return timeBlocks;
 }
@@ -47,7 +52,15 @@ async function updateTimeBlock(
 }
 
 async function getTimeBlock(_id: TGetTimeBlockParamsDefinition["_id"]) {
-  const timeBlock = await TimeBlock.findById(_id);
+  const timeBlock = await TimeBlock.findById(_id).populate([
+    "table",
+    {
+      path: "booking",
+      populate: {
+        path: "players",
+      },
+    },
+  ]);
   return timeBlock;
 }
 

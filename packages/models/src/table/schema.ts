@@ -1,4 +1,5 @@
 import { Schema } from "mongoose";
+import mongooseUniqueValidator from "../mongoose-unique-validator";
 import { ITable } from "./dto";
 
 export const tableSchema = new Schema<ITable>({
@@ -11,3 +12,4 @@ export const tableSchema = new Schema<ITable>({
     default: true,
   },
 });
+tableSchema.plugin(mongooseUniqueValidator);

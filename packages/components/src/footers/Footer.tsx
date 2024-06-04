@@ -18,7 +18,7 @@ export function Footer() {
             role="button"
             className="btn btn-link btn-lg avatar"
           >
-            <SpinSpotIcon />
+            <SpinSpotIcon className="dark:text-base-100" />
           </Link>
           <p>Copyright © 2024 - All right reserved</p>
         </div>

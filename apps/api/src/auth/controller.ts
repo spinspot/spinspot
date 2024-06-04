@@ -1,35 +1,26 @@
 import { sendMail } from "@/email";
 import { userService } from "@/user";
 import {
+  ApiError,
   IUser,
   forgotPasswordInputDefinition,
   resetPasswordInputDefinition,
   signInWithGoogleQueryDefinition,
   signUpWithCredentialsInputDefinition,
 } from "@spin-spot/models";
-import { CookieOptions, NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { verify } from "jsonwebtoken";
-import ms from "ms";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import { Strategy as JWTStrategy } from "passport-jwt";
+import { ExtractJwt, Strategy as JWTStrategy } from "passport-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
 import { authService } from "./service";
-
-const jwtCookieOptions: CookieOptions = {
-  httpOnly: true,
-  maxAge: ms("1d"),
-  sameSite: "none",
-  secure: true,
-};
 
 function loadProviders() {
   passport.use(
     new JWTStrategy(
       {
-        jwtFromRequest: (req: Request) => {
-          return req.cookies["JWT_TOKEN"];
-        },
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
         secretOrKey: process.env.JWT_SECRET,
       },
       async function verify(payload, done) {
@@ -112,13 +103,17 @@ function signInWithCredentials(
         return next(err);
       }
       if (!user) {
-        throw "Correo electrónico o contraseña inválidos";
+        throw new ApiError({
+          status: 401,
+          errors: [{ message: "Correo electrónico o contraseña inválidos" }],
+        });
       }
 
-      const jwt = authService.signJWT(user);
+      const token = authService.signJWT(user);
 
-      return res.status(200).cookie("JWT_TOKEN", jwt, jwtCookieOptions).send({
+      return res.status(200).send({
         user,
+        token,
       });
     },
   )(req, res, next);
@@ -148,19 +143,23 @@ function signInWithGoogleCallback(
         return next(err);
       }
       if (!user) {
-        throw "Autenticación con Google fallida";
+        throw new ApiError({
+          status: 401,
+          errors: [{ message: "Autenticación con Google fallida" }],
+        });
       }
 
-      const jwt = authService.signJWT(user);
+      const token = authService.signJWT(user);
 
       const baseUrl =
         state.app === "admin"
           ? process.env.ADMIN_APP_URL
           : process.env.CLIENT_APP_URL;
 
-      return res
-        .cookie("JWT_TOKEN", jwt, jwtCookieOptions)
-        .redirect(new URL(state.route, baseUrl).href);
+      return res.redirect(
+        new URL(state.route, baseUrl).href +
+          `?token=${encodeURIComponent(token)}`,
+      );
     },
   )(req, res, next);
 }
@@ -169,10 +168,11 @@ async function signUpWithCredentials(req: Request, res: Response) {
   const input = signUpWithCredentialsInputDefinition.parse(req.body);
   const user = await userService.createUser(input);
 
-  const jwt = authService.signJWT(user);
+  const token = authService.signJWT(user);
 
-  return res.status(200).cookie("JWT_TOKEN", jwt, jwtCookieOptions).send({
+  return res.status(200).send({
     user,
+    token,
   });
 }
 
@@ -185,22 +185,24 @@ function refresh(req: Request, res: Response, next: NextFunction) {
         return next(err);
       }
       if (!user) {
-        throw "Token inválido";
+        throw new ApiError({
+          status: 401,
+          errors: [{ message: "Token de autenticación inválido" }],
+        });
       }
 
-      const jwt = authService.signJWT(user);
+      const token = authService.signJWT(user);
 
-      return res.status(200).cookie("JWT_TOKEN", jwt, jwtCookieOptions).send({
+      return res.status(200).send({
         user,
+        token,
       });
     },
   )(req, res, next);
 }
 
 function signOut(req: Request, res: Response) {
-  return res
-    .clearCookie("JWT_TOKEN", { ...jwtCookieOptions, maxAge: undefined })
-    .end();
+  return res.end();
 }
 
 async function getCurrentUser(req: Request, res: Response) {
@@ -212,7 +214,10 @@ async function forgotPassword(req: Request, res: Response) {
 
   const users = await userService.getUsers(email);
   if (users.length !== 1) {
-    return res.status(404).send("El usuario no existe!");
+    throw new ApiError({
+      status: 404,
+      errors: [{ message: "El usuario no existe" }],
+    });
   }
   const user = users[0]!;
   const token = authService.signJWT(
@@ -225,7 +230,7 @@ async function forgotPassword(req: Request, res: Response) {
     process.env.CLIENT_APP_URL,
   ).href;
 
-  sendMail({
+  await sendMail({
     from: `Spin Spot 🏓 <${process.env.EMAIL_USER}>`,
     to: `${email.email}`,
     subject: "Password Reset 🚨 SpinSpot",
@@ -262,6 +267,8 @@ async function forgotPassword(req: Request, res: Response) {
     </html>
   `,
   });
+
+  return res.status(200).end();
 }
 
 async function resetPassword(req: Request, res: Response) {
@@ -273,18 +280,30 @@ async function resetPassword(req: Request, res: Response) {
 
   const user = await userService.getUser(id);
   if (!user) {
-    return res.status(404).json({ status: "El usuario no exste!" });
+    throw new ApiError({
+      status: 404,
+      errors: [{ message: "El usuario no existe" }],
+    });
   }
   const secret = process.env.JWT_SECRET + user.password;
 
   if (!token) {
-    return res.status(404).send("Token undefined");
+    throw new ApiError({
+      status: 401,
+      errors: [{ message: "Enlace de recuperación inválido" }],
+    });
   }
   const verifyUser: any = verify(token, secret);
   if (verifyUser && verifyUser?._id === `${user._id}`) {
     await userService.updateUser(user._id, { password });
+
+    return res.status(200).end();
   }
-  return res.status(401).json({ status: "Usted no esta autorizado" });
+
+  throw new ApiError({
+    status: 401,
+    errors: [{ message: "Usuario no autorizado" }],
+  });
 }
 
 export const authController = {

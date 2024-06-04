@@ -9,7 +9,7 @@ export default function AuthLayout({
 }) {
   return (
     <LayoutWaves>
-      <AuthGuard validate={(user) => user === null} route="/tables">
+      <AuthGuard validate={(user) => user === null} route="/dashboard">
         {children}
       </AuthGuard>
     </LayoutWaves>

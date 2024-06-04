@@ -7,7 +7,9 @@ export const baseModelDefinition = z.object({
   updatedAt: z.date().optional(),
 });
 
-export const genderDefinition = z.enum(["MALE", "FEMALE", "OTHER"]);
+export const genderDefinition = z.enum(["MALE", "FEMALE", "OTHER"], {
+  message: "Debe seleccionar una opción",
+});
 export type TGenderEnum = z.infer<typeof genderDefinition>;
 
 export const userTypeDefinition = z.enum(["PLAYER", "ADMIN"]);
@@ -35,3 +37,22 @@ export const passwordDefinition = z
     message:
       "Debe incluir al menos una letra minúscula, una letra mayúscula y un número.",
   });
+
+export class ApiError extends Error {
+  status: TApiError["status"];
+  errors: TApiError["errors"];
+  constructor(error: TApiError, options?: ErrorOptions) {
+    super(
+      `Error ${error.status}: ${error.errors.map(({ message }) => message).join(". ")}`,
+      options,
+    );
+    this.status = error.status;
+    this.errors = error.errors;
+  }
+}
+export interface TApiError {
+  status: number;
+  errors: {
+    message: string;
+  }[];
+}

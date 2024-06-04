@@ -48,6 +48,7 @@ export type TSignInWithGoogleQueryDefinition = z.infer<
 
 export type TSignInWithCredentialsResponse = {
   user: IUser;
+  token: string;
 };
 
 export type JwtPayload = Pick<

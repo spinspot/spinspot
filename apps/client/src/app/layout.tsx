@@ -1,6 +1,7 @@
 import {
   AuthContextProvider,
   QueryContextProvider,
+  ServiceWorkerLoader,
   ToastContextProvider,
 } from "@spin-spot/components";
 import { cn } from "@spin-spot/utils";
@@ -15,7 +16,8 @@ const bodyFont = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: "Client App",
+  title: "SpinSpot App",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -33,6 +35,7 @@ export default function RootLayout({
             </AuthContextProvider>
           </QueryContextProvider>
         </ToastContextProvider>
+        <ServiceWorkerLoader url="/service-worker.js" />
       </body>
     </html>
   );

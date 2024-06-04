@@ -1,6 +1,6 @@
 import { Types, isValidObjectId } from "mongoose";
 import z from "zod";
-import { IBooking } from "../booking";
+import { IPopulatedBooking } from "../booking";
 import { baseModelDefinition, statusTimeTypeDefinition } from "../definitions";
 import { ITable } from "../table";
 
@@ -9,7 +9,7 @@ const timeBlockDefinition = baseModelDefinition.extend({
   booking: z
     .instanceof(Types.ObjectId)
     .or(z.string().refine(isValidObjectId))
-    .optional(),
+    .nullish(),
   startTime: z.coerce.date(),
   endTime: z.coerce.date(),
   status: statusTimeTypeDefinition,
@@ -18,7 +18,7 @@ const timeBlockDefinition = baseModelDefinition.extend({
 export type ITimeBlock = z.infer<typeof timeBlockDefinition>;
 export type IPopulatedTimeBlock = Omit<ITimeBlock, "booking" | "table"> & {
   table: ITable;
-  booking: IBooking;
+  booking: IPopulatedBooking;
 };
 
 export const getTimeBlocksQueryDefinition = timeBlockDefinition.partial();
