@@ -11,7 +11,7 @@ export default function Dashboard() {
   };
   return (
     <div className="flex-grow">
-      <div className="bg- grid h-56 w-full items-center justify-items-center bg-[url(/pingPongBackground.svg)] bg-cover bg-center bg-no-repeat md:h-60">
+      <div className="grid h-56 w-full items-center justify-items-center bg-[url(/pingPongBackground.svg)] bg-cover bg-center bg-no-repeat md:h-60">
         <div className="font-title text-center">
           <h1 className="flex flex-col text-3xl">
             <span className="text-white">PING PONG</span>
