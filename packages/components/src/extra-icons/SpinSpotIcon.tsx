@@ -1,4 +1,10 @@
-export function SpinSpotIcon() {
+import { cn } from "@spin-spot/utils";
+
+interface SpinSpotIconProps {
+  className?: string;
+}
+
+export function SpinSpotIcon({ className }: SpinSpotIconProps) {
   return (
     <svg
       version="1.1"
@@ -12,7 +18,7 @@ export function SpinSpotIcon() {
       viewBox="0 0 165.734 103.847"
       enableBackground="new 0 0 165.734 103.847"
       xmlSpace="preserve"
-      className="text-primary dark:text-base-100 h-full object-cover"
+      className={cn("text-primary h-full object-cover", className)}
     >
       <rect x="-216.678" y="-344.398" fill="none" width="612" height="792" />
       <rect x="-216.678" y="-344.398" fill="none" width="612" height="792" />
