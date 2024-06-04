@@ -8,29 +8,19 @@ import {
   signInWithGoogleQueryDefinition,
   signUpWithCredentialsInputDefinition,
 } from "@spin-spot/models";
-import { CookieOptions, NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { verify } from "jsonwebtoken";
-import ms from "ms";
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import { Strategy as JWTStrategy } from "passport-jwt";
+import { ExtractJwt, Strategy as JWTStrategy } from "passport-jwt";
 import { Strategy as LocalStrategy } from "passport-local";
 import { authService } from "./service";
-
-const jwtCookieOptions: CookieOptions = {
-  httpOnly: true,
-  maxAge: ms("1d"),
-  sameSite: "none",
-  secure: true,
-};
 
 function loadProviders() {
   passport.use(
     new JWTStrategy(
       {
-        jwtFromRequest: (req: Request) => {
-          return req.cookies["JWT_TOKEN"];
-        },
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
         secretOrKey: process.env.JWT_SECRET,
       },
       async function verify(payload, done) {
@@ -119,10 +109,11 @@ function signInWithCredentials(
         });
       }
 
-      const jwt = authService.signJWT(user);
+      const token = authService.signJWT(user);
 
-      return res.status(200).cookie("JWT_TOKEN", jwt, jwtCookieOptions).send({
+      return res.status(200).send({
         user,
+        token,
       });
     },
   )(req, res, next);
@@ -158,16 +149,17 @@ function signInWithGoogleCallback(
         });
       }
 
-      const jwt = authService.signJWT(user);
+      const token = authService.signJWT(user);
 
       const baseUrl =
         state.app === "admin"
           ? process.env.ADMIN_APP_URL
           : process.env.CLIENT_APP_URL;
 
-      return res
-        .cookie("JWT_TOKEN", jwt, jwtCookieOptions)
-        .redirect(new URL(state.route, baseUrl).href);
+      return res.redirect(
+        new URL(state.route, baseUrl).href +
+          `?token=${encodeURIComponent(token)}`,
+      );
     },
   )(req, res, next);
 }
@@ -176,10 +168,11 @@ async function signUpWithCredentials(req: Request, res: Response) {
   const input = signUpWithCredentialsInputDefinition.parse(req.body);
   const user = await userService.createUser(input);
 
-  const jwt = authService.signJWT(user);
+  const token = authService.signJWT(user);
 
-  return res.status(200).cookie("JWT_TOKEN", jwt, jwtCookieOptions).send({
+  return res.status(200).send({
     user,
+    token,
   });
 }
 
@@ -198,19 +191,18 @@ function refresh(req: Request, res: Response, next: NextFunction) {
         });
       }
 
-      const jwt = authService.signJWT(user);
+      const token = authService.signJWT(user);
 
-      return res.status(200).cookie("JWT_TOKEN", jwt, jwtCookieOptions).send({
+      return res.status(200).send({
         user,
+        token,
       });
     },
   )(req, res, next);
 }
 
 function signOut(req: Request, res: Response) {
-  return res
-    .clearCookie("JWT_TOKEN", { ...jwtCookieOptions, maxAge: undefined })
-    .end();
+  return res.end();
 }
 
 async function getCurrentUser(req: Request, res: Response) {

@@ -41,13 +41,13 @@ export async function signInWithCredentials(
 ) {
   const res = await api.post("/auth/sign-in/credentials", { body: input });
 
-  if (!res.ok) {
-    return null;
+  const { user, token }: TSignInWithCredentialsResponse = await res.json();
+
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem("JWT_TOKEN", token);
   }
 
-  const { user }: TSignInWithCredentialsResponse = await res.json();
-
-  return { user };
+  return { user, token };
 }
 
 export function useSignInWithCredentials() {
@@ -121,9 +121,13 @@ export function useSignInWithGoogle() {
 }
 
 export async function signOut() {
-  const res = await api.post("/auth/sign-out");
+  // const res = await api.post("/auth/sign-out");
 
-  return res.ok;
+  if (typeof window !== "undefined") {
+    window.localStorage.removeItem("JWT_TOKEN");
+  }
+
+  // return res.ok;
 }
 
 export function useSignOut() {
