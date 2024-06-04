@@ -28,9 +28,13 @@ export function QueryContextProvider({
                   showToast({
                     label: error.message,
                     type: "error",
-                    duration: 3000,
                   }),
                 );
+              } else {
+                showToast({
+                  label: "Error de conexión",
+                  type: "error",
+                });
               }
             },
           },

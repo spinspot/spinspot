@@ -8,6 +8,7 @@
     "moduleResolution": "Bundler",
     "allowJs": true,
     "jsx": "preserve",
-    "noEmit": true
+    "noEmit": true,
+    "lib": ["es2022", "DOM", "DOM.Iterable", "WebWorker"]
   }
 }

@@ -41,18 +41,14 @@ export default function Reserve({ params }: { params: ReserveProps }) {
   const [indumentary, setIndumentary] = useState<string | null>(null);
   const router = useRouter();
 
-  const { data: timeBlockData, isLoading: isTimeBlockLoading } = useTimeBlock(
-    params.timeBlockId,
-  );
-  const { data: tableData, isLoading: isTableLoading } = useTable(
-    timeBlockData?.table || "",
-  );
-  const { data: fetchedUsers, isLoading: isUsersLoading } = useUsers();
-  const { mutate: createBooking } = useCreateBooking();
+  const timeBlock = useTimeBlock(params.timeBlockId);
+  const table = useTable(timeBlock.data?.table || "");
+  const fetchedUsers = useUsers();
+  const createBooking = useCreateBooking();
 
   useEffect(() => {
-    if (timeBlockData && tableData && fetchedUsers) {
-      const { startTime, endTime } = timeBlockData;
+    if (timeBlock.data && table.data && fetchedUsers.data) {
+      const { startTime, endTime } = timeBlock.data;
 
       setStartTime(
         new Date(startTime).toLocaleTimeString([], {
@@ -78,12 +74,12 @@ export default function Reserve({ params }: { params: ReserveProps }) {
           .replace(/\//g, "-"),
       );
 
-      setTableCode(tableData.code);
-      setTableId(tableData._id.toString());
-      setUsers(fetchedUsers);
+      setTableCode(table.data.code);
+      setTableId(table.data._id.toString());
+      setUsers(fetchedUsers.data);
       setIsLoading(false);
     }
-  }, [timeBlockData, tableData, fetchedUsers]);
+  }, [timeBlock.data, table.data, fetchedUsers.data]);
 
   const handleSearch = (index: number, text: string) => {
     const newSearchTexts = [...searchTexts];
@@ -143,7 +139,7 @@ export default function Reserve({ params }: { params: ReserveProps }) {
     ];
 
     const finalizeReserve = async () => {
-      createBooking(
+      createBooking.mutate(
         {
           eventType: eventType as "1V1" | "2V2",
           owner: user._id,
@@ -196,7 +192,29 @@ export default function Reserve({ params }: { params: ReserveProps }) {
     }
   };
 
-  if (isLoading || isTimeBlockLoading || isTableLoading || isUsersLoading) {
+  useEffect(() => {
+    if (
+      ![timeBlock.status, table.status, fetchedUsers.status].some(
+        (status) => status === "pending",
+      ) &&
+      [timeBlock.status, table.status, fetchedUsers.status].some(
+        (status) => status === "error",
+      )
+    ) {
+      showToast({
+        label: "Error de conexión",
+        type: "error",
+      });
+      router.back();
+    }
+  }, [timeBlock.status, table.status, fetchedUsers.status]);
+
+  if (
+    isLoading ||
+    timeBlock.isLoading ||
+    table.isLoading ||
+    fetchedUsers.isLoading
+  ) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader size="lg" variant="dots" className="text-primary" />

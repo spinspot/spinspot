@@ -12,4 +12,5 @@ export * from "./layouts";
 export * from "./loaders";
 export * from "./paginations";
 export * from "./reserves";
+export * from "./service-workers";
 export * from "./text-inputs";

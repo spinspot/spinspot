@@ -1,0 +1,15 @@
+{
+  "name": "SpinSpot",
+  "short_name": "SpinSpot",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "Sistema de Reserva de Partidas de Tenis de Mesa",
+  "icons": [
+    {
+      "src": "images/touch/homescreen48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    }
+  ]
+}
