@@ -14,9 +14,19 @@ export async function createBooking(input: TCreateBookingInputDefinition) {
 }
 
 export function useCreateBooking() {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationKey: ["createBooking"],
     mutationFn: createBooking,
+
+    onSuccess(data) {
+      queryClient.invalidateQueries({ queryKey: ["getTimeBlocks"] });
+      queryClient.invalidateQueries({ queryKey: ["getBookings"] });
+      queryClient.invalidateQueries({
+        queryKey: ["getTimeBlock", data.timeBlock],
+      });
+    },
   });
 }
 
