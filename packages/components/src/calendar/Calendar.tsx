@@ -20,7 +20,9 @@ export function Calendar({ onDateChange }: CalendarProps) {
 
   const disablePastDates = (date: Date): boolean => {
     const today = new Date();
-    return date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    return (
+      date < new Date(today.getFullYear(), today.getMonth(), today.getDate())
+    );
   };
 
   return (

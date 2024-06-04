@@ -18,22 +18,15 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface ReserveProps {
+interface ReserveParams {
   timeBlockId: string;
 }
 
-export default function Reserve({ params }: { params: ReserveProps }) {
+export default function Reserve({ params }: { params: ReserveParams }) {
   const { user } = useAuth();
   const { showToast } = useToast();
   const options = ["1V1", "2V2"];
   const optinosNo = ["NO", "SI"];
-  const [isLoading, setIsLoading] = useState(false);
-  const [startTime, setStartTime] = useState<string>("");
-  const [endTime, setEndTime] = useState<string>("");
-  const [dateReserve, setDateReserve] = useState<string>("");
-  const [tableCode, setTableCode] = useState<string>("");
-  const [tableId, setTableId] = useState<string>("");
-  const [users, setUsers] = useState<any[]>([]);
   const [searchTexts, setSearchTexts] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<any[][]>([]);
   const [selectedUsers, setSelectedUsers] = useState<(string | null)[]>([]);
@@ -41,49 +34,10 @@ export default function Reserve({ params }: { params: ReserveProps }) {
   const [indumentary, setIndumentary] = useState<string | null>(null);
   const router = useRouter();
 
-  const { data: timeBlockData, isLoading: isTimeBlockLoading } = useTimeBlock(
-    params.timeBlockId,
-  );
-  const { data: tableData, isLoading: isTableLoading } = useTable(
-    timeBlockData?.table || "",
-  );
-  const { data: fetchedUsers, isLoading: isUsersLoading } = useUsers();
-  const { mutate: createBooking } = useCreateBooking();
-
-  useEffect(() => {
-    if (timeBlockData && tableData && fetchedUsers) {
-      const { startTime, endTime } = timeBlockData;
-
-      setStartTime(
-        new Date(startTime).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      );
-
-      setEndTime(
-        new Date(endTime).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      );
-
-      setDateReserve(
-        new Date(startTime)
-          .toLocaleDateString([], {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          })
-          .replace(/\//g, "-"),
-      );
-
-      setTableCode(tableData.code);
-      setTableId(tableData._id.toString());
-      setUsers(fetchedUsers);
-      setIsLoading(false);
-    }
-  }, [timeBlockData, tableData, fetchedUsers]);
+  const timeBlock = useTimeBlock(params.timeBlockId);
+  const table = useTable(timeBlock.data?.table._id);
+  const users = useUsers();
+  const createBooking = useCreateBooking();
 
   const handleSearch = (index: number, text: string) => {
     const newSearchTexts = [...searchTexts];
@@ -96,14 +50,15 @@ export default function Reserve({ params }: { params: ReserveProps }) {
 
     if (text.length >= 1) {
       const lowerCaseText = text.toLowerCase();
-      const filtered = users.filter((user) => {
-        const fullName = `${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}`;
-        return (
-          user.firstName.toLowerCase().includes(lowerCaseText) ||
-          user.lastName.toLowerCase().includes(lowerCaseText) ||
-          fullName.includes(lowerCaseText)
-        );
-      });
+      const filtered =
+        users.data?.filter((user) => {
+          const fullName = `${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}`;
+          return (
+            user.firstName.toLowerCase().includes(lowerCaseText) ||
+            user.lastName.toLowerCase().includes(lowerCaseText) ||
+            fullName.includes(lowerCaseText)
+          );
+        }) || [];
       const newSuggestions = [...suggestions];
       newSuggestions[index] = filtered;
       setSuggestions(newSuggestions);
@@ -135,7 +90,7 @@ export default function Reserve({ params }: { params: ReserveProps }) {
   };
 
   const handleReserve = async () => {
-    if (!eventType || !indumentary || !user) return;
+    if (!eventType || !indumentary || !user || !timeBlock.isSuccess) return;
 
     const validPlayers = [
       ...(selectedUsers.filter((player) => player !== null) as string[]),
@@ -143,11 +98,11 @@ export default function Reserve({ params }: { params: ReserveProps }) {
     ];
 
     const finalizeReserve = async () => {
-      createBooking(
+      createBooking.mutate(
         {
           eventType: eventType as "1V1" | "2V2",
           owner: user._id,
-          table: tableId,
+          table: timeBlock.data?.table._id,
           players: validPlayers,
           timeBlock: params.timeBlockId,
           status: "PENDING",
@@ -196,7 +151,24 @@ export default function Reserve({ params }: { params: ReserveProps }) {
     }
   };
 
-  if (isLoading || isTimeBlockLoading || isTableLoading || isUsersLoading) {
+  useEffect(() => {
+    if (
+      ![timeBlock.status, table.status, users.status].some(
+        (status) => status === "pending",
+      ) &&
+      [timeBlock.status, table.status, users.status].some(
+        (status) => status === "error",
+      )
+    ) {
+      showToast({
+        label: "Error de conexión",
+        type: "error",
+      });
+      router.back();
+    }
+  }, [timeBlock.status, table.status, users.status]);
+
+  if (timeBlock.isLoading || table.isLoading || users.isLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader size="lg" variant="dots" className="text-primary" />
@@ -206,13 +178,27 @@ export default function Reserve({ params }: { params: ReserveProps }) {
 
   return (
     <div className="font-body flex-grow py-32">
-      <ReservationInfo
-        dateReserve={dateReserve}
-        startTime={startTime}
-        endTime={endTime}
-        tableCode={tableCode}
-        user={user}
-      />
+      {timeBlock.isSuccess && (
+        <ReservationInfo
+          dateReserve={new Date(timeBlock.data.startTime)
+            .toLocaleDateString([], {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            })
+            .replace(/\//g, "-")}
+          startTime={new Date(timeBlock.data.startTime).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+          endTime={new Date(timeBlock.data.endTime).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+          tableCode={timeBlock.data.table.code}
+          user={user}
+        />
+      )}
       <SelectionSection
         options={options}
         optinosNo={optinosNo}

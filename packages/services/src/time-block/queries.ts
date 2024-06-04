@@ -1,6 +1,5 @@
 import {
   IPopulatedTimeBlock,
-  ITimeBlock,
   TGetTimeBlockParamsDefinition,
 } from "@spin-spot/models";
 import { useQuery } from "@tanstack/react-query";
@@ -22,7 +21,7 @@ export function useTimeBlocks(tableCode?: string) {
 
 export async function getTimeBlock(_id: TGetTimeBlockParamsDefinition["_id"]) {
   const res = await api.get(`/time-blocks/${encodeURIComponent(`${_id}`)}`);
-  const timeBlock: ITimeBlock = await res.json();
+  const timeBlock: IPopulatedTimeBlock = await res.json();
   return timeBlock;
 }
 

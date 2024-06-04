@@ -5,6 +5,7 @@ import {
   eventTypeDefinition,
   statusTypeDefinition,
 } from "../definitions";
+import { IUser } from "../user";
 
 export const bookingDefinition = baseModelDefinition.extend({
   eventType: eventTypeDefinition,
@@ -23,6 +24,9 @@ export const bookingDefinition = baseModelDefinition.extend({
 });
 
 export type IBooking = z.infer<typeof bookingDefinition>;
+export type IPopulatedBooking = Omit<IBooking, "players"> & {
+  players: IUser[];
+};
 
 export const getBookingsQueryDefinition = bookingDefinition.partial();
 export type TGetBookingsQueryDefinition = z.infer<
