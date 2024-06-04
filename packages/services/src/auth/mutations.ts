@@ -15,13 +15,13 @@ export async function signUpWithCredentials(
 ) {
   const res = await api.post("/auth/sign-up/credentials", { body: input });
 
-  if (!res.ok) {
-    return null;
+  const { user, token }: TSignInWithCredentialsResponse = await res.json();
+
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem("JWT_TOKEN", token);
   }
 
-  const { user }: TSignInWithCredentialsResponse = await res.json();
-
-  return { user };
+  return { user, token };
 }
 
 export function useSignUpWithCredentials() {
