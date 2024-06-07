@@ -1,5 +1,6 @@
 import {
   createTimeBlockInputDefinition,
+  createTimeBlocksInputDefinition,
   getTimeBlockParamsDefinition,
   getTimeBlocksQueryDefinition,
   updateTimeBlockInputDefinition,
@@ -9,9 +10,19 @@ import { Request, Response } from "express";
 import { timeBlockService } from "./service";
 
 async function createTimeBlock(req: Request, res: Response) {
-  const timeBlockData = createTimeBlockInputDefinition.parse(req.body);
-  const timeBlock = await timeBlockService.createTimeBlock(timeBlockData);
-  res.status(200).json(timeBlock);
+  const timeBlockData = createTimeBlockInputDefinition
+    .or(createTimeBlocksInputDefinition)
+    .parse(req.body);
+
+  if (timeBlockData instanceof Array) {
+    /* Create many time blocks */
+    const timeBlock = await timeBlockService.createTimeBlocks(timeBlockData);
+    res.status(200).json(timeBlock);
+  } else {
+    /* Create one time blocks */
+    const timeBlock = await timeBlockService.createTimeBlock(timeBlockData);
+    res.status(200).json(timeBlock);
+  }
 }
 
 async function getTimeBlocks(req: Request, res: Response) {
