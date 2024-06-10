@@ -106,6 +106,7 @@ export default function Reserve({ params }: { params: ReserveParams }) {
           players: validPlayers,
           timeBlock: params.timeBlockId,
           status: "PENDING",
+          equipment: indumentary === "SI",
         },
         {
           onSuccess: () => {
@@ -240,3 +241,4 @@ export default function Reserve({ params }: { params: ReserveParams }) {
     </div>
   );
 }
+
