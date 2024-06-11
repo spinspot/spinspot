@@ -249,7 +249,7 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
         initialActive={eventType === "1V1" ? 0 : 1}
         initialIndumentary={initialIndumentaryIndex}
       />
-      <div className="mt-8 flex w-full flex-col items-center justify-center">
+      <div className="mt-4 flex w-full flex-col items-center justify-center">
         {eventType && (
           <PlayerInput
             searchTexts={searchTexts}
@@ -281,5 +281,3 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
     </div>
   );
 }
-
-

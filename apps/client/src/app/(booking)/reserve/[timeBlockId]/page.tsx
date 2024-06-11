@@ -209,7 +209,7 @@ export default function Reserve({ params }: { params: ReserveParams }) {
         setIndumentary={setIndumentary}
         resetInputs={resetInputs}
       />
-      <div className="mt-8 flex w-full flex-col items-center justify-center">
+      <div className="mt-4 flex w-full flex-col items-center justify-center">
         {eventType && (
           <PlayerInput
             searchTexts={searchTexts}
@@ -241,4 +241,3 @@ export default function Reserve({ params }: { params: ReserveParams }) {
     </div>
   );
 }
-
