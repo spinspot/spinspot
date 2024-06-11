@@ -21,3 +21,17 @@ export async function getUser(_id: TGetUserParamsDefinition["_id"]) {
 export function useUser(_id: TGetUserParamsDefinition["_id"]) {
   return useQuery({ queryKey: ["getUser", _id], queryFn: () => getUser(_id) });
 }
+
+export async function getAvailableUsers() {
+  const res = await api.get("/users/available");
+  const users: IUser[] = await res.json();
+  return users;
+}
+
+export function useAvailableUsers() {
+  return useQuery({
+    queryKey: ["getAvailableUsers"],
+    queryFn: getAvailableUsers
+  });
+}
+

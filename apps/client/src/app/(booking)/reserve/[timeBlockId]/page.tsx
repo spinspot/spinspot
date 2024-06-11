@@ -14,6 +14,7 @@ import {
   useTimeBlock,
   useToast,
   useUsers,
+  useAvailableUsers
 } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -38,6 +39,7 @@ export default function Reserve({ params }: { params: ReserveParams }) {
   const table = useTable(timeBlock.data?.table._id);
   const users = useUsers();
   const createBooking = useCreateBooking();
+  const availableUsers = useAvailableUsers();
 
   const handleSearch = (index: number, text: string) => {
     const newSearchTexts = [...searchTexts];
@@ -51,7 +53,7 @@ export default function Reserve({ params }: { params: ReserveParams }) {
     if (text.length >= 1) {
       const lowerCaseText = text.toLowerCase();
       const filtered =
-        users.data?.filter((user) => {
+        availableUsers.data?.filter((user) => {
           const fullName = `${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}`;
           return (
             user.firstName.toLowerCase().includes(lowerCaseText) ||
