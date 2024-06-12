@@ -1,7 +1,7 @@
 import { Types, isValidObjectId } from "mongoose";
 import z from "zod";
 import { IPopulatedBooking } from "../booking";
-import { baseModelDefinition, statusTimeTypeDefinition } from "../definitions";
+import { baseModelDefinition, timeBlockStatusDefinition } from "../definitions";
 import { ITable } from "../table";
 
 const timeBlockDefinition = baseModelDefinition.extend({
@@ -12,7 +12,7 @@ const timeBlockDefinition = baseModelDefinition.extend({
     .nullish(),
   startTime: z.coerce.date(),
   endTime: z.coerce.date(),
-  status: statusTimeTypeDefinition,
+  status: timeBlockStatusDefinition,
 });
 
 export type ITimeBlock = z.infer<typeof timeBlockDefinition>;

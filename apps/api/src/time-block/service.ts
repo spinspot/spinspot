@@ -6,11 +6,11 @@ import {
   TUpdateTimeBlockInputDefinition,
   TUpdateTimeBlockParamsDefinition,
   tableSchema,
-  timeSchema,
+  timeBlockSchema,
 } from "@spin-spot/models";
 import { model } from "mongoose";
 
-const TimeBlock = model("TimeBlock", timeSchema);
+const TimeBlock = model("TimeBlock", timeBlockSchema);
 
 async function createTimeBlock(data: TCreateTimeBlockInputDefinition) {
   const timeBlock = await TimeBlock.create(data);
