@@ -1,11 +1,10 @@
 "use client";
 
 import { Card } from "@spin-spot/components";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Tournament() {
-  const router = useRouter();
+  //const router = useRouter();
 
   // Estados para los diferentes niveles de torneos
   const [beginnerCards, setBeginnerCards] = useState([
@@ -46,10 +45,6 @@ export default function Tournament() {
       labelButton: "Jugar",
     },
   ]);
-
-  const handleClick = () => {
-    router.push("/tables");
-  };
 
   // Función para determinar la clase de justificación
   const getCarouselClass = (cards: string | any[]) =>
