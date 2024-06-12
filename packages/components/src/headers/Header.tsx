@@ -100,12 +100,12 @@ export function Header() {
             >
               <li>
                 <a className="justify-between" onClick={handleProfileClick}>
-                  Profile
+                  Perfil
                 </a>
               </li>
               <li>
                 <a className="text-red-500" onClick={handleLogoutClick}>
-                  Logout
+                  Cerrar Sesión
                 </a>
               </li>
             </ul>
