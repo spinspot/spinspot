@@ -17,13 +17,13 @@ export const genderDefinition = z.enum(["MALE", "FEMALE", "OTHER"], {
 export type TGenderEnum = z.infer<typeof genderDefinition>;
 
 export const dayOfWeekDefinition = z.enum([
+  "SUNDAY",
   "MONDAY",
   "TUESDAY",
   "WEDNESDAY",
   "THURSDAY",
   "FRIDAY",
   "SATURDAY",
-  "SUNDAY",
 ]);
 export type TDayOfWeek = z.infer<typeof dayOfWeekDefinition>;
 

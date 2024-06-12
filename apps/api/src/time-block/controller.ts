@@ -1,5 +1,6 @@
 import {
   createTimeBlockInputDefinition,
+  createTimeBlocksFromTemplateInputDefinition,
   createTimeBlocksInputDefinition,
   getTimeBlockParamsDefinition,
   getTimeBlocksQueryDefinition,
@@ -23,6 +24,12 @@ async function createTimeBlock(req: Request, res: Response) {
     const timeBlock = await timeBlockService.createTimeBlock(timeBlockData);
     res.status(200).json(timeBlock);
   }
+}
+
+async function createTimeBlocksFromTemplate(req: Request, res: Response) {
+  const input = createTimeBlocksFromTemplateInputDefinition.parse(req.body);
+  const timeBlocks = await timeBlockService.createTimeBlocksFromTemplate(input);
+  return res.status(200).json(timeBlocks);
 }
 
 async function getTimeBlocks(req: Request, res: Response) {
@@ -49,4 +56,5 @@ export const timeBlockController = {
   getTimeBlock,
   getTimeBlocks,
   updateTimeBlock,
+  createTimeBlocksFromTemplate,
 } as const;

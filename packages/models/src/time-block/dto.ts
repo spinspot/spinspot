@@ -1,7 +1,11 @@
 import { Types, isValidObjectId } from "mongoose";
 import z from "zod";
 import { IPopulatedBooking } from "../booking";
-import { baseModelDefinition, timeBlockStatusDefinition } from "../definitions";
+import {
+  baseModelDefinition,
+  objectIdDefinition,
+  timeBlockStatusDefinition,
+} from "../definitions";
 import { ITable } from "../table";
 
 const timeBlockDefinition = baseModelDefinition.extend({
@@ -41,10 +45,19 @@ export type TCreateTimeBlockInputDefinition = z.infer<
 >;
 
 export const createTimeBlocksInputDefinition = z.array(
-  timeBlockDefinition.omit({ _id: true }),
+  createTimeBlockInputDefinition,
 );
 export type TCreateTimeBlocksInputDefinition = z.infer<
   typeof createTimeBlocksInputDefinition
+>;
+
+export const createTimeBlocksFromTemplateInputDefinition = z.object({
+  template: objectIdDefinition,
+  startDate: z.string().date(),
+  endDate: z.string().date(),
+});
+export type TCreateTimeBlocksFromTemplateInputDefinition = z.infer<
+  typeof createTimeBlocksFromTemplateInputDefinition
 >;
 
 export const updateTimeBlockParamsDefinition = timeBlockDefinition.pick({

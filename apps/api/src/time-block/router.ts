@@ -6,6 +6,10 @@ const timeBlockRouter = Router();
 timeBlockRouter.get("/", timeBlockController.getTimeBlocks);
 timeBlockRouter.get("/:_id", timeBlockController.getTimeBlock);
 timeBlockRouter.post("/", timeBlockController.createTimeBlock);
+timeBlockRouter.post(
+  "/from-template",
+  timeBlockController.createTimeBlocksFromTemplate,
+);
 timeBlockRouter.put("/:_id", timeBlockController.updateTimeBlock);
 
 export { timeBlockRouter };

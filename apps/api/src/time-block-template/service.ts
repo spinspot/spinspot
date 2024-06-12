@@ -39,15 +39,7 @@ async function updateTimeBlockTemplate(
 async function getTimeBlockTemplate(
   _id: TGetTimeBlockTemplateParamsDefinition["_id"],
 ) {
-  const timeBlockTemplate = await TimeBlockTemplate.findById(_id).populate([
-    "table",
-    {
-      path: "booking",
-      populate: {
-        path: "players",
-      },
-    },
-  ]);
+  const timeBlockTemplate = await TimeBlockTemplate.findById(_id);
   return timeBlockTemplate;
 }
 
