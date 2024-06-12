@@ -52,12 +52,20 @@ export type TCreateTimeBlocksInputDefinition = z.infer<
 >;
 
 export const createTimeBlocksFromTemplateInputDefinition = z.object({
-  template: objectIdDefinition,
+  timeBlockTemplate: objectIdDefinition,
   startDate: z.string().date(),
   endDate: z.string().date(),
 });
 export type TCreateTimeBlocksFromTemplateInputDefinition = z.infer<
   typeof createTimeBlocksFromTemplateInputDefinition
+>;
+
+export const createTimeBlocksFromActiveTemplatesInputDefinition = z.object({
+  startDate: z.string().date(),
+  endDate: z.string().date(),
+});
+export type TCreateTimeBlocksFromActiveTemplatesInputDefinition = z.infer<
+  typeof createTimeBlocksFromActiveTemplatesInputDefinition
 >;
 
 export const updateTimeBlockParamsDefinition = timeBlockDefinition.pick({

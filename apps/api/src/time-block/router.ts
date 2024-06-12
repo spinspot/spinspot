@@ -10,6 +10,10 @@ timeBlockRouter.post(
   "/from-template",
   timeBlockController.createTimeBlocksFromTemplate,
 );
+timeBlockRouter.post(
+  "/from-active-templates",
+  timeBlockController.createTimeBlocksFromActiveTemplates,
+);
 timeBlockRouter.put("/:_id", timeBlockController.updateTimeBlock);
 
 export { timeBlockRouter };
