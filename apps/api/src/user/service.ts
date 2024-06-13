@@ -5,7 +5,6 @@ import {
   TUpdateUserInputDefinition,
   TUpdateUserParamsDefinition,
   userSchema,
-  bookingSchema,
   type TCreateUserInputDefinition,
 } from "@spin-spot/models";
 import { hash } from "bcrypt";
@@ -28,7 +27,6 @@ userSchema.set("toJSON", {
   },
 });
 const User = model("User", userSchema);
-const Booking = model("Booking", bookingSchema);
 
 async function getUsers(filter: TGetUsersQueryDefinition = {}) {
   const users = await User.find(filter);
@@ -54,32 +52,35 @@ async function updateUser(
 }
 
 async function getAvailableUsers() {
-    const bookings = await Booking.aggregate([
-      {
-        $match: {
-          status: { $in: ["PENDING", "IN_PROGRESS"] }
-        }
+  const users: IUser[] = await User.aggregate([
+    {
+      $lookup: {
+        from: "bookings",
+        localField: "_id",
+        foreignField: "players",
+        as: "bookings",
       },
-      {
-        $unwind: "$players"
+    },
+    {
+      $match: {
+        bookings: {
+          $not: {
+            $elemMatch: {
+              status: { $in: ["PENDING", "IN_PROGRESS"] },
+            },
+          },
+        },
       },
-      {
-        $group: {
-          _id: null,
-          players: { $addToSet: "$players" }
-        }
-      }
-    ]);
+    },
+    {
+      $project: {
+        bookings: false,
+      },
+    },
+  ]);
 
-    const playersInBookings = bookings[0]?.players || [];
-
-    const availableUsers = await User.find({
-      _id: { $nin: playersInBookings }
-    });
-
-    return availableUsers;
+  return users;
 }
-
 
 export const userService = {
   getUsers,
