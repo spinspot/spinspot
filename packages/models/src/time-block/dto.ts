@@ -61,8 +61,8 @@ export type TCreateTimeBlocksFromTemplateInputDefinition = z.infer<
 >;
 
 export const createTimeBlocksFromActiveTemplatesInputDefinition = z.object({
-  startDate: z.string().date(),
-  endDate: z.string().date(),
+  startDate: z.string().date().optional(),
+  endDate: z.string().date().optional(),
 });
 export type TCreateTimeBlocksFromActiveTemplatesInputDefinition = z.infer<
   typeof createTimeBlocksFromActiveTemplatesInputDefinition

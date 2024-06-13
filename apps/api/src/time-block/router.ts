@@ -16,4 +16,10 @@ timeBlockRouter.post(
 );
 timeBlockRouter.put("/:_id", timeBlockController.updateTimeBlock);
 
+/* Cron Job */
+timeBlockRouter.get(
+  "/generate",
+  timeBlockController.createTimeBlocksFromActiveTemplates,
+);
+
 export { timeBlockRouter };

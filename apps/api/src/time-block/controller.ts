@@ -127,14 +127,20 @@ async function createTimeBlocksFromActiveTemplates(
   const input = createTimeBlocksFromActiveTemplatesInputDefinition.parse(
     req.body,
   );
+
+  const startDate =
+    input.startDate ?? dayjs.utc().add(1, "week").format("YYYY-MM-DD");
+  const endDate =
+    input.endDate ?? dayjs.utc(startDate).add(1, "week").format("YYYY-MM-DD");
+
   const timeBlockTemplates =
     await timeBlockTemplateService.getTimeBlockTemplates({ isActive: true });
 
   const newTimeBlocks = timeBlockTemplates.flatMap((timeBlockTemplate) =>
     generateTimeBlocksFromTemplate({
       timeBlockTemplate,
-      startDate: input.startDate,
-      endDate: input.endDate,
+      startDate,
+      endDate,
     }),
   );
 
