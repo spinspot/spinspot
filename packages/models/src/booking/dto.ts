@@ -21,6 +21,7 @@ export const bookingDefinition = baseModelDefinition.extend({
     .instanceof(Types.ObjectId)
     .or(z.string().refine(isValidObjectId)),
   status: statusTypeDefinition,
+  equipment: z.boolean().optional(),
 });
 
 export type IBooking = z.infer<typeof bookingDefinition>;
