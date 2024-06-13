@@ -9,12 +9,12 @@ import {
 } from "@spin-spot/components";
 import {
   useAuth,
+  useAvailableUsers,
   useCreateBooking,
   useTable,
   useTimeBlock,
   useToast,
   useUsers,
-  useAvailableUsers
 } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -98,6 +98,15 @@ export default function Reserve({ params }: { params: ReserveParams }) {
       ...(selectedUsers.filter((player) => player !== null) as string[]),
       user._id,
     ];
+
+    if (!availableUsers.data?.some((item) => item._id === user._id)) {
+      showToast({
+        label:
+          "No puede realizar la reserva debido a que usted ya forma parte de otra reserva",
+        type: "error",
+      });
+      return;
+    }
 
     const finalizeReserve = async () => {
       createBooking.mutate(

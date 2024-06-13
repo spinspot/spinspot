@@ -16,6 +16,7 @@
     "@spin-spot/services": "*",
     "@spin-spot/utils": "*",
     "@tanstack/react-query": "^5.36.2",
+    "dayjs": "^1.11.11",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
