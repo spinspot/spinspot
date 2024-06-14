@@ -33,7 +33,7 @@ export default function Tables() {
   const router = useRouter();
   const availableUsers = useAvailableUsers();
   const { showToast } = useToast();
-  const { mutate: updateBooking } = useUpdateBooking();
+  const updateBooking = useUpdateBooking();
   const { mutate: updateTimeBlock } = useUpdateTimeBlock();
   const { mutate: cancelBooking } = useCancelBooking();
 
@@ -145,7 +145,25 @@ export default function Tables() {
     if (user?._id) {
       const playerIds = booking.players.map((player) => player._id);
       const newPlayers = [...playerIds, user._id];
-      updateBooking({ _id: booking._id, players: newPlayers });
+      updateBooking.mutate(
+        { _id: booking._id, players: newPlayers },
+        {
+          onSuccess() {
+            showToast({
+              label: "Se ha unido a la reserva de forma exitosa!",
+              type: "success",
+              duration: 3000,
+            });
+          },
+          onError() {
+            showToast({
+              label: "Error al unirse a la reserva.",
+              type: "error",
+              duration: 3000,
+            });
+          },
+        },
+      );
     }
   }
 
@@ -171,7 +189,7 @@ export default function Tables() {
     if (user?._id) {
       const playerIds = booking.players.map((player) => player._id);
       const newPlayers = playerIds.filter((playerId) => playerId !== user._id);
-      updateBooking({ _id: booking._id, players: newPlayers });
+      updateBooking.mutate({ _id: booking._id, players: newPlayers });
     }
   }
 
