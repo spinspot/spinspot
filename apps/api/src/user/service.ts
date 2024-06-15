@@ -5,10 +5,12 @@ import {
   TUpdateUserInputDefinition,
   TUpdateUserParamsDefinition,
   userSchema,
+  bookingSchema,
   type TCreateUserInputDefinition,
 } from "@spin-spot/models";
 import { hash } from "bcrypt";
 import { UpdateQuery, model } from "mongoose";
+
 
 userSchema.pre("save", async function (next) {
   if (this.password) this.password = await hash(this.password, 10);
@@ -81,6 +83,19 @@ async function getAvailableUsers() {
 
   return users;
 }
+const Booking = model("Booking", bookingSchema);
+
+async function isUserAvailable(_id : TGetUserParamsDefinition["_id"]){
+  const user = await User.findById(_id);
+  if (!user) return false;
+
+  const bookings = await Booking.find({
+    players: _id,
+    status: { $in: ["PENDING", "IN_PROGRESS"] },
+  });
+
+  return bookings.length === 0;
+}
 
 export const userService = {
   getUsers,
@@ -88,4 +103,5 @@ export const userService = {
   createUser,
   updateUser,
   getAvailableUsers,
+  isUserAvailable,
 } as const;
