@@ -4,3 +4,5 @@ export * from "./definitions";
 export * from "./table";
 export * from "./time-block";
 export * from "./user";
+export * from "./tournament";
+export * from "./team";
