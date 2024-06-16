@@ -32,9 +32,9 @@ async function createTournament(req: Request, res: Response) {
       });
     }
   
-    const tournament = await tournamentService.createTournament(tournamentData);
-    res.status(200).json(tournament);
   }
+  const tournament = await tournamentService.createTournament(tournamentData);
+  res.status(200).json(tournament);
 }
 
 async function getTournaments(req: Request, res: Response) {
