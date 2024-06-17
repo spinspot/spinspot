@@ -26,9 +26,7 @@ export default function Tables() {
   );
   const { data: tables } = useTables();
   const [selectedTable, setSelectedTable] = useState<string | null>(null);
-  const { data: timeBlocks, isLoading } = useTimeBlocks(
-    selectedTable || undefined,
-  );
+  const timeBlocks = useTimeBlocks(selectedTable || undefined);
   const { user } = useAuth();
   const router = useRouter();
   const availableUsers = useAvailableUsers();
@@ -157,7 +155,6 @@ export default function Tables() {
               type: "success",
               duration: 3000,
             });
-            setLoadingBlockId(null);
           },
           onError() {
             showToast({
@@ -170,6 +167,12 @@ export default function Tables() {
       );
     }
   }
+
+  useEffect(() => {
+    if (!timeBlocks.isFetching) {
+      setLoadingBlockId(null);
+    }
+  }, [timeBlocks.isFetching]);
 
   const handleShowSalirseToast = (booking: IPopulatedBooking) => {
     showToast({
@@ -203,7 +206,6 @@ export default function Tables() {
               type: "success",
               duration: 3000,
             });
-            setLoadingBlockId(null);
           },
           onError() {
             showToast({
@@ -218,8 +220,8 @@ export default function Tables() {
   }
 
   const filteredTimeBlocks = useMemo<IPopulatedTimeBlock[]>(() => {
-    if (!selectedDate || !timeBlocks) return [];
-    return timeBlocks.filter((block) => {
+    if (!selectedDate || !timeBlocks.data) return [];
+    return timeBlocks.data.filter((block) => {
       const blockDate = new Date(block.startTime);
       // Filtrar por fecha y, si hay una mesa seleccionada, por el código de mesa
       const isSameDate =
@@ -246,7 +248,7 @@ export default function Tables() {
         onPageChange={(label) => setSelectedTable(label ?? null)} // Si no hay mesa seleccionada, se pone null
       />
       <div className="mt-2 w-full overflow-x-auto p-4 sm:w-4/5">
-        {isLoading ? (
+        {timeBlocks.isLoading ? (
           <div className="flex items-center justify-center">
             <Loader
               className="text-primary dark:text-neutral"
