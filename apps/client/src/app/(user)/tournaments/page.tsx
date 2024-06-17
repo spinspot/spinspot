@@ -1,12 +1,11 @@
-'use client'
+"use client";
 
 import { Button } from "@spin-spot/components";
 import { useCreateTournament, useToast } from "@spin-spot/services";
 
 export default function page() {
-
-  const createTournament = useCreateTournament()
-  const {showToast} = useToast();
+  const createTournament = useCreateTournament();
+  const { showToast } = useToast();
 
   const handleCreateExampleTournament = () => {
     // Create a new tournament
@@ -20,7 +19,7 @@ export default function page() {
         eventType: "1V1",
         status: "OPEN",
         startTime: new Date("2024-06-26T15:00:00.000Z"),
-        endTime: new Date("2024-06-27T15:00:00.000Z")
+        endTime: new Date("2024-06-27T15:00:00.000Z"),
       },
       {
         onSuccess: () => {
@@ -38,13 +37,15 @@ export default function page() {
         },
       },
     );
-  }
+  };
 
   return (
     <div className="flex h-screen flex-col items-center justify-center gap-5 text-lg font-bold">
       Tournaments Page 🚧
-    <Button onClick={handleCreateExampleTournament}
-    label = "Crear torneo ejemplo"></Button>
+      <Button
+        onClick={handleCreateExampleTournament}
+        label="Crear torneo ejemplo"
+      ></Button>
     </div>
   );
 }

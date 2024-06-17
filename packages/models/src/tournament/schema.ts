@@ -1,15 +1,14 @@
 import { Schema } from "mongoose";
 import { ITournament } from "./dto";
 
-
 export const tournamentSchema = new Schema<ITournament>({
-  name:{
+  name: {
     type: String,
-    required: true
+    required: true,
   },
-  description:{
+  description: {
     type: String,
-    required: true
+    required: true,
   },
   owner: {
     type: Schema.Types.ObjectId,
@@ -27,8 +26,8 @@ export const tournamentSchema = new Schema<ITournament>({
   maxPlayers: Number,
   maxTeams: Number,
   prize: String,
-  eventType: String, 
-  status: String, 
+  eventType: String,
+  status: String,
   startTime: {
     type: Date,
     required: true,
@@ -36,5 +35,5 @@ export const tournamentSchema = new Schema<ITournament>({
   endTime: {
     type: Date,
     required: true,
-  }
+  },
 });

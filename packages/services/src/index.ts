@@ -3,5 +3,5 @@ export * from "./booking";
 export * from "./table";
 export * from "./time-block";
 export * from "./toast";
+export * from "./tournament";
 export * from "./user";
-export * from "./tournament"

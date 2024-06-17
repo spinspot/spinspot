@@ -1,9 +1,9 @@
-import { 
+import {
   createTeamInputDefinition,
   getTeamParamsDefinition,
   getTeamsQueryDefinition,
   updateTeamInputDefinition,
-  updateTeamParamsDefinition 
+  updateTeamParamsDefinition,
 } from "@spin-spot/models";
 import { Request, Response } from "express";
 import { teamService } from "./service";
@@ -35,7 +35,7 @@ async function updateTeam(req: Request, res: Response) {
 
 export const teamController = {
   getTeam,
-  getTeams, 
+  getTeams,
   createTeam,
-  updateTeam
+  updateTeam,
 } as const;

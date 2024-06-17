@@ -12,7 +12,9 @@ export function useTournaments() {
   return useQuery({ queryKey: ["getTournaments"], queryFn: getTournaments });
 }
 
-export async function getTournament(_id: TGetTournamentParamsDefinition["_id"]) {
+export async function getTournament(
+  _id: TGetTournamentParamsDefinition["_id"],
+) {
   const res = await api.get(`/tournaments/${encodeURIComponent(`${_id}`)}`);
   const tournament: ITournament = await res.json();
   return tournament;

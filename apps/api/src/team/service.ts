@@ -1,9 +1,9 @@
-import { 
-  TCreateTeamInputDefinition, 
-  TGetTeamsQueryDefinition, 
-  TUpdateTeamInputDefinition, 
-  TUpdateTeamParamsDefinition, 
-  teamSchema 
+import {
+  TCreateTeamInputDefinition,
+  TGetTeamsQueryDefinition,
+  TUpdateTeamInputDefinition,
+  TUpdateTeamParamsDefinition,
+  teamSchema,
 } from "@spin-spot/models";
 import { model } from "mongoose";
 
@@ -36,5 +36,5 @@ export const teamService = {
   createTeam,
   getTeam,
   getTeams,
-  updateTeam
+  updateTeam,
 } as const;

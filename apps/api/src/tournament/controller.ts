@@ -1,11 +1,11 @@
 import {
   ApiError,
-   createTournamentInputDefinition, 
-   getTournamentParamsDefinition, 
-   getTournamentsQueryDefinition, 
-   updateTournamentInputDefinition, 
-   updateTournamentParamsDefinition 
-  } from "@spin-spot/models";
+  createTournamentInputDefinition,
+  getTournamentParamsDefinition,
+  getTournamentsQueryDefinition,
+  updateTournamentInputDefinition,
+  updateTournamentParamsDefinition,
+} from "@spin-spot/models";
 import { Request, Response } from "express";
 import { tournamentService } from "./service";
 
@@ -13,7 +13,7 @@ async function createTournament(req: Request, res: Response) {
   const tournamentData = createTournamentInputDefinition.parse(req.body);
   const currentTime = new Date();
 
-  if(currentTime > tournamentData?.startTime){
+  if (currentTime > tournamentData?.startTime) {
     throw new ApiError({
       status: 400,
       errors: [{ message: "Fecha invalida para crear el torneo" }],
@@ -39,7 +39,10 @@ async function getTournament(req: Request, res: Response) {
 async function updateTournament(req: Request, res: Response) {
   const params = updateTournamentParamsDefinition.parse(req.params);
   const input = updateTournamentInputDefinition.parse(req.body);
-  const tournament = await tournamentService.updateTournament(params._id, input);
+  const tournament = await tournamentService.updateTournament(
+    params._id,
+    input,
+  );
   return res.status(200).json(tournament);
 }
 
@@ -47,5 +50,5 @@ export const tournamentController = {
   getTournament,
   getTournaments,
   updateTournament,
-  createTournament
+  createTournament,
 } as const;

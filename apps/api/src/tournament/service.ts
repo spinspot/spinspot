@@ -1,9 +1,9 @@
-import { 
-  TCreateTournamentInputDefinition, 
-  TGetTournamentsQueryDefinition,   
-  TUpdateTournamentInputDefinition,  
-  TUpdateTournamentParamsDefinition,  
-  tournamentSchema
+import {
+  TCreateTournamentInputDefinition,
+  TGetTournamentsQueryDefinition,
+  TUpdateTournamentInputDefinition,
+  TUpdateTournamentParamsDefinition,
+  tournamentSchema,
 } from "@spin-spot/models";
 import { model } from "mongoose";
 
@@ -28,7 +28,9 @@ async function updateTournament(
   _id: TUpdateTournamentParamsDefinition["_id"],
   data: TUpdateTournamentInputDefinition,
 ) {
-  const tournament = await Tournament.findByIdAndUpdate(_id, data, { new: true });
+  const tournament = await Tournament.findByIdAndUpdate(_id, data, {
+    new: true,
+  });
   return tournament;
 }
 
@@ -36,5 +38,5 @@ export const tournamentService = {
   createTournament,
   getTournament,
   getTournaments,
-  updateTournament
+  updateTournament,
 } as const;

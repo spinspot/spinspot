@@ -3,17 +3,15 @@ import z from "zod";
 import {
   baseModelDefinition,
   eventTypeDefinition,
-  statusTournamentTypeDefinition
+  statusTournamentTypeDefinition,
 } from "../definitions";
-import { IUser } from "../user";
 import { ITeam } from "../team";
+import { IUser } from "../user";
 
 export const tournamentDefinition = baseModelDefinition.extend({
   name: z.string(),
   description: z.string(),
-  owner: z
-    .instanceof(Types.ObjectId)
-    .or(z.string().refine(isValidObjectId)),
+  owner: z.instanceof(Types.ObjectId).or(z.string().refine(isValidObjectId)),
   players: z
     .array(z.instanceof(Types.ObjectId).or(z.string().refine(isValidObjectId)))
     .optional(),
@@ -30,7 +28,7 @@ export const tournamentDefinition = baseModelDefinition.extend({
 });
 
 export type ITournament = z.infer<typeof tournamentDefinition>;
-export type IPopulatedTournament = Omit<ITournament, 'players' | 'teams'> & {
+export type IPopulatedTournament = Omit<ITournament, "players" | "teams"> & {
   players: IUser[];
   teams: ITeam[];
 };
@@ -40,32 +38,40 @@ export type TGetTournamentsQueryDefinition = z.infer<
   typeof getTournamentsQueryDefinition
 >;
 
-export const getTournamentParamsDefinition = tournamentDefinition.pick({ _id: true });
+export const getTournamentParamsDefinition = tournamentDefinition.pick({
+  _id: true,
+});
 export type TGetTournamentParamsDefinition = z.infer<
   typeof getTournamentParamsDefinition
 >;
 
-export const createTournamentInputDefinition = tournamentDefinition.omit({
-  _id: true,
-}).refine(
-  (data) => {
-    if (data.eventType === "1V1") {
-      if(data.players && data.maxPlayers && data.players.length > data.maxPlayers){
-        return true;
+export const createTournamentInputDefinition = tournamentDefinition
+  .omit({
+    _id: true,
+  })
+  .refine(
+    (data) => {
+      if (data.eventType === "1V1") {
+        if (
+          data.players &&
+          data.maxPlayers &&
+          data.players.length > data.maxPlayers
+        ) {
+          return true;
+        }
       }
-    } 
-    if (data.eventType === "2V2") {
-      if(data.teams && data.maxTeams && data.teams.length > data.maxTeams){
-        return true;
+      if (data.eventType === "2V2") {
+        if (data.teams && data.maxTeams && data.teams.length > data.maxTeams) {
+          return true;
+        }
       }
-    }
-    return true
-  },
-  {
-    message: "Registre los datos necesarios para el torneo",
-    path: ["eventType", "teams", "players", "maxTeams", "maxPlayers"],
-  }
-);
+      return true;
+    },
+    {
+      message: "Registre los datos necesarios para el torneo",
+      path: ["eventType", "teams", "players", "maxTeams", "maxPlayers"],
+    },
+  );
 export type TCreateTournamentInputDefinition = z.infer<
   typeof createTournamentInputDefinition
 >;

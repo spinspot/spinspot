@@ -3,9 +3,9 @@ import { authRouter } from "./auth";
 import { bookingRouter } from "./booking";
 import { tableRouter } from "./table";
 import { timeBlockRouter } from "./time-block";
-import { userRouter } from "./user";
 import { tournamentRouter } from "./tournament";
 import { tournamentMatchRouter } from "./tournament-match";
+import { userRouter } from "./user";
 
 const router = Router();
 

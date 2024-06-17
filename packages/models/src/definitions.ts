@@ -35,14 +35,13 @@ export const statusTournamentTypeDefinition = z.enum([
   "OPEN",
   "CLOSED",
   "IN_PROGRESS",
-  "FINISHED"
+  "FINISHED",
 ]);
-export type TStatusTournamentTypeEnum = z.infer<typeof statusTournamentTypeDefinition>;
+export type TStatusTournamentTypeEnum = z.infer<
+  typeof statusTournamentTypeDefinition
+>;
 
-export const teamSideTypeDefinition = z.enum([
-  "LEFT",
-  "RIGHT"
-]);
+export const teamSideTypeDefinition = z.enum(["LEFT", "RIGHT"]);
 export type TTeamSideTypeEnum = z.infer<typeof teamSideTypeDefinition>;
 
 export const passwordDefinition = z

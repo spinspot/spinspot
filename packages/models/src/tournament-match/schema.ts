@@ -11,27 +11,27 @@ export const tournamentMatchSchema = new Schema<ITournamentMatch>({
   status: String,
   leftPlayer: {
     type: Schema.Types.ObjectId,
-    ref: "User"
+    ref: "User",
   },
-  rightPlayer:{
+  rightPlayer: {
     type: Schema.Types.ObjectId,
-    ref: "User"
+    ref: "User",
   },
-  leftTeam:{
+  leftTeam: {
     type: Schema.Types.ObjectId,
-    ref: "Team"
+    ref: "Team",
   },
-  rightTeam:{
+  rightTeam: {
     type: Schema.Types.ObjectId,
-    ref: "Team"
+    ref: "Team",
   },
-  score:{
-    type:[[Number]],
-    required: true
+  score: {
+    type: [[Number]],
+    required: true,
   },
   winner: String,
   dateTime: {
     type: Date,
     required: true,
-  }
+  },
 });
