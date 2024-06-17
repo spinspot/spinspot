@@ -5,3 +5,5 @@ export * from "./time-block";
 export * from "./toast";
 export * from "./tournament";
 export * from "./user";
+export * from "./tournament-match";
+export * from "./team";

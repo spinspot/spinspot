@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "../api";
 
 export async function getBookings() {
-  const res = await api.get("/timeblock/all");
+  const res = await api.get("/booking");
   const timeBlocks: IBooking[] = await res.json();
   return timeBlocks;
 }

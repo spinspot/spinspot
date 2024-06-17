@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "../api";
 
 export async function getTournaments() {
-  const res = await api.get("/tournaments/all");
+  const res = await api.get("/tournaments");
   const tournaments: ITournament[] = await res.json();
   return tournaments;
 }
