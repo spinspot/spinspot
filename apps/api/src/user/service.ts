@@ -51,9 +51,41 @@ async function updateUser(
   return user;
 }
 
+async function getAvailableUsers() {
+  const users: IUser[] = await User.aggregate([
+    {
+      $lookup: {
+        from: "bookings",
+        localField: "_id",
+        foreignField: "players",
+        as: "bookings",
+      },
+    },
+    {
+      $match: {
+        bookings: {
+          $not: {
+            $elemMatch: {
+              status: { $in: ["PENDING", "IN_PROGRESS"] },
+            },
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        bookings: false,
+      },
+    },
+  ]);
+
+  return users;
+}
+
 export const userService = {
   getUsers,
   getUser,
   createUser,
   updateUser,
+  getAvailableUsers,
 } as const;

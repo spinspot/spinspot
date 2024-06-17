@@ -1,7 +1,9 @@
+import { sendMail } from "@/email";
 import { tableService } from "@/table";
 import { timeBlockService } from "@/time-block";
 import {
   ApiError,
+  IPopulatedBooking,
   createBookingInputDefinition,
   getBookingParamsDefinition,
   getBookingsQueryDefinition,
@@ -96,7 +98,105 @@ async function getBooking(req: Request, res: Response) {
 async function updateBooking(req: Request, res: Response) {
   const params = updateBookingParamsDefinition.parse(req.params);
   const input = updateBookingInputDefinition.parse(req.body);
-  const booking = await bookingService.updateBooking(params._id, input);
+
+  const prevBooking: IPopulatedBooking | any = await bookingService.getBooking(
+    params._id,
+  );
+
+  const booking: IPopulatedBooking | any = await bookingService.updateBooking(
+    params._id,
+    input,
+  );
+
+  const newBooking: IPopulatedBooking | any = await bookingService.getBooking(
+    params._id,
+  );
+
+  let actionMessage = "";
+
+  // Comparar los jugadores antes y después para determinar el cambio
+  if (prevBooking?.players && newBooking?.players) {
+    const prevPlayerIds = prevBooking.players.map(
+      (player: { _id: { toString: () => any } }) => player._id.toString(),
+    );
+    const newPlayerIds = newBooking.players.map(
+      (player: { _id: { toString: () => any } }) => player._id.toString(),
+    );
+
+    // Encontrar jugadores que se unieron
+    const joinedPlayers = newBooking.players.filter(
+      (player: { _id: { toString: () => any } }) =>
+        !prevPlayerIds.includes(player._id.toString()),
+    );
+
+    // Encontrar jugadores que se salieron
+    const leftPlayers = prevBooking.players.filter(
+      (player: { _id: { toString: () => any } }) =>
+        !newPlayerIds.includes(player._id.toString()),
+    );
+
+    if (joinedPlayers.length > 0) {
+      const joinedPlayerNames = joinedPlayers
+        .map(
+          (player: { firstName: string; lastName: string }) =>
+            `${player.firstName} ${player.lastName}`,
+        )
+        .join(", ");
+      actionMessage = `Hola! ${booking.owner.firstName} ${booking.owner.lastName}, este correo informativo es para notificarle que los siguientes jugadores se han unido a su reserva: <br> ${joinedPlayerNames}`;
+    } else if (leftPlayers.length > 0) {
+      const leftPlayerNames = leftPlayers
+        .map(
+          (player: { firstName: string; lastName: string }) =>
+            `${player.firstName} ${player.lastName}`,
+        )
+        .join(", ");
+      actionMessage = `Hola! ${booking.owner.firstName} ${booking.owner.lastName}, este correo informativo es para notificarle que los siguientes jugadores se han salido de su reserva: <br> ${leftPlayerNames}`;
+    }
+  }
+
+  const link = new URL(
+    `/edit-reserve/${booking.timeBlock}`,
+    process.env.CLIENT_APP_URL,
+  ).href;
+
+  console.log(booking.timeBlock);
+  await sendMail({
+    from: `Spin Spot 🏓 <${process.env.EMAIL_USER}>`,
+    to: `${booking.owner.email}`,
+    subject: "Reserve Notification 🚨 SpinSpot",
+    html: `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        .button {
+          display: inline-block;
+          padding: 10px 20px;
+          font-size: 16px;
+          background-color: #02415a;
+          color: #ffffff !important;
+          text-decoration: none;
+          border-radius: 5px;
+          transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+          background-color: #022431;
+          color: #ffffff;
+        }
+
+        .text {
+          color: #000000;
+        }
+      </style>
+    </head>
+    <body>
+      <p class="text">${actionMessage}</p>
+      <a href="${link}" class="button">Editar Reserva</a>
+    </body>
+    </html>
+  `,
+  });
   return res.status(200).json(booking);
 }
 

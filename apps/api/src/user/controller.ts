@@ -45,9 +45,15 @@ async function updateUser(req: Request, res: Response) {
   return res.status(200).json(user);
 }
 
+async function getAvailableUsers(req: Request, res: Response) {
+    const users = await userService.getAvailableUsers();
+    return res.status(200).json(users);
+}
+
 export const userController = {
   getUsers,
   getUser,
   createUser,
   updateUser,
+  getAvailableUsers,
 } as const;

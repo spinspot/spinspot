@@ -56,6 +56,9 @@ export function useUpdateBooking() {
         queryKey: ["getTimeBlock", data.timeBlock],
       });
       queryClient.invalidateQueries({ queryKey: ["getBooking", data._id] });
+      queryClient.invalidateQueries({
+        queryKey: ["getAvailableUsers"],
+      });
     },
   });
 }
