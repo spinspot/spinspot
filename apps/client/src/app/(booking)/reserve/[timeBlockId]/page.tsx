@@ -29,8 +29,8 @@ export default function Reserve({ params }: { params: ReserveParams }) {
   const { showToast } = useToast();
   const options = ["1V1", "2V2"];
   const optinosNo = ["NO", "SI"];
-  const optionsInv=["NO", "SI"];
-  const [invitations, setInvitations]=useState<string| null>(null);
+  const optionsInv = ["NO", "SI"];
+  const [invitations, setInvitations] = useState<string | null>(null);
   const [searchTexts, setSearchTexts] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<any[][]>([]);
   const [selectedUsers, setSelectedUsers] = useState<(string | null)[]>([]);
@@ -226,18 +226,17 @@ export default function Reserve({ params }: { params: ReserveParams }) {
               onPageChange={(label) => setInvitations(label ?? null)}
               className="btn-neutral mt-2 min-w-28 text-nowrap"
             />
-            {invitations==="SI" ? <InvitationSection 
-            timeBlockId={params.timeBlockId}
-            reservationOwner={user}
-            />: 
-            <PlayerInput
-              searchTexts={searchTexts}
-              suggestions={suggestions}
-              selectedUsers={selectedUsers}
-              handleSearch={handleSearch}
-              handleSelectUser={handleSelectUser}
-            />
-            }
+            {invitations === "SI" ? (
+              <InvitationSection timeBlockId={params.timeBlockId} />
+            ) : (
+              <PlayerInput
+                searchTexts={searchTexts}
+                suggestions={suggestions}
+                selectedUsers={selectedUsers}
+                handleSearch={handleSearch}
+                handleSelectUser={handleSelectUser}
+              />
+            )}
           </>
         )}
       </div>
