@@ -31,6 +31,19 @@ export const statusTimeTypeDefinition = z.enum([
 ]);
 export type TStatusTimeTypeEnum = z.infer<typeof statusTimeTypeDefinition>;
 
+export const tournamentLevelTypeDefinition = z.enum([
+  "MEDIUM",
+  "ADVANCED",
+  "BEGINNER",
+]);
+export type TTournamentLevelTypeEnum = z.infer<typeof tournamentLevelTypeDefinition>;
+
+export const tournamentFormatTypeDefinition = z.enum([
+  "LEAGUE",
+  "ELIMINATION",
+]);
+export type TTournamentFormatTypeEnum = z.infer<typeof tournamentFormatTypeDefinition>;
+
 export const statusTournamentTypeDefinition = z.enum([
   "OPEN",
   "CLOSED",

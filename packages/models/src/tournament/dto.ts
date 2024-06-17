@@ -4,6 +4,8 @@ import {
   baseModelDefinition,
   eventTypeDefinition,
   statusTournamentTypeDefinition,
+  tournamentFormatTypeDefinition,
+  tournamentLevelTypeDefinition,
 } from "../definitions";
 import { ITeam } from "../team";
 import { IUser } from "../user";
@@ -23,6 +25,9 @@ export const tournamentDefinition = baseModelDefinition.extend({
   prize: z.string(),
   eventType: eventTypeDefinition,
   status: statusTournamentTypeDefinition,
+  location: z.string(),
+  tournamentType: tournamentLevelTypeDefinition,
+  tournamentFormat: tournamentFormatTypeDefinition,
   startTime: z.coerce.date(),
   endTime: z.coerce.date(),
 });
@@ -56,13 +61,16 @@ export const createTournamentInputDefinition = tournamentDefinition
         if (
           data.players &&
           data.maxPlayers &&
-          data.players.length > data.maxPlayers
+          data.players.length < data.maxPlayers
         ) {
           return true;
         }
       }
       if (data.eventType === "2V2") {
-        if (data.teams && data.maxTeams && data.teams.length > data.maxTeams) {
+        if (data.teams && 
+          data.maxTeams && 
+          data.teams.length < data.maxTeams
+        ) {
           return true;
         }
       }
