@@ -11,7 +11,7 @@ import { teamService } from "./service";
 
 async function createTeam(req: Request, res: Response) {
   const teamData = createTeamInputDefinition.parse(req.body);
-  if(teamData.players.length<2){
+  if (teamData.players.length < 2) {
     throw new ApiError({
       status: 400,
       errors: [{ message: "Ingrese todos los integrantes del team" }],

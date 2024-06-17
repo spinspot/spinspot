@@ -1,6 +1,6 @@
-import { ITeam, TGetTeamParamsDefinition} from "@spin-spot/models";
+import { ITeam, TGetTeamParamsDefinition } from "@spin-spot/models";
 import { useQuery } from "@tanstack/react-query";
-import {api} from '../api';
+import { api } from "../api";
 
 export async function getTeams() {
   const res = await api.get("/teams");
@@ -12,9 +12,7 @@ export function useTeams() {
   return useQuery({ queryKey: ["getTeams"], queryFn: getTeams });
 }
 
-export async function getTeam(
-  _id: TGetTeamParamsDefinition["_id"],
-) {
+export async function getTeam(_id: TGetTeamParamsDefinition["_id"]) {
   const res = await api.get(`/teams/${encodeURIComponent(`${_id}`)}`);
   const team: ITeam = await res.json();
   return team;
