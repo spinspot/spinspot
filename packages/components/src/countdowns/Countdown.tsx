@@ -2,46 +2,52 @@
 
 import { useEffect, useState } from "react";
 
-export function Countdown() {
-  const [time, setTime] = useState({
-    days: 15,
-    hours: 10,
-    minutes: 24,
-    seconds: 5,
-  });
+interface CountdownProps {
+  startTime: Date;
+}
+
+interface TimeLeft {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+}
+
+export function Countdown({ startTime }: CountdownProps) {
+  const calculateTimeLeft = () => {
+    const now = new Date();
+    const startTimeDate = new Date(startTime);
+    const difference = startTimeDate.getTime() - now.getTime();
+    let timeLeft: TimeLeft;
+
+    if (difference > 0) {
+      timeLeft = {
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        seconds: Math.floor((difference / 1000) % 60),
+      };
+    } else {
+      timeLeft = {
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+      };
+    }
+
+    return timeLeft;
+  };
+
+  const [time, setTime] = useState(calculateTimeLeft());
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTime((prevTime) => {
-        let { days, hours, minutes, seconds } = prevTime;
-
-        if (seconds > 0) {
-          seconds -= 1;
-        } else {
-          seconds = 59;
-          if (minutes > 0) {
-            minutes -= 1;
-          } else {
-            minutes = 59;
-            if (hours > 0) {
-              hours -= 1;
-            } else {
-              hours = 23;
-              if (days > 0) {
-                days -= 1;
-              } else {
-                clearInterval(timer);
-              }
-            }
-          }
-        }
-
-        return { days, hours, minutes, seconds };
-      });
+      setTime(calculateTimeLeft());
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [startTime]);
 
   return (
     <div className="grid auto-cols-max grid-flow-col gap-5 text-center">

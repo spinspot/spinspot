@@ -1,13 +1,41 @@
 "use client";
 
 import { Card } from "@spin-spot/components";
+import { useTournaments } from "@spin-spot/services";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Tournament() {
-  //const router = useRouter();
+  const router = useRouter();
+
+  const tournaments = useTournaments();
+
+  function handlePlay(tournamentId: string) {
+    router.push(`/tournaments/${tournamentId}`);
+  }
 
   // Estados para los diferentes niveles de torneos
   const [beginnerCards, setBeginnerCards] = useState([
+    {
+      label: "Inicio: 11 de junio",
+      labelName: "Torneo principiantes",
+      labelButton: "Jugar",
+    },
+    {
+      label: "Inicio: 11 de junio",
+      labelName: "Torneo principiantes",
+      labelButton: "Jugar",
+    },
+    {
+      label: "Inicio: 11 de junio",
+      labelName: "Torneo principiantes",
+      labelButton: "Jugar",
+    },
+    {
+      label: "Inicio: 11 de junio",
+      labelName: "Torneo principiantes",
+      labelButton: "Jugar",
+    },
     {
       label: "Inicio: 11 de junio",
       labelName: "Torneo principiantes",
@@ -44,6 +72,16 @@ export default function Tournament() {
       labelName: "Torneo avanzados",
       labelButton: "Jugar",
     },
+    {
+      label: "Inicio: 15 de junio",
+      labelName: "Torneo avanzados",
+      labelButton: "Jugar",
+    },
+    {
+      label: "Inicio: 15 de junio",
+      labelName: "Torneo avanzados",
+      labelButton: "Jugar",
+    },
   ]);
 
   // Función para determinar la clase de justificación
@@ -69,17 +107,19 @@ export default function Tournament() {
         <div className="p-4">
           <h3 className="mb-4 text-center text-xl">Torneos Principiantes</h3>
           <div
-            className={`carousel w-full gap-x-8 bg-inherit px-4 pb-6 ${getCarouselClass(beginnerCards)}`}
+            className={`carousel carousel-center w-full gap-x-8 bg-inherit px-4 pb-8 ${getCarouselClass(beginnerCards)}`}
           >
-            {beginnerCards.map((card, index) => (
-              <Card
-                key={index}
-                label={card.label}
-                labelName={card.labelName}
-                labelButton={card.labelButton}
-                className="carousel-item"
-              />
-            ))}
+            {tournaments.data &&
+              tournaments.data.map((tournament, index) => (
+                <Card
+                  key={index}
+                  label={tournament.description}
+                  labelName={tournament.name}
+                  labelButton="Jugar"
+                  onClick={() => handlePlay(`${tournament._id}`)}
+                  className="carousel-item"
+                />
+              ))}
           </div>
         </div>
 
@@ -87,17 +127,18 @@ export default function Tournament() {
         <div className="p-4">
           <h3 className="mb-4 text-center text-xl">Torneos Intermedios</h3>
           <div
-            className={`carousel w-full gap-x-8 bg-inherit px-4 pb-6 ${getCarouselClass(intermediateCards)}`}
+            className={`carousel carousel-center w-full gap-x-8 bg-inherit px-4 pb-8 ${getCarouselClass(intermediateCards)}`}
           >
-            {intermediateCards.map((card, index) => (
-              <Card
-                key={index}
-                label={card.label}
-                labelName={card.labelName}
-                labelButton={card.labelButton}
-                className="carousel-item"
-              />
-            ))}
+            {tournaments.data &&
+              tournaments.data.map((tournament, index) => (
+                <Card
+                  key={index}
+                  label={tournament.description}
+                  labelName={tournament.name}
+                  labelButton="Jugar"
+                  className="carousel-item"
+                />
+              ))}
           </div>
         </div>
 
@@ -105,17 +146,18 @@ export default function Tournament() {
         <div className="p-4">
           <h3 className="mb-4 text-center text-xl">Torneos Avanzados</h3>
           <div
-            className={`carousel w-full gap-x-8 bg-inherit px-4 pb-6 ${getCarouselClass(advancedCards)}`}
+            className={`carousel carousel-center w-full gap-x-8 bg-inherit px-4 pb-8 ${getCarouselClass(advancedCards)}`}
           >
-            {advancedCards.map((card, index) => (
-              <Card
-                key={index}
-                label={card.label}
-                labelName={card.labelName}
-                labelButton={card.labelButton}
-                className="carousel-item"
-              />
-            ))}
+            {tournaments.data &&
+              tournaments.data.map((tournament, index) => (
+                <Card
+                  key={index}
+                  label={tournament.description}
+                  labelName={tournament.name}
+                  labelButton="Jugar"
+                  className="carousel-item"
+                />
+              ))}
           </div>
         </div>
       </div>

@@ -37,6 +37,8 @@ export default function Tables() {
   const { mutate: updateTimeBlock } = useUpdateTimeBlock();
   const { mutate: cancelBooking } = useCancelBooking();
 
+  const [loadingBlockId, setLoadingBlockId] = useState<string | null>(null);
+
   const handleShowCancelationToast = (
     timeBlockId: string,
     bookingId: string,
@@ -145,6 +147,7 @@ export default function Tables() {
     if (user?._id) {
       const playerIds = booking.players.map((player) => player._id);
       const newPlayers = [...playerIds, user._id];
+      setLoadingBlockId(booking.timeBlock.toString());
       updateBooking.mutate(
         { _id: booking._id, players: newPlayers },
         {
@@ -154,6 +157,7 @@ export default function Tables() {
               type: "success",
               duration: 3000,
             });
+            setLoadingBlockId(null);
           },
           onError() {
             showToast({
@@ -189,7 +193,27 @@ export default function Tables() {
     if (user?._id) {
       const playerIds = booking.players.map((player) => player._id);
       const newPlayers = playerIds.filter((playerId) => playerId !== user._id);
-      updateBooking.mutate({ _id: booking._id, players: newPlayers });
+      setLoadingBlockId(booking.timeBlock.toString());
+      updateBooking.mutate(
+        { _id: booking._id, players: newPlayers },
+        {
+          onSuccess() {
+            showToast({
+              label: "Se ha salido de la reserva de forma exitosa!",
+              type: "success",
+              duration: 3000,
+            });
+            setLoadingBlockId(null);
+          },
+          onError() {
+            showToast({
+              label: "Error al salirse de la reserva.",
+              type: "error",
+              duration: 3000,
+            });
+          },
+        },
+      );
     }
   }
 
@@ -305,8 +329,16 @@ export default function Tables() {
                             {isUserJoined ? (
                               <>
                                 <Button
-                                  className="btn-secondary btn-sm mx-2"
-                                  label="Salirse"
+                                  className={`btn-secondary btn-sm mx-2 ${updateBooking.isPending ? "btn-disabled" : ""}`}
+                                  label={
+                                    loadingBlockId === block._id ? (
+                                      <div className="flex items-center justify-center gap-2">
+                                        <Loader size="sm" /> Saliéndose...
+                                      </div>
+                                    ) : (
+                                      "Salirse"
+                                    )
+                                  }
                                   labelSize="text-md"
                                   onClick={() =>
                                     handleShowSalirseToast(block.booking)
@@ -317,8 +349,16 @@ export default function Tables() {
                             ) : playersCount < maxPlayers ? (
                               <>
                                 <Button
-                                  className="btn-primary btn-sm mx-2"
-                                  label="Unirse"
+                                  className={`btn-primary btn-sm mx-2 ${updateBooking.isPending ? "btn-disabled" : ""}`}
+                                  label={
+                                    loadingBlockId === block._id ? (
+                                      <div className="flex items-center justify-center gap-2">
+                                        <Loader size="sm" /> Uniéndose...
+                                      </div>
+                                    ) : (
+                                      "Unirse"
+                                    )
+                                  }
                                   labelSize="text-md"
                                   onClick={() =>
                                     handleShowJoinToast(block.booking)
