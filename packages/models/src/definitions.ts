@@ -31,6 +31,19 @@ export const statusTimeTypeDefinition = z.enum([
 ]);
 export type TStatusTimeTypeEnum = z.infer<typeof statusTimeTypeDefinition>;
 
+export const statusTournamentTypeDefinition = z.enum([
+  "OPEN",
+  "CLOSED",
+  "IN_PROGRESS",
+  "FINISHED",
+]);
+export type TStatusTournamentTypeEnum = z.infer<
+  typeof statusTournamentTypeDefinition
+>;
+
+export const teamSideTypeDefinition = z.enum(["LEFT", "RIGHT"]);
+export type TTeamSideTypeEnum = z.infer<typeof teamSideTypeDefinition>;
+
 export const passwordDefinition = z
   .string()
   .regex(/^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9]).{6,})\S$/, {
