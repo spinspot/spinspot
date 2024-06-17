@@ -39,7 +39,10 @@ async function updateBooking(
   _id: TUpdateBookingParamsDefinition["_id"],
   data: TUpdateBookingInputDefinition,
 ) {
-  const booking = await Booking.findByIdAndUpdate(_id, data);
+  const booking = await Booking.findByIdAndUpdate(_id, data).populate([
+    "owner",
+    "players",
+  ]);
   return booking;
 }
 

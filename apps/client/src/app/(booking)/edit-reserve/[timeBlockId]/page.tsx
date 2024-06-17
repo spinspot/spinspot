@@ -13,6 +13,7 @@ import {
   useToast,
   useUpdateBooking,
   useUsers,
+  useAvailableUsers,
 } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -35,7 +36,7 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
 
   const timeBlock = useTimeBlock(params.timeBlockId);
   const users = useUsers();
-
+  const availableUsers = useAvailableUsers();
   const updateBooking = useUpdateBooking();
 
   useEffect(() => {
@@ -80,7 +81,7 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
 
     if (text.length >= 1) {
       const lowerCaseText = text.toLowerCase();
-      const filtered = users.data?.filter((user) => {
+      const filtered = availableUsers.data?.filter((user) => {
         const fullName = `${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}`;
         return (
           user.firstName.toLowerCase().includes(lowerCaseText) ||
