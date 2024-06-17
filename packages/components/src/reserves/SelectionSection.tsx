@@ -9,7 +9,7 @@ interface SelectionSectionProps {
   setIndumentary: (_indumentary: string | null) => void;
   resetInputs: (_length: number) => void;
   initialActive?: number | null;
-  initialIndumentary?: number | null; 
+  initialIndumentary?: number | null;
 }
 
 export function SelectionSection({
@@ -40,7 +40,7 @@ export function SelectionSection({
         <h3 className="mr-1 text-lg">¿Necesitas Raquetas y Pelotas? </h3>
         <Pagination
           labels={optinosNo}
-          initialActiveIndex={initialIndumentary ?? null} 
+          initialActiveIndex={initialIndumentary ?? null}
           size="sm"
           onPageChange={(label) => setIndumentary(label ?? null)}
           className="btn-neutral mt-2 min-w-28 text-nowrap"
@@ -49,4 +49,3 @@ export function SelectionSection({
     </div>
   );
 }
-
