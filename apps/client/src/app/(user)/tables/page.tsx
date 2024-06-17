@@ -331,7 +331,7 @@ export default function Tables() {
                             {isUserJoined ? (
                               <>
                                 <Button
-                                  className={`btn-secondary btn-sm mx-2 ${updateBooking.isPending ? "btn-disabled" : ""}`}
+                                  className={`btn-secondary btn-sm mx-2 ${loadingBlockId ? "btn-disabled" : ""}`}
                                   label={
                                     loadingBlockId === block._id ? (
                                       <div className="flex items-center justify-center gap-2">
@@ -351,7 +351,7 @@ export default function Tables() {
                             ) : playersCount < maxPlayers ? (
                               <>
                                 <Button
-                                  className={`btn-primary btn-sm mx-2 ${updateBooking.isPending ? "btn-disabled" : ""}`}
+                                  className={`btn-primary btn-sm mx-2 ${loadingBlockId ? "btn-disabled" : ""}`}
                                   label={
                                     loadingBlockId === block._id ? (
                                       <div className="flex items-center justify-center gap-2">
