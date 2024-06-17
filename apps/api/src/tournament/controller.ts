@@ -1,5 +1,5 @@
 import {
-   ApiError, 
+  ApiError,
    createTournamentInputDefinition, 
    getTournamentParamsDefinition, 
    getTournamentsQueryDefinition, 
@@ -10,29 +10,16 @@ import { Request, Response } from "express";
 import { tournamentService } from "./service";
 
 async function createTournament(req: Request, res: Response) {
-  
   const tournamentData = createTournamentInputDefinition.parse(req.body);
-  
-  if(tournamentData?.eventType === "1V1"){
-    if (tournamentData.players && tournamentData.maxPlayers 
-      && tournamentData.players.length > tournamentData.maxPlayers) {
-      throw new ApiError({
-        status: 400,
-        errors: [{ message: "No se permiten más jugadores en el torneo" }],
-      });
-    }
+  const currentTime = new Date();
+
+  if(currentTime > tournamentData?.startTime){
+    throw new ApiError({
+      status: 400,
+      errors: [{ message: "Fecha invalida para crear el torneo" }],
+    });
   }
 
-  else if(tournamentData?.eventType === "2V2"){
-    if (tournamentData.teams && tournamentData.maxTeams 
-      && tournamentData.teams.length > tournamentData.maxTeams) {
-      throw new ApiError({
-        status: 400,
-        errors: [{ message: "No se permiten más equipos en el torneo" }],
-      });
-    }
-  
-  }
   const tournament = await tournamentService.createTournament(tournamentData);
   res.status(200).json(tournament);
 }

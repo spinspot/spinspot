@@ -47,7 +47,25 @@ export type TGetTournamentParamsDefinition = z.infer<
 
 export const createTournamentInputDefinition = tournamentDefinition.omit({
   _id: true,
-});
+}).refine(
+  (data) => {
+    if (data.eventType === "1V1") {
+      if(data.players && data.maxPlayers && data.players.length > data.maxPlayers){
+        return true;
+      }
+    } 
+    if (data.eventType === "2V2") {
+      if(data.teams && data.maxTeams && data.teams.length > data.maxTeams){
+        return true;
+      }
+    }
+    return true
+  },
+  {
+    message: "Registre los datos necesarios para el torneo",
+    path: ["eventType", "teams", "players", "maxTeams", "maxPlayers"],
+  }
+);
 export type TCreateTournamentInputDefinition = z.infer<
   typeof createTournamentInputDefinition
 >;
