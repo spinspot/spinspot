@@ -28,7 +28,8 @@ export const tournamentDefinition = baseModelDefinition.extend({
 });
 
 export type ITournament = z.infer<typeof tournamentDefinition>;
-export type IPopulatedTournament = Omit<ITournament, "players" | "teams"> & {
+export type IPopulatedTournament = Omit<ITournament, "owner" | "players" | "teams"> & {
+  owner: IUser;
   players: IUser[];
   teams: ITeam[];
 };
