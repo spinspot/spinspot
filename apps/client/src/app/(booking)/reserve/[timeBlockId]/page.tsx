@@ -9,6 +9,7 @@ import {
 } from "@spin-spot/components";
 import {
   useAuth,
+  useAvailableUsers,
   useCreateBooking,
   useTable,
   useTimeBlock,
@@ -38,6 +39,7 @@ export default function Reserve({ params }: { params: ReserveParams }) {
   const table = useTable(timeBlock.data?.table._id);
   const users = useUsers();
   const createBooking = useCreateBooking();
+  const availableUsers = useAvailableUsers();
 
   const handleSearch = (index: number, text: string) => {
     const newSearchTexts = [...searchTexts];
@@ -51,7 +53,7 @@ export default function Reserve({ params }: { params: ReserveParams }) {
     if (text.length >= 1) {
       const lowerCaseText = text.toLowerCase();
       const filtered =
-        users.data?.filter((user) => {
+        availableUsers.data?.filter((user) => {
           const fullName = `${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}`;
           return (
             user.firstName.toLowerCase().includes(lowerCaseText) ||
@@ -97,6 +99,15 @@ export default function Reserve({ params }: { params: ReserveParams }) {
       user._id,
     ];
 
+    if (!availableUsers.data?.some((item) => item._id === user._id)) {
+      showToast({
+        label:
+          "No puede realizar la reserva debido a que usted ya forma parte de otra reserva",
+        type: "error",
+      });
+      return;
+    }
+
     const finalizeReserve = async () => {
       createBooking.mutate(
         {
@@ -106,6 +117,7 @@ export default function Reserve({ params }: { params: ReserveParams }) {
           players: validPlayers,
           timeBlock: params.timeBlockId,
           status: "PENDING",
+          equipment: indumentary === "SI",
         },
         {
           onSuccess: () => {
@@ -208,7 +220,7 @@ export default function Reserve({ params }: { params: ReserveParams }) {
         setIndumentary={setIndumentary}
         resetInputs={resetInputs}
       />
-      <div className="mt-8 flex w-full flex-col items-center justify-center">
+      <div className="mt-4 flex w-full flex-col items-center justify-center">
         {eventType && (
           <PlayerInput
             searchTexts={searchTexts}

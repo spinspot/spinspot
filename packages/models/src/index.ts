@@ -2,5 +2,8 @@ export * from "./auth";
 export * from "./booking";
 export * from "./definitions";
 export * from "./table";
+export * from "./team";
 export * from "./time-block";
+export * from "./tournament";
+export * from "./tournament-match";
 export * from "./user";

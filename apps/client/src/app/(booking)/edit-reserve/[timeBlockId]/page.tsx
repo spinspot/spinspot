@@ -13,6 +13,7 @@ import {
   useToast,
   useUpdateBooking,
   useUsers,
+  useAvailableUsers,
 } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -35,7 +36,7 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
 
   const timeBlock = useTimeBlock(params.timeBlockId);
   const users = useUsers();
-
+  const availableUsers = useAvailableUsers();
   const updateBooking = useUpdateBooking();
 
   useEffect(() => {
@@ -61,6 +62,11 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
       );
 
       setEventType(timeBlock.data?.booking.eventType);
+
+      const equipmentValue = timeBlock.data?.booking.equipment;
+      if (equipmentValue !== undefined) {
+        setIndumentary(equipmentValue ? "SI" : "NO");
+      }
     }
   }, [timeBlock.status]);
 
@@ -75,7 +81,7 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
 
     if (text.length >= 1) {
       const lowerCaseText = text.toLowerCase();
-      const filtered = users.data?.filter((user) => {
+      const filtered = availableUsers.data?.filter((user) => {
         const fullName = `${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}`;
         return (
           user.firstName.toLowerCase().includes(lowerCaseText) ||
@@ -134,10 +140,11 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
           _id: timeBlock.data?.booking._id,
           eventType: eventType as "1V1" | "2V2",
           owner: user._id,
-          table: timeBlock.data.table._id, // Aquí se pasa `tableId`
+          table: timeBlock.data.table._id,
           players: validPlayers,
           timeBlock: params.timeBlockId,
           status: "PENDING",
+          equipment: indumentary === "SI",
         },
         {
           onSuccess: () => {
@@ -206,6 +213,9 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
     );
   }
 
+  const initialIndumentaryIndex =
+    indumentary === "SI" ? 1 : indumentary === "NO" ? 0 : null;
+
   return (
     <div className="font-body flex-grow py-32">
       {timeBlock.isSuccess && (
@@ -238,8 +248,9 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
         setIndumentary={setIndumentary}
         resetInputs={resetInputs}
         initialActive={eventType === "1V1" ? 0 : 1}
+        initialIndumentary={initialIndumentaryIndex}
       />
-      <div className="mt-8 flex w-full flex-col items-center justify-center">
+      <div className="mt-4 flex w-full flex-col items-center justify-center">
         {eventType && (
           <PlayerInput
             searchTexts={searchTexts}
