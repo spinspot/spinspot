@@ -85,7 +85,7 @@ async function joinTournament(req: Request, res: Response) {
     ) {
       const updateTeams = [...tournament.teams, team._id]
       await tournamentService.updateTournament(params._id, {
-        players: updateTeams
+        teams: updateTeams
       });
     } else {
       throw new ApiError({
