@@ -1,5 +1,6 @@
 import { sendMail } from "@/email";
 import { tableService } from "@/table";
+import { userService } from "@/user";
 import { timeBlockService } from "@/time-block";
 import {
   ApiError,
@@ -62,6 +63,12 @@ async function bookingWithUser(req: Request, res: Response) {
       errors: [{ message: "Hay jugadores repetidos en la reserva" }],
     });
   }
+ if (!(await userService.isUserAvailable(user?._id.toString() ?? ""))) {
+   throw new ApiError({
+     status: 400,
+     errors: [{ message: "Ya tienes una Reserva Activa" }],
+   });
+ }
 
   const session = await startSession();
 
@@ -103,6 +110,30 @@ async function updateBooking(req: Request, res: Response) {
     params._id,
   );
 
+  //Obtenemos los jugadores de la reserva actual, esto para no revisar si están disponibles
+  const currentPlayers = prevBooking.players.map((player: { _id: string }) =>
+    player._id.toString()
+  );
+
+  const unavailablePlayers = [];
+  for (const player of input.players ?? []) {
+    // Verificar si el jugador ya está en la reserva actual
+    if (!currentPlayers.includes(player.toString())) {
+      if (!(await userService.isUserAvailable(player))) {
+        unavailablePlayers.push(player);
+      }
+    }
+  }
+
+  if (unavailablePlayers.length > 0) {
+    throw new ApiError({
+      status: 400,
+      errors: [
+        { message: "Hay jugadores que ya están en una reserva activa" },
+      ],
+    });
+  }
+
   const booking: IPopulatedBooking | any = await bookingService.updateBooking(
     params._id,
     input,
@@ -111,6 +142,8 @@ async function updateBooking(req: Request, res: Response) {
   const newBooking: IPopulatedBooking | any = await bookingService.getBooking(
     params._id,
   );
+
+
 
   let actionMessage = "";
 
