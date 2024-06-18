@@ -20,7 +20,7 @@ async function getTournaments(filter: TGetTournamentsQueryDefinition = {}) {
 }
 
 async function getTournament(_id: TGetTournamentsQueryDefinition["_id"]) {
-  const tournament = await Tournament.findById(_id);
+  const tournament = await Tournament.findById(_id).populate(["players"]);
   return tournament;
 }
 

@@ -13,7 +13,14 @@ import {
   Loader,
   PingPongIcon,
 } from "@spin-spot/components";
-import { useToast, useTournament } from "@spin-spot/services";
+import { IPopulatedTournament } from "@spin-spot/models";
+import {
+  useAuth,
+  useToast,
+  useTournament,
+  useUpdateTournament,
+} from "@spin-spot/services";
+import { useEffect, useState } from "react";
 
 interface TournamentParams {
   tournamentId: string;
@@ -26,17 +33,47 @@ export default function TournamentJoin({
 }) {
   const { showToast } = useToast();
   const tournament = useTournament(params.tournamentId);
-  console.log(tournament);
+  const { user } = useAuth();
+  const updateTournament = useUpdateTournament();
 
-  const handleInscribirse = () => {
+  const [isUpdating, setIsUpdating] = useState(false); // Estado para controlar si se está actualizando el torneo
+
+  function handleInscription(tournament: IPopulatedTournament) {
+    if (user?._id) {
+      const playerIds = tournament.players.map((player) => player._id);
+      const newPlayers = [...playerIds, user._id];
+      setIsUpdating(true); // Comienza la actualización
+      updateTournament.mutate(
+        { _id: tournament._id, players: newPlayers },
+        {
+          onSuccess() {
+            showToast({
+              label: "Se ha inscrito al torneo de forma exitosa!",
+              type: "success",
+              duration: 3000,
+            });
+          },
+          onError() {
+            showToast({
+              label: "Error al inscribirse en el torneo",
+              type: "error",
+              duration: 3000,
+            });
+          },
+        },
+      );
+    }
+  }
+
+  const handleInscribirseToast = (tournament: IPopulatedTournament) => {
     showToast({
       label: "¿Seguro que quieres unirte al torneo?",
       type: "warning",
       acceptButtonLabel: "Sí",
       denyButtonLabel: "No",
-      //   onAccept() {
-      //     funcionAca()
-      //   },
+      onAccept() {
+        handleInscription(tournament);
+      },
       onDeny() {
         showToast({
           label: "Inscripción Cancelada",
@@ -46,6 +83,82 @@ export default function TournamentJoin({
       },
     });
   };
+
+  function handleSalirse(tournament: IPopulatedTournament) {
+    if (user?._id) {
+      const playerIds = tournament.players.map((player) => player._id);
+      const newPlayers = playerIds.filter((playerId) => playerId !== user._id);
+      setIsUpdating(true); // Comienza la actualización
+      updateTournament.mutate(
+        { _id: tournament._id, players: newPlayers },
+        {
+          onSuccess() {
+            showToast({
+              label: "Se ha salido del torneo de forma exitosa!",
+              type: "success",
+              duration: 3000,
+            });
+          },
+          onError() {
+            showToast({
+              label: "Error al salirse del torneo",
+              type: "error",
+              duration: 3000,
+            });
+          },
+        },
+      );
+    }
+  }
+
+  const handleSalirseToast = (tournament: IPopulatedTournament) => {
+    showToast({
+      label: "¿Seguro que quieres salirte del torneo?",
+      type: "warning",
+      acceptButtonLabel: "Sí",
+      denyButtonLabel: "No",
+      onAccept() {
+        handleSalirse(tournament);
+      },
+      onDeny() {
+        showToast({
+          label: "Inscripción Cancelada",
+          type: "error",
+          duration: 2500,
+        });
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (!tournament.isFetching) {
+      setIsUpdating(false);
+    }
+  }, [tournament.isFetching]);
+
+  const buttonOnClick = tournament.data?.players.some(
+    (player) => player._id === user?._id,
+  )
+    ? handleSalirseToast
+    : handleInscribirseToast;
+
+  const buttonText = tournament.data?.players.some(
+    (player) => player._id === user?._id,
+  )
+    ? "Salirse"
+    : "Inscribirse";
+
+  const showLoader =
+    isUpdating &&
+    (tournament.data?.players.some((player) => player._id === user?._id) ? (
+      <div className="flex items-center justify-center gap-2">
+        <Loader size="md" className="text-secondary"></Loader> Saliéndose...
+      </div>
+    ) : (
+      <div className="flex items-center justify-center gap-2">
+        <Loader size="md" className="text-primary"></Loader> Inscribiendose...
+      </div>
+    ));
 
   return (
     <div>
@@ -132,12 +245,16 @@ export default function TournamentJoin({
             {tournament.data?.startTime && (
               <Countdown startTime={tournament.data?.startTime}></Countdown>
             )}
-            <div className="text-3xl font-bold">{`Juagdores Inscritos ${tournament.data?.players?.length}/${tournament.data?.maxPlayers}`}</div>
+            <div className="text-3xl font-bold">
+              {tournament.data?.eventType === "1V1"
+                ? `Juagdores Inscritos ${tournament.data?.players?.length}/${tournament.data.maxPlayers}`
+                : `Equipos Inscritos ${tournament.data?.teams.length}/${tournament.data?.maxTeams}`}
+            </div>
             <Button
-              label="Inscribirse"
-              className="btn-primary btn-lg w-72"
-              onClick={handleInscribirse}
-            ></Button>
+              label={showLoader || buttonText}
+              className={`btn-lg w-72 ${showLoader ? "btn-disabled" : ""} ${buttonText === "Inscribirse" ? "btn-primary" : "btn-secondary"}`}
+              onClick={() => tournament.data && buttonOnClick(tournament.data)}
+            />
           </div>
         </div>
       )}

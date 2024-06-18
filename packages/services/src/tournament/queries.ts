@@ -1,4 +1,8 @@
-import { ITournament, TGetTournamentParamsDefinition } from "@spin-spot/models";
+import {
+  IPopulatedTournament,
+  ITournament,
+  TGetTournamentParamsDefinition,
+} from "@spin-spot/models";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../api";
 
@@ -16,7 +20,7 @@ export async function getTournament(
   _id: TGetTournamentParamsDefinition["_id"],
 ) {
   const res = await api.get(`/tournaments/${encodeURIComponent(`${_id}`)}`);
-  const tournament: ITournament = await res.json();
+  const tournament: IPopulatedTournament = await res.json();
   return tournament;
 }
 
