@@ -250,11 +250,21 @@ export default function TournamentJoin({
                 ? `Juagdores Inscritos ${tournament.data?.players?.length}/${tournament.data.maxPlayers}`
                 : `Equipos Inscritos ${tournament.data?.teams.length}/${tournament.data?.maxTeams}`}
             </div>
-            <Button
-              label={showLoader || buttonText}
-              className={`btn-lg w-72 ${showLoader ? "btn-disabled" : ""} ${buttonText === "Inscribirse" ? "btn-primary" : "btn-secondary"}`}
-              onClick={() => tournament.data && buttonOnClick(tournament.data)}
-            />
+            {tournament.data?.players.length === tournament.data?.maxPlayers ||
+            tournament.data?.teams.length === tournament.data?.maxTeams ? (
+              <Button
+                label="Torneo Lleno"
+                className={"btn-disabled btn-lg w-72"}
+              />
+            ) : (
+              <Button
+                label={showLoader || buttonText}
+                className={`btn-lg w-72 ${showLoader ? "btn-disabled" : ""} ${buttonText === "Inscribirse" ? "btn-primary" : "btn-secondary"}`}
+                onClick={() =>
+                  tournament.data && buttonOnClick(tournament.data)
+                }
+              />
+            )}
           </div>
         </div>
       )}
