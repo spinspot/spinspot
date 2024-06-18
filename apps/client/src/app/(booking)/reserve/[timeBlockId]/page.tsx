@@ -2,13 +2,16 @@
 
 import {
   Button,
+  InvitationSection,
   Loader,
+  Pagination,
   PlayerInput,
   ReservationInfo,
   SelectionSection,
 } from "@spin-spot/components";
 import {
   useAuth,
+  useAvailableUsers,
   useCreateBooking,
   useTable,
   useTimeBlock,
@@ -27,6 +30,8 @@ export default function Reserve({ params }: { params: ReserveParams }) {
   const { showToast } = useToast();
   const options = ["1V1", "2V2"];
   const optinosNo = ["NO", "SI"];
+  const optionsInv = ["NO", "SI"];
+  const [invitations, setInvitations] = useState<string | null>(null);
   const [searchTexts, setSearchTexts] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<any[][]>([]);
   const [selectedUsers, setSelectedUsers] = useState<(string | null)[]>([]);
@@ -38,6 +43,7 @@ export default function Reserve({ params }: { params: ReserveParams }) {
   const table = useTable(timeBlock.data?.table._id);
   const users = useUsers();
   const createBooking = useCreateBooking();
+  const availableUsers = useAvailableUsers();
 
   const handleSearch = (index: number, text: string) => {
     const newSearchTexts = [...searchTexts];
@@ -51,7 +57,7 @@ export default function Reserve({ params }: { params: ReserveParams }) {
     if (text.length >= 1) {
       const lowerCaseText = text.toLowerCase();
       const filtered =
-        users.data?.filter((user) => {
+        availableUsers.data?.filter((user) => {
           const fullName = `${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}`;
           return (
             user.firstName.toLowerCase().includes(lowerCaseText) ||
@@ -96,6 +102,15 @@ export default function Reserve({ params }: { params: ReserveParams }) {
       ...(selectedUsers.filter((player) => player !== null) as string[]),
       user._id,
     ];
+
+    if (!availableUsers.data?.some((item) => item._id === user._id)) {
+      showToast({
+        label:
+          "No puede realizar la reserva debido a que usted ya forma parte de otra reserva",
+        type: "error",
+      });
+      return;
+    }
 
     const finalizeReserve = async () => {
       createBooking.mutate(
@@ -211,13 +226,29 @@ export default function Reserve({ params }: { params: ReserveParams }) {
       />
       <div className="mt-4 flex w-full flex-col items-center justify-center">
         {eventType && (
-          <PlayerInput
-            searchTexts={searchTexts}
-            suggestions={suggestions}
-            selectedUsers={selectedUsers}
-            handleSearch={handleSearch}
-            handleSelectUser={handleSelectUser}
-          />
+          <>
+            <h3 className="mt-6 text-center text-lg">
+              ¿Deseas invitar un amigo a la reserva?
+            </h3>
+            <Pagination
+              labels={optionsInv}
+              initialActiveIndex={null}
+              size="sm"
+              onPageChange={(label) => setInvitations(label ?? null)}
+              className="btn-neutral mt-2 min-w-28 text-nowrap"
+            />
+            {invitations === "SI" ? (
+              <InvitationSection timeBlockId={params.timeBlockId} />
+            ) : (
+              <PlayerInput
+                searchTexts={searchTexts}
+                suggestions={suggestions}
+                selectedUsers={selectedUsers}
+                handleSearch={handleSearch}
+                handleSelectUser={handleSelectUser}
+              />
+            )}
+          </>
         )}
       </div>
       <div className="mt-6 flex flex-row justify-center gap-x-6">

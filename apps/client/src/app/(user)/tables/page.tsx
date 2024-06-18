@@ -1,19 +1,26 @@
 "use client";
 
 import { Button, Calendar, Loader, Pagination } from "@spin-spot/components";
-import { IPopulatedTimeBlock } from "@spin-spot/models";
+import { IPopulatedBooking, IPopulatedTimeBlock } from "@spin-spot/models";
 import {
   useAuth,
+  useAvailableUsers,
   useCancelBooking,
   useTables,
   useTimeBlocks,
   useToast,
+  useUpdateBooking,
   useUpdateTimeBlock,
 } from "@spin-spot/services";
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
-export default function Page() {
+export default function Tables() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
     new Date(),
   );
@@ -24,7 +31,9 @@ export default function Page() {
   );
   const { user } = useAuth();
   const router = useRouter();
+  const availableUsers = useAvailableUsers();
   const { showToast } = useToast();
+  const updateBooking = useUpdateBooking();
   const { mutate: updateTimeBlock } = useUpdateTimeBlock();
   const { mutate: cancelBooking } = useCancelBooking();
 
@@ -103,10 +112,85 @@ export default function Page() {
     );
   }
 
-  function handleJoin(timeBlockId: string) {
-    console.log(
-      `Unirse a la reserva solicitada para el bloque de tiempo con ID: ${timeBlockId}`,
-    );
+  const handleShowJoinToast = (booking: IPopulatedBooking) => {
+    showToast({
+      label: "¿Seguro que quieres unirte a la reserva?",
+      type: "warning",
+      acceptButtonLabel: "Sí",
+      denyButtonLabel: "No",
+      onAccept() {
+        handleJoin(booking);
+      },
+      onDeny() {
+        showToast({
+          label: "Unión Cancelada",
+          type: "error",
+        });
+      },
+    });
+  };
+
+  function handleJoin(booking: IPopulatedBooking) {
+    console.log(availableUsers.data);
+
+    if (!availableUsers.data?.some((item) => item._id === user?._id)) {
+      showToast({
+        label:
+          "No se puede unir a la reserva debido a que usted ya forma parte de otra reserva",
+        type: "error",
+      });
+      return;
+    }
+
+    if (user?._id) {
+      const playerIds = booking.players.map((player) => player._id);
+      const newPlayers = [...playerIds, user._id];
+      updateBooking.mutate(
+        { _id: booking._id, players: newPlayers },
+        {
+          onSuccess() {
+            showToast({
+              label: "Se ha unido a la reserva de forma exitosa!",
+              type: "success",
+              duration: 3000,
+            });
+          },
+          onError() {
+            showToast({
+              label: "Error al unirse a la reserva.",
+              type: "error",
+              duration: 3000,
+            });
+          },
+        },
+      );
+    }
+  }
+
+  const handleShowSalirseToast = (booking: IPopulatedBooking) => {
+    showToast({
+      label: "¿Seguro que quieres salirte de la reserva?",
+      type: "warning",
+      acceptButtonLabel: "Sí",
+      denyButtonLabel: "No",
+      onAccept() {
+        handleSalirse(booking);
+      },
+      onDeny() {
+        showToast({
+          label: "Desvinculación Cancelada",
+          type: "error",
+        });
+      },
+    });
+  };
+
+  function handleSalirse(booking: IPopulatedBooking) {
+    if (user?._id) {
+      const playerIds = booking.players.map((player) => player._id);
+      const newPlayers = playerIds.filter((playerId) => playerId !== user._id);
+      updateBooking.mutate({ _id: booking._id, players: newPlayers });
+    }
   }
 
   const filteredTimeBlocks = useMemo<IPopulatedTimeBlock[]>(() => {
@@ -164,6 +248,12 @@ export default function Page() {
                     : block.booking?.eventType === "2V2"
                       ? 4
                       : 0; // Variable para ver la cantidad maxima de jugadores que puede tener un evento
+                const timeZone = "America/Caracas"; // Zona horaria de Venezuela
+                const blockDate = dayjs(block.startTime).tz(timeZone); // Convertir la fecha al huso horario de Venezuela
+                const now = dayjs().tz(timeZone); // Hora actual en la zona horaria de Venezuela
+                const isUserJoined = block.booking?.players?.some(
+                  (player) => player._id === user?._id,
+                );
 
                 return (
                   <tr key={`${block._id}`}>
@@ -174,13 +264,18 @@ export default function Page() {
                       })}
                     </td>
                     <td>
-                      {block.status.toLowerCase() === "available" && (
-                        <Button
-                          className="btn-primary btn-sm"
-                          label="Reservar"
-                          labelSize="text-md"
-                          onClick={() => handleReserve(`${block._id}`)}
-                        />
+                      {blockDate.isBefore(now) &&
+                      block.status.toLowerCase() === "available" ? (
+                        <span>El horario ya ha pasado</span>
+                      ) : (
+                        block.status.toLowerCase() === "available" && (
+                          <Button
+                            className="btn-primary btn-sm"
+                            label="Reservar"
+                            labelSize="text-md"
+                            onClick={() => handleReserve(`${block._id}`)}
+                          />
+                        )
                       )}
                       {block.status.toLowerCase() === "booked" &&
                         user?._id === block.booking?.owner && (
@@ -205,21 +300,37 @@ export default function Page() {
                           </div>
                         )}
                       {block.status === "BOOKED" &&
-                        user?._id !== block.booking?.owner &&
-                        playersCount < maxPlayers && (
+                        user?._id !== block.booking?.owner && (
                           <>
-                            <Button
-                              className="btn-primary btn-sm mx-2"
-                              label="Unirse"
-                              labelSize="text-md"
-                              onClick={() => handleJoin(`${block._id}`)}
-                            />
-                            <span>{`${playersCount}/${maxPlayers}`}</span>
+                            {isUserJoined ? (
+                              <>
+                                <Button
+                                  className="btn-secondary btn-sm mx-2"
+                                  label="Salirse"
+                                  labelSize="text-md"
+                                  onClick={() =>
+                                    handleShowSalirseToast(block.booking)
+                                  }
+                                />
+                                <span>{`${playersCount}/${maxPlayers}`}</span>
+                              </>
+                            ) : playersCount < maxPlayers ? (
+                              <>
+                                <Button
+                                  className="btn-primary btn-sm mx-2"
+                                  label="Unirse"
+                                  labelSize="text-md"
+                                  onClick={() =>
+                                    handleShowJoinToast(block.booking)
+                                  }
+                                />
+                                <span>{`${playersCount}/${maxPlayers}`}</span>
+                              </>
+                            ) : (
+                              <span>Reservado</span>
+                            )}
                           </>
                         )}
-                      {block.status === "BOOKED" &&
-                        user?._id !== block.booking?.owner &&
-                        playersCount === maxPlayers && <span>Reservado</span>}
                     </td>
                     <td>{block.table.code}</td>
                   </tr>
