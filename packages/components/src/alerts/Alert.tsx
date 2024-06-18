@@ -50,7 +50,7 @@ export function Alert({
       {(denyButtonLabel || acceptButtonLabel) && (
         <div className="flex gap-2">
           {denyButtonLabel && (
-            <button className="btn btn-sm" onClick={onDeny}>
+            <button className="btn btn-sm dark:text-white" onClick={onDeny}>
               {denyButtonLabel}
             </button>
           )}
