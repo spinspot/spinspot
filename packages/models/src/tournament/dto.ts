@@ -33,7 +33,10 @@ export const tournamentDefinition = baseModelDefinition.extend({
 });
 
 export type ITournament = z.infer<typeof tournamentDefinition>;
-export type IPopulatedTournament = Omit<ITournament, "owner" | "players" | "teams"> & {
+export type IPopulatedTournament = Omit<
+  ITournament,
+  "owner" | "players" | "teams"
+> & {
   owner: IUser;
   players: IUser[];
   teams: ITeam[];
@@ -67,10 +70,7 @@ export const createTournamentInputDefinition = tournamentDefinition
         }
       }
       if (data.eventType === "2V2") {
-        if (data.teams && 
-          data.maxTeams && 
-          data.teams.length < data.maxTeams
-        ) {
+        if (data.teams && data.maxTeams && data.teams.length < data.maxTeams) {
           return true;
         }
       }

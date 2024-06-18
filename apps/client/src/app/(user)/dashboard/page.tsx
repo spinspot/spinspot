@@ -2,16 +2,35 @@
 
 import { Button, Card } from "@spin-spot/components";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function Dashboard() {
   const router = useRouter();
+  const [cards, setCards] = useState([
+    {
+      label: "Inicio: 11 de junio",
+      labelName: "Torneo profesores",
+      labelButton: "Jugar",
+    },
+    {
+      label: "Inicio: 17 de julio",
+      labelName: "Torneo Ingenieria",
+      labelButton: "Jugar",
+    },
+    {
+      label: "Inicio 3 de junio",
+      labelName: "Torneo FACES",
+      labelButton: "Jugar",
+    },
+  ]);
 
   const handleClick = () => {
     router.push("/tables");
   };
+
   return (
     <div className="flex-grow">
-      <div className="grid h-56 w-full items-center justify-items-center bg-[url(/pingPongBackGround.svg)] bg-cover bg-center bg-no-repeat md:h-60">
+      <div className="grid h-64 w-full items-center justify-items-center bg-[url(/pingPongBackGround.svg)] bg-cover bg-center bg-no-repeat md:h-72">
         <div className="font-title text-center">
           <h1 className="flex flex-col text-3xl">
             <span className="text-white">PING PONG</span>
@@ -19,7 +38,7 @@ export default function Dashboard() {
           </h1>
         </div>
       </div>
-      <div className="font-title h-56  w-full pt-5 text-center font-normal md:h-60">
+      <div className="font-title w-full pt-10 text-center font-normal">
         <h2 className="pb-3 text-xl">¡Bienvenido a Spin-Spot! </h2>
         <p className="px-6 pb-5 text-center">
           En esta página podrás realizar las reservas de las nuevas canchas de
@@ -32,29 +51,29 @@ export default function Dashboard() {
           onClick={handleClick}
         />
       </div>
-      <div className="font-title w-full pt-10 text-center font-normal md:h-20">
+      <div className="font-title w-full pt-6 text-center font-normal">
         <h2 className="h-10 text-2xl">Torneos activos</h2>
       </div>
-
-      <div className="carousel carousel-center w-full space-x-8  bg-inherit p-4 md:justify-center">
-        <Card
-          label="Inicio: 11 de junio"
-          labelName="Torneo profesores"
-          labelButton="Jugar"
-          className="carousel-item"
-        />
-        <Card
-          label="Inicio: 17 de julio"
-          labelName="Torneo Ingenieria"
-          labelButton="Jugar"
-          className="carousel-item"
-        />
-        <Card
-          label="Inicio 3 de junio"
-          labelName="Torneo FACES"
-          labelButton="Jugar"
-          className="carousel-item"
-        />
+      <div className="p-4">
+        <div
+          className={`carousel w-full gap-x-8 bg-inherit px-4 pb-10 ${
+            cards.length <= 4
+              ? cards.length === 1
+                ? "justify-center"
+                : "lg:justify-center"
+              : ""
+          }`}
+        >
+          {cards.map((card, index) => (
+            <Card
+              key={index}
+              label={card.label}
+              labelName={card.labelName}
+              labelButton={card.labelButton}
+              className="carousel-item"
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

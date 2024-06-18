@@ -1,3 +1,4 @@
+import { teamService } from "@/team";
 import {
   ApiError,
   createTeamInputDefinition,
@@ -9,7 +10,6 @@ import {
 } from "@spin-spot/models";
 import { Request, Response } from "express";
 import { tournamentService } from "./service";
-import { teamService } from "@/team";
 
 async function createTournament(req: Request, res: Response) {
   const tournamentData = createTournamentInputDefinition.parse(req.body);
@@ -59,38 +59,52 @@ async function joinTournament(req: Request, res: Response) {
       tournament.players &&
       tournament.maxPlayers &&
       tournament.players.length < tournament.maxPlayers &&
-      !tournament.players.some(player => player.toString() === user._id.toString())
+      !tournament.players.some(
+        (player) => player.toString() === user._id.toString(),
+      )
     ) {
       const updatePlayers = [...tournament.players, user._id];
       await tournamentService.updateTournament(params._id, {
-        players: updatePlayers
+        players: updatePlayers,
       });
     } else {
       throw new ApiError({
         status: 400,
-        errors: [{ message: "El jugador ya está en el torneo o se ha alcanzado el límite de participantes." }],
+        errors: [
+          {
+            message:
+              "El jugador ya está en el torneo o se ha alcanzado el límite de participantes.",
+          },
+        ],
       });
     }
   }
-  if (tournament?.eventType=="2V2"){
+  if (tournament?.eventType == "2V2") {
     const teamData = createTeamInputDefinition.parse(req.body);
     const team = await teamService.createTeam(teamData);
-    
+
     if (
       team &&
       tournament.teams &&
       tournament.maxTeams &&
       tournament.teams.length < tournament.maxTeams &&
-      !tournament.teams.some(teamArray => teamArray.toString() === team._id.toString())
+      !tournament.teams.some(
+        (teamArray) => teamArray.toString() === team._id.toString(),
+      )
     ) {
-      const updateTeams = [...tournament.teams, team._id]
+      const updateTeams = [...tournament.teams, team._id];
       await tournamentService.updateTournament(params._id, {
-        teams: updateTeams
+        teams: updateTeams,
       });
     } else {
       throw new ApiError({
         status: 400,
-        errors: [{ message: "El team ya está en el torneo o se ha alcanzado el límite de participantes." }],
+        errors: [
+          {
+            message:
+              "El team ya está en el torneo o se ha alcanzado el límite de participantes.",
+          },
+        ],
       });
     }
   }
@@ -102,5 +116,5 @@ export const tournamentController = {
   getTournaments,
   updateTournament,
   createTournament,
-  joinTournament
+  joinTournament,
 } as const;

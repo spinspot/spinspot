@@ -1,8 +1,8 @@
 import {
   ITournament,
   TCreateTournamentInputDefinition,
+  TUpdateTournamentInputDefinition,
   TUpdateTournamentParamsDefinition,
-  TUpdateTournamentInputDefinition
 } from "@spin-spot/models";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api";
@@ -61,9 +61,12 @@ export async function joinTournament({
 }: {
   _id: TUpdateTournamentParamsDefinition["_id"];
 } & TUpdateTournamentInputDefinition) {
-  const res = await api.post(`/tournaments/${encodeURIComponent(`${_id}`)}/join`, {
-    body: input,
-  });
+  const res = await api.post(
+    `/tournaments/${encodeURIComponent(`${_id}`)}/join`,
+    {
+      body: input,
+    },
+  );
   const tournament: ITournament = await res.json();
   return tournament;
 }
@@ -80,5 +83,3 @@ export function useJoinTournament() {
     },
   });
 }
-
-
