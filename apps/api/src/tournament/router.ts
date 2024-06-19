@@ -16,7 +16,7 @@ tournamentRouter.post(
 tournamentRouter.post(
   "/:_id/leave",
   auth(),
-  tournamentController.leftTournament
+  tournamentController.leaveTournament
 );
 
 export { tournamentRouter };
