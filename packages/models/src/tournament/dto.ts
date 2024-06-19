@@ -38,7 +38,6 @@ export type IPopulatedTournament = Omit<
   "owner" | "players" | "teams"
 > & {
   owner: IUser;
-  players: IUser[];
   teams: ITeam[];
 };
 
