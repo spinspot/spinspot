@@ -198,25 +198,30 @@ export default function TournamentJoin({
     }
   }, [tournament.isFetching]);
 
-  const buttonOnClick = tournament.data?.players?.some(
-    (player) => player._id === user?._id,
-  )
-    ? handleSalirseToast
-    : handleInscribirseToast;
+  const isPlayerInTeams =
+    tournament.data?.teams &&
+    tournament.data?.teams.some((team) =>
+      team.players.some((player) => player._id === user?._id),
+    );
 
-  // const isPlayerInTeams = tournament.data?.teams.some((team) =>
-  //   team.players.some((player) => player._id === user?._id),
-  // );
+  const buttonOnClick =
+    isPlayerInTeams ||
+    tournament.data?.players?.some((player) => player._id === user?._id)
+      ? handleSalirseToast
+      : handleInscribirseToast;
 
-  const buttonText = tournament.data?.players?.some(
-    (player) => player._id === user?._id,
-  )
-    ? "Salirse"
-    : "Inscribirse";
+  console.log(isPlayerInTeams);
+
+  const buttonText =
+    isPlayerInTeams ||
+    tournament.data?.players?.some((player) => player._id === user?._id)
+      ? "Salirse"
+      : "Inscribirse";
 
   const showLoader =
     isUpdating &&
-    (tournament.data?.players?.some((player) => player._id === user?._id) ? (
+    (isPlayerInTeams ||
+    tournament.data?.players?.some((player) => player._id === user?._id) ? (
       <div className="flex items-center justify-center gap-2">
         <Loader size="md" className="text-secondary"></Loader> Saliéndose...
       </div>
@@ -323,18 +328,28 @@ export default function TournamentJoin({
                 className={"btn-disabled btn-lg w-72"}
               />
             ) : eventType === "2V2" ? (
-              <Modal
-                searchTexts={searchTexts}
-                suggestions={suggestions}
-                selectedUsers={selectedUsers}
-                handleSearch={handleSearch}
-                handleSelectUser={handleSelectUser}
-                teamName={teamName}
-                setTeamName={setTeamName}
-                onClick={() =>
-                  tournament.data && handleInscription(tournament.data)
-                }
-              ></Modal>
+              isPlayerInTeams ? (
+                <Button
+                  label={showLoader || buttonText}
+                  className={`btn-lg w-72 ${showLoader ? "btn-disabled" : ""} ${buttonText === "Inscribirse" ? "btn-primary" : "btn-secondary"}`}
+                  onClick={() =>
+                    tournament.data && buttonOnClick(tournament.data)
+                  }
+                />
+              ) : (
+                <Modal
+                  searchTexts={searchTexts}
+                  suggestions={suggestions}
+                  selectedUsers={selectedUsers}
+                  handleSearch={handleSearch}
+                  handleSelectUser={handleSelectUser}
+                  teamName={teamName}
+                  setTeamName={setTeamName}
+                  onClick={() =>
+                    tournament.data && handleInscription(tournament.data)
+                  }
+                ></Modal>
+              )
             ) : (
               <Button
                 label={showLoader || buttonText}
