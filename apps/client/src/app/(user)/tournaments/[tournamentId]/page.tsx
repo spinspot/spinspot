@@ -22,7 +22,6 @@ import {
   useLeaveTournament,
   useToast,
   useTournament,
-  useUpdateTournament,
 } from "@spin-spot/services";
 import { useEffect, useState } from "react";
 
@@ -44,7 +43,6 @@ export default function TournamentJoin({
   const [selectedUsers, setSelectedUsers] = useState<(string | any)[]>([]);
   const [teamName, setTeamName] = useState<string>("");
 
-  const updateTournament = useUpdateTournament();
   const joinTournament = useJoinTournament();
   const leaveTournament = useLeaveTournament();
   const usersAvailables = useAvailableUsersByTournament(params.tournamentId);
@@ -209,8 +207,6 @@ export default function TournamentJoin({
     tournament.data?.players?.some((player) => player._id === user?._id)
       ? handleSalirseToast
       : handleInscribirseToast;
-
-  console.log(isPlayerInTeams);
 
   const buttonText =
     isPlayerInTeams ||

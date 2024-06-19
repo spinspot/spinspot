@@ -1,32 +1,27 @@
 "use client";
 
-import { Button, Card } from "@spin-spot/components";
+import { Button, Card, Loader } from "@spin-spot/components";
+import { useTournaments } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 export default function Dashboard() {
   const router = useRouter();
-  const [cards, setCards] = useState([
-    {
-      label: "Inicio: 11 de junio",
-      labelName: "Torneo profesores",
-      labelButton: "Jugar",
-    },
-    {
-      label: "Inicio: 17 de julio",
-      labelName: "Torneo Ingenieria",
-      labelButton: "Jugar",
-    },
-    {
-      label: "Inicio 3 de junio",
-      labelName: "Torneo FACES",
-      labelButton: "Jugar",
-    },
-  ]);
+  const tournaments = useTournaments();
 
   const handleClick = () => {
     router.push("/tables");
   };
+
+  function handlePlay(tournamentId: string) {
+    router.push(`/tournaments/${tournamentId}`);
+  }
+
+  const getCarouselClass = (cards: string | any[]) =>
+    cards.length <= 4
+      ? cards.length <= 1
+        ? "justify-center"
+        : "lg:justify-center"
+      : "";
 
   return (
     <div className="flex-grow">
@@ -56,23 +51,29 @@ export default function Dashboard() {
       </div>
       <div className="p-4">
         <div
-          className={`carousel w-full gap-x-8 bg-inherit px-4 pb-10 ${
-            cards.length <= 4
-              ? cards.length === 1
-                ? "justify-center"
-                : "lg:justify-center"
-              : ""
-          }`}
+          className={`carousel carousel-center w-full gap-x-8 bg-inherit px-4 pb-8 ${tournaments.data && getCarouselClass(tournaments.data)}`}
         >
-          {cards.map((card, index) => (
-            <Card
-              key={index}
-              label={card.label}
-              labelName={card.labelName}
-              labelButton={card.labelButton}
-              className="carousel-item"
-            />
-          ))}
+          {tournaments.isPending ? (
+            <div className="flex w-full items-center justify-center">
+              <Loader size="lg" className="text-primary" variant="dots" />
+            </div>
+          ) : tournaments.data?.length !== 0 ? (
+            tournaments.data &&
+            tournaments.data.map((tournament, index) => (
+              <Card
+                key={index}
+                label={tournament.description}
+                labelName={tournament.name}
+                labelButton="Jugar"
+                onClick={() => handlePlay(`${tournament._id}`)}
+                className="carousel-item"
+              />
+            ))
+          ) : (
+            <div className="">
+              No se tienen torneos para esta categoria actualmente
+            </div>
+          )}
         </div>
       </div>
     </div>
