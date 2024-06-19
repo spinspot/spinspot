@@ -1,4 +1,5 @@
 import {
+  IPopulatedTournament,
   TCreateTournamentInputDefinition,
   TGetTournamentsQueryDefinition,
   TUpdateTournamentInputDefinition,
@@ -28,7 +29,9 @@ async function getTournaments(filter: TGetTournamentsQueryDefinition = {}) {
 }
 
 async function getTournament(_id: TGetTournamentsQueryDefinition["_id"]) {
-  const tournament = await Tournament.findById(_id).populate([
+  const tournament = await Tournament.findById<IPopulatedTournament>(
+    _id,
+  ).populate([
     "players",
     {
       path: "teams",

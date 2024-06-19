@@ -13,6 +13,10 @@ tournamentRouter.post(
   auth(),
   tournamentController.joinTournament,
 );
-tournamentRouter.post("/:_id",tournamentController.leftTournament);
+tournamentRouter.post(
+  "/:_id/leave",
+  auth(),
+  tournamentController.leftTournament
+);
 
 export { tournamentRouter };
