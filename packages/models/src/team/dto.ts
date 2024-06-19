@@ -36,18 +36,7 @@ export type TGetTeamParamsDefinition = z.infer<typeof getTeamParamsDefinition>;
 
 export const createTeamInputDefinition = teamDefinition.omit({
   _id: true,
-}).refine(
-  (data) => {
-    if (data.name && data.players && data.players.length==2) {
-      return true;
-    }
-  },
-  {
-    message:
-      "Registre el nombre y los jugadores del equipo",
-    path: ["name", "players"],
-  },
-);;
+});
 export type TCreateTeamInputDefinition = z.infer<
   typeof createTeamInputDefinition
 >;
