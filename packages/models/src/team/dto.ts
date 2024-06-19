@@ -8,11 +8,10 @@ export const teamDefinition = baseModelDefinition.extend({
     .string()
     .min(1, { message: "El nombre del equipo es requerido" })
     .max(25, { message: "El nombre no puede tener más de 50 caracteres" }),
-    players: z
-    .array(
-      z.instanceof(Types.ObjectId).or(z.string().refine(isValidObjectId))
-    )
-    .refine((players) => players.length === 2, {
+    players: z.tuple([
+      z.instanceof(Types.ObjectId).or(z.string().refine(isValidObjectId)),
+      z.instanceof(Types.ObjectId).or(z.string().refine(isValidObjectId)),
+    ]).refine((players) => players.length === 2, {
       message: "El equipo debe tener exactamente 2 jugadores",
     }),
   });
