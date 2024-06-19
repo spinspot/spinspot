@@ -19,7 +19,18 @@ export type IPopulatedTeam = Omit<ITeam, "players"> & {
   players: IUser[];
 };
 
-export const getTeamsQueryDefinition = teamDefinition.partial();
+export const getTeamsQueryDefinition = teamDefinition.partial().refine(
+  (data) => {
+    if (data.name && data.players) {
+      return true;
+    }
+  },
+  {
+    message:
+      "Registre el nombre y los jugadores del equipo",
+    path: ["name", "players"],
+  },
+);
 export type TGetTeamsQueryDefinition = z.infer<typeof getTeamsQueryDefinition>;
 
 export const getTeamsByUserIdParamsDefinition = teamDefinition.pick({players: true}).extend({
