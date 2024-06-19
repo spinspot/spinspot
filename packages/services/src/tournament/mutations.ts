@@ -1,5 +1,6 @@
 import {
   ITournament,
+  TCreateTeamInputDefinition,
   TCreateTournamentInputDefinition,
   TUpdateTournamentInputDefinition,
   TUpdateTournamentParamsDefinition,
@@ -60,7 +61,7 @@ export async function joinTournament({
   ...input
 }: {
   _id: TUpdateTournamentParamsDefinition["_id"];
-} & TUpdateTournamentInputDefinition) {
+} & TCreateTeamInputDefinition) {
   const res = await api.post(
     `/tournaments/${encodeURIComponent(`${_id}`)}/join`,
     {

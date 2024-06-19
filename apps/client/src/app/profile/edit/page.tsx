@@ -126,13 +126,13 @@ export default function EditProfile() {
         <div className="mt-6 flex justify-center space-x-4">
           <Button
             className="btn-md btn-secondary w-24"
-            label="Back"
+            label="Volver"
             labelSize="text-md"
             onClick={handleBackClick}
           />
           <Button
-            className="btn-md btn-neutral"
-            label="Edit Profile"
+            className="btn-md btn-primary"
+            label="Editar Perfil"
             labelSize="text-md"
             onClick={handleSubmit(handleUpdateProfile)}
           />
