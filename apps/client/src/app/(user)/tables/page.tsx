@@ -307,8 +307,14 @@ export default function Tables() {
                         user?._id === block.booking?.owner && (
                           <div className="flex flex-col items-center justify-center gap-2">
                             <Button
-                              className="btn-secondary btn-sm mx-2"
-                              label="Cancelar"
+                              className="btn-primary btn-sm mx-2 w-20"
+                              label="Editar"
+                              labelSize="text-md"
+                              onClick={() => handleEdit(`${block._id}`)}
+                            />
+                            <Button
+                              className="btn-link text-secondary btn-sm mx-auto !no-underline"
+                              label="Eiminar"
                               labelSize="text-md"
                               onClick={() =>
                                 handleShowCancelationToast(
@@ -316,12 +322,6 @@ export default function Tables() {
                                   block.booking?._id.toString(),
                                 )
                               }
-                            />
-                            <Button
-                              className="btn-primary btn-sm mx-2 w-20"
-                              label="Editar"
-                              labelSize="text-md"
-                              onClick={() => handleEdit(`${block._id}`)}
                             />
                           </div>
                         )}

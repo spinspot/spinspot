@@ -33,7 +33,7 @@ export const SelectInput = forwardRef<HTMLSelectElement, SelectInputProps>(
     };
 
     return (
-      <label className="form-control w-full max-w-xs">
+      <label className="form-control w-full ">
         {renderTopLabels && (
           <div className="label">
             {topLeftLabel && (
@@ -44,10 +44,10 @@ export const SelectInput = forwardRef<HTMLSelectElement, SelectInputProps>(
             )}
           </div>
         )}
-        <div className="relative w-full max-w-xs">
+        <div className="relative w-full">
           <select
             ref={ref}
-            className={cn("select select-bordered w-full max-w-xs", className)}
+            className={cn("select select-bordered w-full ", className)}
             defaultValue=""
             {...props}
           >

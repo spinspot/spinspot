@@ -72,7 +72,7 @@ export default function EditProfile() {
 
   return (
     <div className="font-body flex-grow pb-16 lg:py-36">
-      <div className="mb-3 flex flex-col items-center justify-center">
+      <div className="mb-3 flex flex-col items-center justify-center max-sm:px-8">
         <div className="w-90 mb-2 h-32 overflow-hidden rounded-full bg-black">
           <Image
             src="/DefaultUserImage.png" // PONER PERFIL DE USUARIO
@@ -82,7 +82,7 @@ export default function EditProfile() {
             className="object-cover"
           />
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="flex w-full max-w-full flex-col gap-4">
           <TextInput
             placeholder="First Name"
             topRightLabel="First Name"
@@ -123,18 +123,18 @@ export default function EditProfile() {
           />
         </div>
 
-        <div className="mt-6 flex justify-center space-x-4">
-          <Button
-            className="btn-md btn-secondary w-24"
-            label="Volver"
-            labelSize="text-md"
-            onClick={handleBackClick}
-          />
+        <div className="mt-6 flex w-full flex-col gap-3">
           <Button
             className="btn-md btn-primary"
             label="Editar Perfil"
             labelSize="text-md"
             onClick={handleSubmit(handleUpdateProfile)}
+          />
+          <Button
+            className="btn-md btn-link text-secondary mx-auto !no-underline"
+            label="Volver"
+            labelSize="text-md"
+            onClick={handleBackClick}
           />
         </div>
       </div>

@@ -19,6 +19,7 @@ import {
   useAuth,
   useAvailableUsersByTournament,
   useJoinTournament,
+  useLeaveTournament,
   useToast,
   useTournament,
   useUpdateTournament,
@@ -45,6 +46,7 @@ export default function TournamentJoin({
 
   const updateTournament = useUpdateTournament();
   const joinTournament = useJoinTournament();
+  const leaveTournament = useLeaveTournament();
   const usersAvailables = useAvailableUsersByTournament(params.tournamentId);
   const eventType = tournament.data?.eventType;
 
@@ -148,11 +150,9 @@ export default function TournamentJoin({
 
   function handleSalirse(tournament: IPopulatedTournament) {
     if (user?._id && tournament.players) {
-      const playerIds = tournament.players.map((player) => player._id);
-      const newPlayers = playerIds.filter((playerId) => playerId !== user._id);
       setIsUpdating(true);
-      updateTournament.mutate(
-        { _id: tournament._id, players: newPlayers },
+      leaveTournament.mutate(
+        { _id: tournament._id },
         {
           onSuccess() {
             showToast({

@@ -72,12 +72,37 @@ export async function joinTournament({
   return tournament;
 }
 
+export async function leaveTournament({
+  _id,
+}: {
+  _id: TUpdateTournamentParamsDefinition["_id"];
+}) {
+  const res = await api.post(
+    `/tournaments/${encodeURIComponent(`${_id}`)}/leave`,
+  );
+  const tournament: ITournament = await res.json();
+  return tournament;
+}
+
 export function useJoinTournament() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationKey: ["joinTournament"],
     mutationFn: joinTournament,
+    onSuccess(data) {
+      queryClient.invalidateQueries({ queryKey: ["getTournaments"] });
+      queryClient.invalidateQueries({ queryKey: ["getTournament", data._id] });
+    },
+  });
+}
+
+export function useLeaveTournament() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationKey: ["leaveTournament"],
+    mutationFn: leaveTournament,
     onSuccess(data) {
       queryClient.invalidateQueries({ queryKey: ["getTournaments"] });
       queryClient.invalidateQueries({ queryKey: ["getTournament", data._id] });
