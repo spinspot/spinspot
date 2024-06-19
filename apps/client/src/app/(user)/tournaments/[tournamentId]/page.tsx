@@ -120,7 +120,6 @@ export default function TournamentJoin({
             showToast({
               label: "Error al inscribirse en el torneo",
               type: "error",
-              duration: 3000,
             });
           },
         },
