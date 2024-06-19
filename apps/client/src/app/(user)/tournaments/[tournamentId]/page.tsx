@@ -17,11 +17,11 @@ import {
 import { IPopulatedTournament } from "@spin-spot/models";
 import {
   useAuth,
+  useAvailableUsersByTournament,
   useJoinTournament,
   useToast,
   useTournament,
   useUpdateTournament,
-  useUsers,
 } from "@spin-spot/services";
 import { useEffect, useState } from "react";
 
@@ -45,7 +45,7 @@ export default function TournamentJoin({
 
   const updateTournament = useUpdateTournament();
   const joinTournament = useJoinTournament();
-  const users = useUsers();
+  const usersAvailables = useAvailableUsersByTournament(params.tournamentId);
   const eventType = tournament.data?.eventType;
 
   const [isUpdating, setIsUpdating] = useState(false); // Estado para controlar si se está actualizando el torneo
@@ -62,7 +62,7 @@ export default function TournamentJoin({
     if (text.length >= 1) {
       const lowerCaseText = text.toLowerCase();
       const filtered =
-        users.data?.filter((user) => {
+        usersAvailables.data?.filter((user) => {
           const fullName = `${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}`;
           return (
             user.firstName.toLowerCase().includes(lowerCaseText) ||
