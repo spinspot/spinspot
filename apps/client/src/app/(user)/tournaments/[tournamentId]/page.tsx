@@ -150,7 +150,7 @@ export default function TournamentJoin({
     if (user?._id) {
       const playerIds = tournament.players.map((player) => player._id);
       const newPlayers = playerIds.filter((playerId) => playerId !== user._id);
-      setIsUpdating(true); // Comienza la actualización
+      setIsUpdating(true);
       updateTournament.mutate(
         { _id: tournament._id, players: newPlayers },
         {
