@@ -1,5 +1,6 @@
 import {
   TCreateTeamInputDefinition,
+  TGetTeamsByUserIdParamsDefinition,
   TGetTeamsQueryDefinition,
   TUpdateTeamInputDefinition,
   TUpdateTeamParamsDefinition,
@@ -15,12 +16,19 @@ async function createTeam(data: TCreateTeamInputDefinition) {
 }
 
 async function getTeams(filter: TGetTeamsQueryDefinition = {}) {
-  const teams = await Team.find(filter);
+  const teams = await Team.find(filter).populate([
+    "players",
+  ]);;
   return teams;
 }
 
 async function getTeam(_id: TGetTeamsQueryDefinition["_id"]) {
   const team = await Team.findById(_id);
+  return team;
+}
+
+async function getTeamByUserId(players: TGetTeamsByUserIdParamsDefinition["players"]) {
+  const team = await Team.findById(players);
   return team;
 }
 
@@ -37,4 +45,5 @@ export const teamService = {
   getTeam,
   getTeams,
   updateTeam,
+  getTeamByUserId,
 } as const;

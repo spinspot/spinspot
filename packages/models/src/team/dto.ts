@@ -18,6 +18,11 @@ export type IPopulatedTeam = Omit<ITeam, "players"> & {
 export const getTeamsQueryDefinition = teamDefinition.partial();
 export type TGetTeamsQueryDefinition = z.infer<typeof getTeamsQueryDefinition>;
 
+export const getTeamsByUserIdParamsDefinition = teamDefinition.pick({players: true}).extend({
+  players: z.instanceof(Types.ObjectId).or(z.string().refine(isValidObjectId)),
+});
+export type TGetTeamsByUserIdParamsDefinition = z.infer<typeof getTeamsByUserIdParamsDefinition>;
+
 export const getTeamParamsDefinition = teamDefinition.pick({ _id: true });
 export type TGetTeamParamsDefinition = z.infer<typeof getTeamParamsDefinition>;
 
