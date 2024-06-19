@@ -21,7 +21,7 @@ export type IPopulatedTeam = Omit<ITeam, "players"> & {
 
 export const getTeamsQueryDefinition = teamDefinition.partial().refine(
   (data) => {
-    if (data.name && data.players) {
+    if (data.name && data.players && data.players.length==2) {
       return true;
     }
   },
