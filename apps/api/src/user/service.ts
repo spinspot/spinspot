@@ -7,10 +7,13 @@ import {
   userSchema,
   bookingSchema,
   type TCreateUserInputDefinition,
+  TGetTournamentParamsDefinition,
+  ITournament,
+  tournamentSchema,
+  teamSchema,
 } from "@spin-spot/models";
 import { hash } from "bcrypt";
 import { UpdateQuery, model } from "mongoose";
-
 
 userSchema.pre("save", async function (next) {
   if (this.password) this.password = await hash(this.password, 10);
@@ -29,6 +32,8 @@ userSchema.set("toJSON", {
   },
 });
 const User = model("User", userSchema);
+const Booking = model("Booking", bookingSchema);
+
 
 async function getUsers(filter: TGetUsersQueryDefinition = {}) {
   const users = await User.find(filter);
@@ -83,7 +88,6 @@ async function getAvailableUsers() {
 
   return users;
 }
-const Booking = model("Booking", bookingSchema);
 
 async function isUserAvailable(_id : TGetUserParamsDefinition["_id"]){
   const user = await User.findById(_id);
@@ -97,6 +101,36 @@ async function isUserAvailable(_id : TGetUserParamsDefinition["_id"]){
   return bookings.length === 0;
 }
 
+const Tournament = model("Tournament", tournamentSchema);
+const Team = model("Team", teamSchema);
+
+async function getAvailableUsersByTournament(_id: TGetTournamentParamsDefinition["_id"]) {
+  const tournamentId: ITournament["_id"] = _id;
+  const tournament = await Tournament.findById(tournamentId).select('players teams');
+
+  const playersInTournament = tournament?.players ?? [];
+
+  const teamsInTournament = tournament?.teams ?? [];
+  const teams = await Team.find({ _id: { $in: teamsInTournament } }).select('players');
+
+  const playersInTeams = teams.flatMap(team => team.players); //esto crea un nuevo array de jugadores de los equipos 
+
+  const allExcludedPlayers = [...playersInTournament, ...playersInTeams];
+
+  const users = await User.aggregate([
+    {
+      $match: {
+        _id: { $nin: allExcludedPlayers },
+      }
+    }
+  ]);
+
+  return users;
+}
+
+
+
+
 export const userService = {
   getUsers,
   getUser,
@@ -104,4 +138,6 @@ export const userService = {
   updateUser,
   getAvailableUsers,
   isUserAvailable,
+  getAvailableUsersByTournament,
 } as const;
+

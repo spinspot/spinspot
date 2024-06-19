@@ -15,7 +15,7 @@ async function createTeam(data: TCreateTeamInputDefinition) {
 }
 
 async function getTeams(filter: TGetTeamsQueryDefinition = {}) {
-  const teams = await Team.find(filter);
+  const teams = await Team.find(filter).populate(["players"]);
   return teams;
 }
 

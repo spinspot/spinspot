@@ -28,6 +28,9 @@ export const tournamentSchema = new Schema<ITournament>({
   prize: String,
   eventType: String,
   status: String,
+  tournamentType: String,
+  tournamentFormat: String,
+  location: String,
   startTime: {
     type: Date,
     required: true,

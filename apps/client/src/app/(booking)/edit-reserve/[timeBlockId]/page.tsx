@@ -9,11 +9,11 @@ import {
 } from "@spin-spot/components";
 import {
   useAuth,
+  useAvailableUsers,
   useTimeBlock,
   useToast,
   useUpdateBooking,
   useUsers,
-  useAvailableUsers,
 } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -250,7 +250,7 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
         initialActive={eventType === "1V1" ? 0 : 1}
         initialIndumentary={initialIndumentaryIndex}
       />
-      <div className="mt-4 flex w-full flex-col items-center justify-center">
+      <div className="flex w-full flex-col items-center justify-center max-sm:p-6 sm:mt-4">
         {eventType && (
           <PlayerInput
             searchTexts={searchTexts}
@@ -261,22 +261,22 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
           />
         )}
       </div>
-      <div className="mt-10 flex flex-row justify-center gap-x-6">
-        <Button
-          label="Cancelar"
-          labelSize="text-sm"
-          className="btn-lg btn-secondary"
-          onClick={() => router.back()}
-        />
+      <div className="flex w-full flex-col justify-center gap-2 max-sm:px-6 sm:mt-6">
         <Button
           label="Editar"
           labelSize="text-sm"
           className={
             eventType != null && indumentary != null
-              ? "btn-lg btn-primary w-[102px]"
-              : "btn-primary btn-lg btn-disabled w-[102px]"
+              ? "btn-md btn-primary"
+              : "btn-primary btn-md btn-disabled"
           }
           onClick={handleUpdate}
+        />
+        <Button
+          label="Cancelar"
+          labelSize="text-sm"
+          className="btn-md btn-link text-secondary mx-auto !no-underline"
+          onClick={() => router.back()}
         />
       </div>
     </div>

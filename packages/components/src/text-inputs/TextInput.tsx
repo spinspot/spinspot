@@ -28,7 +28,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
     const renderBottomLabels = bottomLeftLabel || bottomRightLabel;
 
     return (
-      <label className="form-control w-full max-w-xs">
+      <label className="form-control w-full">
         {renderTopLabels && (
           <div className="label">
             {topLeftLabel && (
@@ -39,7 +39,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
             )}
           </div>
         )}
-        <div className="relative w-full max-w-xs">
+        <div className="relative w-full ">
           {iconLeft && (
             <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               {iconLeft}
@@ -48,7 +48,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
           <input
             ref={ref}
             className={cn(
-              "input input-bordered input-primary w-full max-w-xs",
+              "input input-bordered input-primary w-full",
               className,
               {
                 "pl-10": iconLeft,

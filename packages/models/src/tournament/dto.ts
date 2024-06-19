@@ -4,8 +4,10 @@ import {
   baseModelDefinition,
   eventTypeDefinition,
   statusTournamentTypeDefinition,
+  tournamentFormatTypeDefinition,
+  tournamentLevelTypeDefinition,
 } from "../definitions";
-import { ITeam } from "../team";
+import { IPopulatedTeam } from "../team";
 import { IUser } from "../user";
 
 export const tournamentDefinition = baseModelDefinition.extend({
@@ -23,15 +25,21 @@ export const tournamentDefinition = baseModelDefinition.extend({
   prize: z.string(),
   eventType: eventTypeDefinition,
   status: statusTournamentTypeDefinition,
+  location: z.string(),
+  tournamentType: tournamentLevelTypeDefinition,
+  tournamentFormat: tournamentFormatTypeDefinition,
   startTime: z.coerce.date(),
   endTime: z.coerce.date(),
 });
 
 export type ITournament = z.infer<typeof tournamentDefinition>;
-export type IPopulatedTournament = Omit<ITournament, "owner" | "players" | "teams"> & {
+export type IPopulatedTournament = Omit<
+  ITournament,
+  "owner" | "players" | "teams"
+> & {
   owner: IUser;
-  players: IUser[];
-  teams: ITeam[];
+  players?: IUser[];
+  teams?: IPopulatedTeam[];
 };
 
 export const getTournamentsQueryDefinition = tournamentDefinition.partial();
@@ -56,13 +64,13 @@ export const createTournamentInputDefinition = tournamentDefinition
         if (
           data.players &&
           data.maxPlayers &&
-          data.players.length > data.maxPlayers
+          data.players.length < data.maxPlayers
         ) {
           return true;
         }
       }
       if (data.eventType === "2V2") {
-        if (data.teams && data.maxTeams && data.teams.length > data.maxTeams) {
+        if (data.teams && data.maxTeams && data.teams.length < data.maxTeams) {
           return true;
         }
       }

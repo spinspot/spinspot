@@ -1,4 +1,5 @@
 import {
+  IPopulatedTournament,
   TCreateTournamentInputDefinition,
   TGetTournamentsQueryDefinition,
   TUpdateTournamentInputDefinition,
@@ -15,12 +16,30 @@ async function createTournament(data: TCreateTournamentInputDefinition) {
 }
 
 async function getTournaments(filter: TGetTournamentsQueryDefinition = {}) {
-  const tournaments = await Tournament.find(filter);
+  const tournaments = await Tournament.find(filter).populate([
+    "players",
+    {
+      path: "teams",
+      populate: {
+        path: "players",
+      },
+    },
+  ]);
   return tournaments;
 }
 
 async function getTournament(_id: TGetTournamentsQueryDefinition["_id"]) {
-  const tournament = await Tournament.findById(_id);
+  const tournament = await Tournament.findById<IPopulatedTournament>(
+    _id,
+  ).populate([
+    "players",
+    {
+      path: "teams",
+      populate: {
+        path: "players",
+      },
+    },
+  ]);
   return tournament;
 }
 
