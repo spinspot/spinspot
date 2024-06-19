@@ -147,7 +147,7 @@ export default function TournamentJoin({
   };
 
   function handleSalirse(tournament: IPopulatedTournament) {
-    if (user?._id) {
+    if (user?._id && tournament.players) {
       const playerIds = tournament.players.map((player) => player._id);
       const newPlayers = playerIds.filter((playerId) => playerId !== user._id);
       setIsUpdating(true);
@@ -198,7 +198,7 @@ export default function TournamentJoin({
     }
   }, [tournament.isFetching]);
 
-  const buttonOnClick = tournament.data?.players.some(
+  const buttonOnClick = tournament.data?.players?.some(
     (player) => player._id === user?._id,
   )
     ? handleSalirseToast
@@ -208,7 +208,7 @@ export default function TournamentJoin({
   //   team.players.some((player) => player._id === user?._id),
   // );
 
-  const buttonText = tournament.data?.players.some(
+  const buttonText = tournament.data?.players?.some(
     (player) => player._id === user?._id,
   )
     ? "Salirse"
@@ -216,7 +216,7 @@ export default function TournamentJoin({
 
   const showLoader =
     isUpdating &&
-    (tournament.data?.players.some((player) => player._id === user?._id) ? (
+    (tournament.data?.players?.some((player) => player._id === user?._id) ? (
       <div className="flex items-center justify-center gap-2">
         <Loader size="md" className="text-secondary"></Loader> Saliéndose...
       </div>
@@ -314,10 +314,10 @@ export default function TournamentJoin({
             <div className="text-3xl font-bold">
               {tournament.data?.eventType === "1V1"
                 ? `Juagdores Inscritos ${tournament.data?.players?.length}/${tournament.data.maxPlayers}`
-                : `Equipos Inscritos ${tournament.data?.teams.length}/${tournament.data?.maxTeams}`}
+                : `Equipos Inscritos ${tournament.data?.teams?.length}/${tournament.data?.maxTeams}`}
             </div>
-            {tournament.data?.players.length === tournament.data?.maxPlayers ||
-            tournament.data?.teams.length === tournament.data?.maxTeams ? (
+            {tournament.data?.players?.length === tournament.data?.maxPlayers ||
+            tournament.data?.teams?.length === tournament.data?.maxTeams ? (
               <Button
                 label="Torneo Lleno"
                 className={"btn-disabled btn-lg w-72"}
