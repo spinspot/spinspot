@@ -7,7 +7,7 @@ import {
   tournamentFormatTypeDefinition,
   tournamentLevelTypeDefinition,
 } from "../definitions";
-import { ITeam } from "../team";
+import { IPopulatedTeam } from "../team";
 import { IUser } from "../user";
 
 export const tournamentDefinition = baseModelDefinition.extend({
@@ -38,7 +38,8 @@ export type IPopulatedTournament = Omit<
   "owner" | "players" | "teams"
 > & {
   owner: IUser;
-  teams: ITeam[];
+  players?: IUser[];
+  teams?: IPopulatedTeam[];
 };
 
 export const getTournamentsQueryDefinition = tournamentDefinition.partial();

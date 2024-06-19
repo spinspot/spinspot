@@ -17,11 +17,11 @@ import {
 import { IPopulatedTournament } from "@spin-spot/models";
 import {
   useAuth,
+  useAvailableUsersByTournament,
   useJoinTournament,
   useToast,
   useTournament,
   useUpdateTournament,
-  useUsers,
 } from "@spin-spot/services";
 import { useEffect, useState } from "react";
 
@@ -45,7 +45,7 @@ export default function TournamentJoin({
 
   const updateTournament = useUpdateTournament();
   const joinTournament = useJoinTournament();
-  const users = useUsers();
+  const usersAvailables = useAvailableUsersByTournament(params.tournamentId);
   const eventType = tournament.data?.eventType;
 
   const [isUpdating, setIsUpdating] = useState(false); // Estado para controlar si se está actualizando el torneo
@@ -62,7 +62,7 @@ export default function TournamentJoin({
     if (text.length >= 1) {
       const lowerCaseText = text.toLowerCase();
       const filtered =
-        users.data?.filter((user) => {
+        usersAvailables.data?.filter((user) => {
           const fullName = `${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}`;
           return (
             user.firstName.toLowerCase().includes(lowerCaseText) ||
@@ -120,7 +120,6 @@ export default function TournamentJoin({
             showToast({
               label: "Error al inscribirse en el torneo",
               type: "error",
-              duration: 3000,
             });
           },
         },
@@ -148,10 +147,10 @@ export default function TournamentJoin({
   };
 
   function handleSalirse(tournament: IPopulatedTournament) {
-    if (user?._id) {
+    if (user?._id && tournament.players) {
       const playerIds = tournament.players.map((player) => player._id);
       const newPlayers = playerIds.filter((playerId) => playerId !== user._id);
-      setIsUpdating(true); // Comienza la actualización
+      setIsUpdating(true);
       updateTournament.mutate(
         { _id: tournament._id, players: newPlayers },
         {
@@ -199,21 +198,30 @@ export default function TournamentJoin({
     }
   }, [tournament.isFetching]);
 
-  const buttonOnClick = tournament.data?.players.some(
-    (player) => player._id === user?._id,
-  )
-    ? handleSalirseToast
-    : handleInscribirseToast;
+  const isPlayerInTeams =
+    tournament.data?.teams &&
+    tournament.data?.teams.some((team) =>
+      team.players.some((player) => player._id === user?._id),
+    );
 
-  const buttonText = tournament.data?.players.some(
-    (player) => player._id === user?._id,
-  )
-    ? "Salirse"
-    : "Inscribirse";
+  const buttonOnClick =
+    isPlayerInTeams ||
+    tournament.data?.players?.some((player) => player._id === user?._id)
+      ? handleSalirseToast
+      : handleInscribirseToast;
+
+  console.log(isPlayerInTeams);
+
+  const buttonText =
+    isPlayerInTeams ||
+    tournament.data?.players?.some((player) => player._id === user?._id)
+      ? "Salirse"
+      : "Inscribirse";
 
   const showLoader =
     isUpdating &&
-    (tournament.data?.players.some((player) => player._id === user?._id) ? (
+    (isPlayerInTeams ||
+    tournament.data?.players?.some((player) => player._id === user?._id) ? (
       <div className="flex items-center justify-center gap-2">
         <Loader size="md" className="text-secondary"></Loader> Saliéndose...
       </div>
@@ -311,27 +319,37 @@ export default function TournamentJoin({
             <div className="text-3xl font-bold">
               {tournament.data?.eventType === "1V1"
                 ? `Juagdores Inscritos ${tournament.data?.players?.length}/${tournament.data.maxPlayers}`
-                : `Equipos Inscritos ${tournament.data?.teams.length}/${tournament.data?.maxTeams}`}
+                : `Equipos Inscritos ${tournament.data?.teams?.length}/${tournament.data?.maxTeams}`}
             </div>
-            {tournament.data?.players.length === tournament.data?.maxPlayers ||
-            tournament.data?.teams.length === tournament.data?.maxTeams ? (
+            {tournament.data?.players?.length === tournament.data?.maxPlayers ||
+            tournament.data?.teams?.length === tournament.data?.maxTeams ? (
               <Button
                 label="Torneo Lleno"
                 className={"btn-disabled btn-lg w-72"}
               />
             ) : eventType === "2V2" ? (
-              <Modal
-                searchTexts={searchTexts}
-                suggestions={suggestions}
-                selectedUsers={selectedUsers}
-                handleSearch={handleSearch}
-                handleSelectUser={handleSelectUser}
-                teamName={teamName}
-                setTeamName={setTeamName}
-                onClick={() =>
-                  tournament.data && handleInscription(tournament.data)
-                }
-              ></Modal>
+              isPlayerInTeams ? (
+                <Button
+                  label={showLoader || buttonText}
+                  className={`btn-lg w-72 ${showLoader ? "btn-disabled" : ""} ${buttonText === "Inscribirse" ? "btn-primary" : "btn-secondary"}`}
+                  onClick={() =>
+                    tournament.data && buttonOnClick(tournament.data)
+                  }
+                />
+              ) : (
+                <Modal
+                  searchTexts={searchTexts}
+                  suggestions={suggestions}
+                  selectedUsers={selectedUsers}
+                  handleSearch={handleSearch}
+                  handleSelectUser={handleSelectUser}
+                  teamName={teamName}
+                  setTeamName={setTeamName}
+                  onClick={() =>
+                    tournament.data && handleInscription(tournament.data)
+                  }
+                ></Modal>
+              )
             ) : (
               <Button
                 label={showLoader || buttonText}

@@ -17,7 +17,12 @@ async function createTournament(data: TCreateTournamentInputDefinition) {
 async function getTournaments(filter: TGetTournamentsQueryDefinition = {}) {
   const tournaments = await Tournament.find(filter).populate([
     "players",
-    "teams",
+    {
+      path: "teams",
+      populate: {
+        path: "players",
+      },
+    },
   ]);
   return tournaments;
 }
@@ -25,7 +30,12 @@ async function getTournaments(filter: TGetTournamentsQueryDefinition = {}) {
 async function getTournament(_id: TGetTournamentsQueryDefinition["_id"]) {
   const tournament = await Tournament.findById(_id).populate([
     "players",
-    "teams",
+    {
+      path: "teams",
+      populate: {
+        path: "players",
+      },
+    },
   ]);
   return tournament;
 }
