@@ -4,11 +4,15 @@ import { baseModelDefinition } from "../definitions";
 import { IUser } from "../user";
 
 export const teamDefinition = baseModelDefinition.extend({
-  name: z.string(),
+  name: z
+    .string()
+    .min(1, { message: "El nombre del equipo es requerido" })
+    .max(25, { message: "El nombre no puede tener más de 50 caracteres" }),
   players: z.array(
     z.instanceof(Types.ObjectId).or(z.string().refine(isValidObjectId)),
   ),
 });
+export type TTeamDefinition = z.infer<typeof teamDefinition>;
 
 export type ITeam = z.infer<typeof teamDefinition>;
 export type IPopulatedTeam = Omit<ITeam, "players"> & {

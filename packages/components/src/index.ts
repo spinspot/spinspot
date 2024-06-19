@@ -11,6 +11,7 @@ export * from "./footers";
 export * from "./headers";
 export * from "./layouts";
 export * from "./loaders";
+export * from "./modals";
 export * from "./paginations";
 export * from "./reserves";
 export * from "./service-workers";

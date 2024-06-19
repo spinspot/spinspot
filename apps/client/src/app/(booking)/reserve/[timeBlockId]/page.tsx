@@ -41,6 +41,8 @@ export default function Reserve({ params }: { params: ReserveParams }) {
   const createBooking = useCreateBooking();
   const availableUsers = useAvailableUsers();
 
+  console.log(selectedUsers);
+
   const handleSearch = (index: number, text: string) => {
     const newSearchTexts = [...searchTexts];
     newSearchTexts[index] = text;
