@@ -11,14 +11,17 @@ import {
   Button,
   Countdown,
   Loader,
+  Modal,
   PingPongIcon,
 } from "@spin-spot/components";
 import { IPopulatedTournament } from "@spin-spot/models";
 import {
   useAuth,
+  useJoinTournament,
   useToast,
   useTournament,
   useUpdateTournament,
+  useUsers,
 } from "@spin-spot/services";
 import { useEffect, useState } from "react";
 
@@ -34,17 +37,77 @@ export default function TournamentJoin({
   const { showToast } = useToast();
   const tournament = useTournament(params.tournamentId);
   const { user } = useAuth();
+
+  const [searchTexts, setSearchTexts] = useState<string[]>([""]);
+  const [suggestions, setSuggestions] = useState<any[][]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<(string | any)[]>([]);
+  const [teamName, setTeamName] = useState<string>("");
+
   const updateTournament = useUpdateTournament();
+  const joinTournament = useJoinTournament();
+  const users = useUsers();
+  const eventType = tournament.data?.eventType;
 
   const [isUpdating, setIsUpdating] = useState(false); // Estado para controlar si se está actualizando el torneo
 
+  const handleSearch = (index: number, text: string) => {
+    const newSearchTexts = [...searchTexts];
+    newSearchTexts[index] = text;
+    setSearchTexts(newSearchTexts);
+
+    const newSelectedUsers = [...selectedUsers];
+    newSelectedUsers[index] = null;
+    setSelectedUsers(newSelectedUsers);
+
+    if (text.length >= 1) {
+      const lowerCaseText = text.toLowerCase();
+      const filtered =
+        users.data?.filter((user) => {
+          const fullName = `${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}`;
+          return (
+            user.firstName.toLowerCase().includes(lowerCaseText) ||
+            user.lastName.toLowerCase().includes(lowerCaseText) ||
+            fullName.includes(lowerCaseText)
+          );
+        }) || [];
+      const newSuggestions = [...suggestions];
+      newSuggestions[index] = filtered;
+      setSuggestions(newSuggestions);
+    } else {
+      const newSuggestions = [...suggestions];
+      newSuggestions[index] = [];
+      setSuggestions(newSuggestions);
+    }
+  };
+
+  const handleSelectUser = (index: number, user: any) => {
+    const newSearchTexts = [...searchTexts];
+    newSearchTexts[index] = `${user.firstName} ${user.lastName}`;
+    setSearchTexts(newSearchTexts);
+
+    const newSuggestions = [...suggestions];
+    newSuggestions[index] = [];
+    setSuggestions(newSuggestions);
+
+    const newSelectedUsers = [...selectedUsers];
+    newSelectedUsers[index] = user._id;
+    setSelectedUsers(newSelectedUsers);
+  };
+
   function handleInscription(tournament: IPopulatedTournament) {
     if (user?._id) {
-      const playerIds = tournament.players.map((player) => player._id);
-      const newPlayers = [...playerIds, user._id];
-      setIsUpdating(true); // Comienza la actualización
-      updateTournament.mutate(
-        { _id: tournament._id, players: newPlayers },
+      const players =
+        eventType === "2V2"
+          ? [...selectedUsers.filter((userId) => userId !== null), user._id]
+          : [];
+      const name = eventType === "2V2" ? teamName : "";
+
+      console.log(name);
+      console.log(players);
+
+      setIsUpdating(true);
+      joinTournament.mutate(
+        { _id: tournament._id, name: name, players: players },
         {
           onSuccess() {
             showToast({
@@ -57,7 +120,6 @@ export default function TournamentJoin({
             showToast({
               label: "Error al inscribirse en el torneo",
               type: "error",
-              duration: 3000,
             });
           },
         },
@@ -88,7 +150,7 @@ export default function TournamentJoin({
     if (user?._id) {
       const playerIds = tournament.players.map((player) => player._id);
       const newPlayers = playerIds.filter((playerId) => playerId !== user._id);
-      setIsUpdating(true); // Comienza la actualización
+      setIsUpdating(true);
       updateTournament.mutate(
         { _id: tournament._id, players: newPlayers },
         {
@@ -141,6 +203,10 @@ export default function TournamentJoin({
   )
     ? handleSalirseToast
     : handleInscribirseToast;
+
+  // const isPlayerInTeams = tournament.data?.teams.some((team) =>
+  //   team.players.some((player) => player._id === user?._id),
+  // );
 
   const buttonText = tournament.data?.players.some(
     (player) => player._id === user?._id,
@@ -256,6 +322,19 @@ export default function TournamentJoin({
                 label="Torneo Lleno"
                 className={"btn-disabled btn-lg w-72"}
               />
+            ) : eventType === "2V2" ? (
+              <Modal
+                searchTexts={searchTexts}
+                suggestions={suggestions}
+                selectedUsers={selectedUsers}
+                handleSearch={handleSearch}
+                handleSelectUser={handleSelectUser}
+                teamName={teamName}
+                setTeamName={setTeamName}
+                onClick={() =>
+                  tournament.data && handleInscription(tournament.data)
+                }
+              ></Modal>
             ) : (
               <Button
                 label={showLoader || buttonText}

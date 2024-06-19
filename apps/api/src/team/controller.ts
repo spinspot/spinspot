@@ -1,7 +1,7 @@
 import {
-  ApiError,
   createTeamInputDefinition,
   getTeamParamsDefinition,
+  getTeamsByUserIdParamsDefinition,
   getTeamsQueryDefinition,
   updateTeamInputDefinition,
   updateTeamParamsDefinition,
@@ -11,13 +11,6 @@ import { teamService } from "./service";
 
 async function createTeam(req: Request, res: Response) {
   const teamData = createTeamInputDefinition.parse(req.body);
-  if (teamData.players.length < 2) {
-    throw new ApiError({
-      status: 400,
-      errors: [{ message: "Ingrese todos los integrantes del team" }],
-    });
-  }
-
   const team = await teamService.createTeam(teamData);
   res.status(200).json(team);
 }
@@ -34,6 +27,12 @@ async function getTeam(req: Request, res: Response) {
   return res.status(200).json(team);
 }
 
+async function getTeamByUser(req: Request, res: Response) {
+  const param = getTeamsByUserIdParamsDefinition.parse(req.params);
+  const team = await teamService.getTeamByUserId(param.players);
+  return res.status(200).json(team);
+}
+
 async function updateTeam(req: Request, res: Response) {
   const params = updateTeamParamsDefinition.parse(req.params);
   const input = updateTeamInputDefinition.parse(req.body);
@@ -46,4 +45,5 @@ export const teamController = {
   getTeams,
   createTeam,
   updateTeam,
+  getTeamByUser
 } as const;
