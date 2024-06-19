@@ -1,10 +1,10 @@
 "use client";
 
-import { UserIcon } from "@heroicons/react/24/outline";
+import { UserGroupIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TTeamDefinition, teamDefinition } from "@spin-spot/models";
 import { cn } from "@spin-spot/utils";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { Button } from "../buttons";
 import { TextInput } from "../text-inputs";
@@ -54,6 +54,16 @@ export function Modal({
     setTeamName(watchedTeamName);
   }, [watchedTeamName, setTeamName]);
 
+  // Referencia al checkbox del modal
+  const modalCheckboxRef = useRef<HTMLInputElement>(null);
+
+  const handleFormSubmit = () => {
+    onClick();
+    if (modalCheckboxRef.current) {
+      modalCheckboxRef.current.checked = false; // Cierra el modal
+    }
+  };
+
   return (
     <>
       {/* The button to open modal */}
@@ -62,7 +72,12 @@ export function Modal({
       </label>
 
       {/* Put this part before </body> tag */}
-      <input type="checkbox" id="my_modal_6" className="modal-toggle" />
+      <input
+        type="checkbox"
+        id="my_modal_6"
+        className="modal-toggle"
+        ref={modalCheckboxRef}
+      />
       <div className="modal" role="dialog">
         <div className="modal-box">
           <h3 className="mb-3 text-2xl font-bold">Crea Tu Equipo!</h3>
@@ -72,7 +87,7 @@ export function Modal({
             topRightLabel="Nombre del Equipo"
             className={`input-md ${errors.name ? "input-error" : "input-primary"}`}
             iconLeft={
-              <UserIcon className="text-primary dark:text-neutral h-6 w-6" />
+              <UserGroupIcon className="text-primary dark:text-neutral h-6 w-6" />
             }
             bottomLeftLabel={errors.name?.message}
             {...register("name")}
@@ -109,12 +124,12 @@ export function Modal({
           ))}
           <div className="modal-action flex gap-1">
             <label htmlFor="my_modal_6" className="btn btn-secondary btn-sm">
-              Close
+              Cerrar
             </label>
             <Button
               label="Unirse"
               className={cn("btn btn-primary btn-sm", className)}
-              onClick={onClick}
+              onClick={handleFormSubmit}
             ></Button>
           </div>
         </div>

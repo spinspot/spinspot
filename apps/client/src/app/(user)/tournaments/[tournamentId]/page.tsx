@@ -205,6 +205,10 @@ export default function TournamentJoin({
     ? handleSalirseToast
     : handleInscribirseToast;
 
+  // const isPlayerInTeams = tournament.data?.teams.some((team) =>
+  //   team.players.some((player) => player._id === user?._id),
+  // );
+
   const buttonText = tournament.data?.players.some(
     (player) => player._id === user?._id,
   )
