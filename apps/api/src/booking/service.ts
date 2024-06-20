@@ -15,7 +15,10 @@ async function getBookings(filter: TGetBookingsQueryDefinition = {}) {
     "owner",
     "players",
     "table",
-    "timeBlock",
+    {
+      path: "timeBlock",
+      populate: "table",
+    },
   ]);
   return bookings;
 }
@@ -25,7 +28,10 @@ async function getBooking(_id: TGetBookingParamsDefinition["_id"]) {
     "owner",
     "players",
     "table",
-    "timeBlock",
+    {
+      path: "timeBlock",
+      populate: "table",
+    },
   ]);
   return booking;
 }

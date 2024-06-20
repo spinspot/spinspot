@@ -129,9 +129,9 @@ async function createTimeBlocksFromActiveTemplates(
   );
 
   const startDate =
-    input.startDate ?? dayjs.utc().add(1, "week").format("YYYY-MM-DD");
+    input?.startDate ?? dayjs.utc().add(1, "week").format("YYYY-MM-DD");
   const endDate =
-    input.endDate ?? dayjs.utc(startDate).add(1, "day").format("YYYY-MM-DD");
+    input?.endDate ?? dayjs.utc(startDate).add(1, "day").format("YYYY-MM-DD");
 
   const timeBlockTemplates =
     await timeBlockTemplateService.getTimeBlockTemplates({ isActive: true });
