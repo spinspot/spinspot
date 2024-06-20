@@ -1,8 +1,12 @@
-import { Types } from "mongoose";
+import { Types, isValidObjectId } from "mongoose";
 import z from "zod";
 
+export const objectIdDefinition = z
+  .instanceof(Types.ObjectId)
+  .or(z.string().refine(isValidObjectId));
+
 export const baseModelDefinition = z.object({
-  _id: z.instanceof(Types.ObjectId).or(z.string()),
+  _id: objectIdDefinition,
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 });
@@ -11,6 +15,17 @@ export const genderDefinition = z.enum(["MALE", "FEMALE", "OTHER"], {
   message: "Debe seleccionar una opción",
 });
 export type TGenderEnum = z.infer<typeof genderDefinition>;
+
+export const dayOfWeekDefinition = z.enum([
+  "SUNDAY",
+  "MONDAY",
+  "TUESDAY",
+  "WEDNESDAY",
+  "THURSDAY",
+  "FRIDAY",
+  "SATURDAY",
+]);
+export type TDayOfWeek = z.infer<typeof dayOfWeekDefinition>;
 
 export const userTypeDefinition = z.enum(["PLAYER", "ADMIN"]);
 export type TUserTypeEnum = z.infer<typeof userTypeDefinition>;
@@ -24,12 +39,12 @@ export const statusTypeDefinition = z.enum([
 ]);
 export type TStatusTypeEnum = z.infer<typeof eventTypeDefinition>;
 
-export const statusTimeTypeDefinition = z.enum([
+export const timeBlockStatusDefinition = z.enum([
   "AVAILABLE",
   "UNAVAILABLE",
   "BOOKED",
 ]);
-export type TStatusTimeTypeEnum = z.infer<typeof statusTimeTypeDefinition>;
+export type TStatusTimeTypeEnum = z.infer<typeof timeBlockStatusDefinition>;
 
 export const tournamentLevelTypeDefinition = z.enum([
   "MEDIUM",

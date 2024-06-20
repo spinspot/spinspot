@@ -1,7 +1,11 @@
 import { Types, isValidObjectId } from "mongoose";
 import z from "zod";
 import { IPopulatedBooking } from "../booking";
-import { baseModelDefinition, statusTimeTypeDefinition } from "../definitions";
+import {
+  baseModelDefinition,
+  objectIdDefinition,
+  timeBlockStatusDefinition,
+} from "../definitions";
 import { ITable } from "../table";
 
 const timeBlockDefinition = baseModelDefinition.extend({
@@ -12,7 +16,7 @@ const timeBlockDefinition = baseModelDefinition.extend({
     .nullish(),
   startTime: z.coerce.date(),
   endTime: z.coerce.date(),
-  status: statusTimeTypeDefinition,
+  status: timeBlockStatusDefinition,
 });
 
 export type ITimeBlock = z.infer<typeof timeBlockDefinition>;
@@ -41,10 +45,27 @@ export type TCreateTimeBlockInputDefinition = z.infer<
 >;
 
 export const createTimeBlocksInputDefinition = z.array(
-  timeBlockDefinition.omit({ _id: true }),
+  createTimeBlockInputDefinition,
 );
 export type TCreateTimeBlocksInputDefinition = z.infer<
   typeof createTimeBlocksInputDefinition
+>;
+
+export const createTimeBlocksFromTemplateInputDefinition = z.object({
+  timeBlockTemplate: objectIdDefinition,
+  startDate: z.string().date(),
+  endDate: z.string().date(),
+});
+export type TCreateTimeBlocksFromTemplateInputDefinition = z.infer<
+  typeof createTimeBlocksFromTemplateInputDefinition
+>;
+
+export const createTimeBlocksFromActiveTemplatesInputDefinition = z.object({
+  startDate: z.string().date().optional(),
+  endDate: z.string().date().optional(),
+});
+export type TCreateTimeBlocksFromActiveTemplatesInputDefinition = z.infer<
+  typeof createTimeBlocksFromActiveTemplatesInputDefinition
 >;
 
 export const updateTimeBlockParamsDefinition = timeBlockDefinition.pick({
