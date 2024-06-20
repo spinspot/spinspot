@@ -10,7 +10,7 @@
   "crons": [
     {
       "path": "/api/time-blocks/generate",
-      "schedule": "0 0 * * 3"
+      "schedule": "0 0 * * *"
     }
   ]
 }

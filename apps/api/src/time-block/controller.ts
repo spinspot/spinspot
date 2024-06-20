@@ -35,7 +35,7 @@ function generateTimeBlocksFromTemplate({
   /* For each day from startDate to endDate */
   for (
     let day = dayjs.utc(startDate);
-    !day.isAfter(endDate);
+    day.isBefore(endDate, "day");
     day = day.add(1, "day")
   ) {
     /* Skip if not in daysOfWeek */
@@ -131,7 +131,7 @@ async function createTimeBlocksFromActiveTemplates(
   const startDate =
     input.startDate ?? dayjs.utc().add(1, "week").format("YYYY-MM-DD");
   const endDate =
-    input.endDate ?? dayjs.utc(startDate).add(1, "week").format("YYYY-MM-DD");
+    input.endDate ?? dayjs.utc(startDate).add(1, "day").format("YYYY-MM-DD");
 
   const timeBlockTemplates =
     await timeBlockTemplateService.getTimeBlockTemplates({ isActive: true });
