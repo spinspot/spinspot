@@ -8,11 +8,13 @@ interface TextInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   bottomRightLabel?: string;
   iconLeft?: React.ReactNode;
   iconRight?: React.ReactNode;
+  containerClassName?: string;
 }
 
 export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
   function TextInput(
     {
+      containerClassName,
       className,
       topLeftLabel,
       topRightLabel,
@@ -28,7 +30,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
     const renderBottomLabels = bottomLeftLabel || bottomRightLabel;
 
     return (
-      <label className="form-control w-full">
+      <label className={cn("form-control w-full", containerClassName)}>
         {renderTopLabels && (
           <div className="label">
             {topLeftLabel && (

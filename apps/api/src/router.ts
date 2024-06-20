@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authRouter } from "./auth";
 import { bookingRouter } from "./booking";
+import { invitationRouter } from "./invitation";
 import { tableRouter } from "./table";
 import { teamRouter } from "./team";
 import { timeBlockRouter } from "./time-block";
@@ -21,5 +22,6 @@ router.use("/booking", bookingRouter);
 router.use("/tournaments", tournamentRouter);
 router.use("/teams", teamRouter);
 router.use("/tournament-matches", tournamentMatchRouter);
+router.use("/invitations", invitationRouter);
 
 export { router };

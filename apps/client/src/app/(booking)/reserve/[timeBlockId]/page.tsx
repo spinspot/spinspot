@@ -13,6 +13,7 @@ import {
   useAuth,
   useAvailableUsers,
   useCreateBooking,
+  useInvitePlayer,
   useTable,
   useTimeBlock,
   useToast,
@@ -23,6 +24,12 @@ import { useEffect, useState } from "react";
 
 interface ReserveParams {
   timeBlockId: string;
+}
+
+interface IInvitedUser {
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 
 export default function Reserve({ params }: { params: ReserveParams }) {
@@ -37,15 +44,19 @@ export default function Reserve({ params }: { params: ReserveParams }) {
   const [selectedUsers, setSelectedUsers] = useState<(string | null)[]>([]);
   const [eventType, setEventType] = useState<string | null>(null);
   const [indumentary, setIndumentary] = useState<string | null>(null);
+  const [invitedUsers, setInvitedUsers] = useState<IInvitedUser[]>([]);
   const router = useRouter();
+
+  const onInviteUser = (user: IInvitedUser) => {
+    setInvitedUsers((prevUsers) => [...prevUsers, user]);
+  };
 
   const timeBlock = useTimeBlock(params.timeBlockId);
   const table = useTable(timeBlock.data?.table._id);
   const users = useUsers();
   const createBooking = useCreateBooking();
   const availableUsers = useAvailableUsers();
-
-  console.log(selectedUsers);
+  const invitePlayer = useInvitePlayer();
 
   const handleSearch = (index: number, text: string) => {
     const newSearchTexts = [...searchTexts];
@@ -126,10 +137,18 @@ export default function Reserve({ params }: { params: ReserveParams }) {
           equipment: indumentary === "SI",
         },
         {
-          onSuccess: () => {
+          onSuccess: (booking) => {
             showToast({
               label: "Reserva creada exitosamente",
               type: "success",
+            });
+            invitedUsers.forEach((user) => {
+              invitePlayer.mutate({
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                booking: booking._id,
+              });
             });
             router.push("/tables");
           },
@@ -240,7 +259,10 @@ export default function Reserve({ params }: { params: ReserveParams }) {
               className="btn-neutral mt-2 min-w-28 text-nowrap"
             />
             {invitations === "SI" ? (
-              <InvitationSection timeBlockId={params.timeBlockId} />
+              <InvitationSection
+                timeBlockId={params.timeBlockId}
+                onSubmit={onInviteUser}
+              />
             ) : (
               <PlayerInput
                 searchTexts={searchTexts}

@@ -1,6 +1,7 @@
 export * from "./auth";
 export * from "./booking";
 export * from "./definitions";
+export * from "./invitation";
 export * from "./table";
 export * from "./team";
 export * from "./time-block";

@@ -5,6 +5,8 @@ import {
   eventTypeDefinition,
   statusTypeDefinition,
 } from "../definitions";
+import { ITable } from "../table";
+import { IPopulatedTimeBlock } from "../time-block";
 import { IUser } from "../user";
 
 export const bookingDefinition = baseModelDefinition.extend({
@@ -26,7 +28,10 @@ export const bookingDefinition = baseModelDefinition.extend({
 
 export type IBooking = z.infer<typeof bookingDefinition>;
 export type IPopulatedBooking = Omit<IBooking, "players"> & {
+  owner: IUser;
   players: IUser[];
+  table: ITable;
+  timeBlock: IPopulatedTimeBlock;
 };
 
 export const getBookingsQueryDefinition = bookingDefinition.partial();
