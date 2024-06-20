@@ -75,6 +75,12 @@ export default function Invitation({ params }: { params: InvitationParams }) {
             },
           );
         },
+        onError: () => {
+          showToast({
+            label: "Error al crear la cuenta",
+            type: "error",
+          });
+        },
       },
     );
   };
