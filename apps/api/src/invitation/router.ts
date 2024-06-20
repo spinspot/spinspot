@@ -6,6 +6,10 @@ const invitationRouter = Router();
 
 invitationRouter.get("/:_id", invitationController.getInvitation);
 invitationRouter.post("/invite", auth(), invitationController.invitePlayer);
-invitationRouter.post("/:_id/accept", invitationController.acceptInvitation);
+invitationRouter.post(
+  "/:_id/accept",
+  auth(),
+  invitationController.acceptInvitation,
+);
 
 export { invitationRouter };

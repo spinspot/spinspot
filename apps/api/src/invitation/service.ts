@@ -1,4 +1,5 @@
 import {
+  IPopulatedInvitation,
   TCreateInvitationInputDefinition,
   TGetInvitationParamsDefinition,
   invitationSchema,
@@ -8,13 +9,29 @@ import { model } from "mongoose";
 const Invitation = model("Invitation", invitationSchema);
 
 async function createInvitation(data: TCreateInvitationInputDefinition) {
-  const team = await Invitation.create(data);
-  return team;
+  const invitation = await Invitation.create(data);
+  return invitation;
 }
 
 async function getInvitation(_id: TGetInvitationParamsDefinition["_id"]) {
-  const team = await Invitation.findById(_id);
-  return team;
+  const invitation = await Invitation.findById<IPopulatedInvitation>(
+    _id,
+  ).populate([
+    "from",
+    {
+      path: "booking",
+      populate: [
+        "owner",
+        "players",
+        "table",
+        {
+          path: "timeBlock",
+          populate: "table",
+        },
+      ],
+    },
+  ]);
+  return invitation;
 }
 
 export const invitationService = {

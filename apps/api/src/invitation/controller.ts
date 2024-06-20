@@ -1,8 +1,7 @@
+import { bookingService } from "@/booking";
 import { sendMail } from "@/email";
-import { userService } from "@/user";
 import {
   ApiError,
-  acceptInvitationInputDefinition,
   acceptInvitationParamsDefinition,
   getInvitationParamsDefinition,
   invitePlayerInputDefinition,
@@ -27,7 +26,7 @@ async function invitePlayer(req: Request, res: Response) {
   });
 
   const link = new URL(
-    `/invitation?id=${encodeURIComponent(`${invitation._id}`)}`,
+    `/invitation/${encodeURIComponent(`${invitation._id}`)}`,
     process.env.CLIENT_APP_URL,
   ).href;
 
@@ -69,14 +68,12 @@ async function invitePlayer(req: Request, res: Response) {
   `,
   });
 
-  console.log("SENT!");
-
   return res.status(200).json(invitation);
 }
 
 async function acceptInvitation(req: Request, res: Response) {
   const params = acceptInvitationParamsDefinition.parse(req.params);
-  const input = acceptInvitationInputDefinition.parse(req.body);
+  const user = req.user!;
   const invitation = await invitationService.getInvitation(params._id);
 
   if (!invitation) {
@@ -86,11 +83,31 @@ async function acceptInvitation(req: Request, res: Response) {
     });
   }
 
-  const user = await userService.createUser({
-    email: invitation.email,
-    firstName: invitation.firstName,
-    lastName: invitation.lastName,
-    password: input.password,
+  if (`${user.email}` !== `${invitation.email}`) {
+    throw new ApiError({
+      status: 500,
+      errors: [{ message: "No puedes aceptar esta invitación" }],
+    });
+  }
+
+  if (
+    invitation.booking.players.some(
+      (player) => `${player._id}` === `${user._id}`,
+    )
+  ) {
+    throw new ApiError({
+      status: 500,
+      errors: [{ message: "Ya estás en esta reserva" }],
+    });
+  }
+
+  const newPlayers = [
+    ...invitation.booking.players.map((player) => player._id),
+    user._id,
+  ];
+
+  await bookingService.updateBooking(invitation.booking._id, {
+    players: newPlayers,
   });
 
   return res.status(200).json(user);

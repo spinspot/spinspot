@@ -1,7 +1,7 @@
 import z from "zod";
-import { IBooking } from "../booking";
+import { IPopulatedBooking } from "../booking";
 import { baseModelDefinition, objectIdDefinition } from "../definitions";
-import { IUser, createUserInputDefinition, userDefinition } from "../user";
+import { IUser, userDefinition } from "../user";
 
 export const invitationStatusDefinition = z.enum(["PENDING", "ACCEPTED"]);
 
@@ -18,7 +18,7 @@ export type TInvitationDefinition = z.infer<typeof invitationDefinition>;
 export type IInvitation = z.infer<typeof invitationDefinition>;
 export type IPopulatedInvitation = Omit<IInvitation, "from"> & {
   from: IUser;
-  booking: IBooking;
+  booking: IPopulatedBooking;
 };
 
 export const getInvitationParamsDefinition = invitationDefinition.pick({
@@ -50,11 +50,4 @@ export const acceptInvitationParamsDefinition = invitationDefinition.pick({
 });
 export type TAcceptInvitationParamsDefinition = z.infer<
   typeof acceptInvitationParamsDefinition
->;
-
-export const acceptInvitationInputDefinition = createUserInputDefinition.pick({
-  password: true,
-});
-export type TAcceptInvitationInputDefinition = z.infer<
-  typeof acceptInvitationInputDefinition
 >;
