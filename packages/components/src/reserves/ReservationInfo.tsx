@@ -37,7 +37,7 @@ export function ReservationInfo({
           />
           <Badge
             labelName="Horario"
-            label={`${startTime} to ${endTime}`}
+            label={`${startTime} a ${endTime}`}
             leftIcon={<ClockIcon className="text-neutral h-[36px] w-[36px]" />}
           />
           <Badge

@@ -1,6 +1,7 @@
 import {
   ITimeBlock,
   TCreateTimeBlockInputDefinition,
+  TCreateTimeBlocksInputDefinition,
   TUpdateTimeBlockInputDefinition,
   TUpdateTimeBlockParamsDefinition,
 } from "@spin-spot/models";
@@ -17,6 +18,21 @@ export function useCreateTimeBlock() {
   return useMutation({
     mutationKey: ["createTimeBlock"],
     mutationFn: createTimeBlock,
+  });
+}
+
+export async function createTimeBlocks(
+  input: TCreateTimeBlocksInputDefinition,
+) {
+  const res = await api.post("/time-blocks", { body: input });
+  const timeBlock: ITimeBlock[] = await res.json();
+  return timeBlock;
+}
+
+export function useCreateTimeBlocks() {
+  return useMutation({
+    mutationKey: ["createTimeBlocks"],
+    mutationFn: createTimeBlocks,
   });
 }
 

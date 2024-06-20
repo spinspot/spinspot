@@ -75,8 +75,8 @@ export function LayoutWaves({ children }: { children: React.ReactNode }) {
         </svg>
       </div>
       {/* Children */}
-      <div className="relative my-auto flex w-full items-center justify-center">
-        <main className="mt-14 max-w-96 space-y-4 rounded-lg py-8 sm:mt-32">
+      <div className="relative my-auto flex w-full flex-col items-center">
+        <main className="mt-14 w-full max-w-md space-y-4 rounded-lg py-8 sm:mt-32">
           {children}
         </main>
       </div>

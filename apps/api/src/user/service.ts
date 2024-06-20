@@ -5,7 +5,12 @@ import {
   TUpdateUserInputDefinition,
   TUpdateUserParamsDefinition,
   userSchema,
+  bookingSchema,
   type TCreateUserInputDefinition,
+  TGetTournamentParamsDefinition,
+  ITournament,
+  tournamentSchema,
+  teamSchema,
 } from "@spin-spot/models";
 import { hash } from "bcrypt";
 import { UpdateQuery, model } from "mongoose";
@@ -27,6 +32,8 @@ userSchema.set("toJSON", {
   },
 });
 const User = model("User", userSchema);
+const Booking = model("Booking", bookingSchema);
+
 
 async function getUsers(filter: TGetUsersQueryDefinition = {}) {
   const users = await User.find(filter);
@@ -51,9 +58,86 @@ async function updateUser(
   return user;
 }
 
+async function getAvailableUsers() {
+  const users: IUser[] = await User.aggregate([
+    {
+      $lookup: {
+        from: "bookings",
+        localField: "_id",
+        foreignField: "players",
+        as: "bookings",
+      },
+    },
+    {
+      $match: {
+        bookings: {
+          $not: {
+            $elemMatch: {
+              status: { $in: ["PENDING", "IN_PROGRESS"] },
+            },
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        bookings: false,
+      },
+    },
+  ]);
+
+  return users;
+}
+
+async function isUserAvailable(_id : TGetUserParamsDefinition["_id"]){
+  const user = await User.findById(_id);
+  if (!user) return false;
+
+  const bookings = await Booking.find({
+    players: _id,
+    status: { $in: ["PENDING", "IN_PROGRESS"] },
+  });
+
+  return bookings.length === 0;
+}
+
+const Tournament = model("Tournament", tournamentSchema);
+const Team = model("Team", teamSchema);
+
+async function getAvailableUsersByTournament(_id: TGetTournamentParamsDefinition["_id"]) {
+  const tournamentId: ITournament["_id"] = _id;
+  const tournament = await Tournament.findById(tournamentId).select('players teams');
+
+  const playersInTournament = tournament?.players ?? [];
+
+  const teamsInTournament = tournament?.teams ?? [];
+  const teams = await Team.find({ _id: { $in: teamsInTournament } }).select('players');
+
+  const playersInTeams = teams.flatMap(team => team.players); //esto crea un nuevo array de jugadores de los equipos 
+
+  const allExcludedPlayers = [...playersInTournament, ...playersInTeams];
+
+  const users = await User.aggregate([
+    {
+      $match: {
+        _id: { $nin: allExcludedPlayers },
+      }
+    }
+  ]);
+
+  return users;
+}
+
+
+
+
 export const userService = {
   getUsers,
   getUser,
   createUser,
   updateUser,
+  getAvailableUsers,
+  isUserAvailable,
+  getAvailableUsersByTournament,
 } as const;
+

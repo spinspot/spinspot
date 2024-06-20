@@ -1,6 +1,7 @@
 import {
   ApiError,
   createUserInputDefinition,
+  getTournamentParamsDefinition,
   getUserParamsDefinition,
   getUsersQueryDefinition,
   updateUserInputDefinition,
@@ -45,9 +46,23 @@ async function updateUser(req: Request, res: Response) {
   return res.status(200).json(user);
 }
 
+async function getAvailableUsers(req: Request, res: Response) {
+    const users = await userService.getAvailableUsers();
+    return res.status(200).json(users);
+}
+
+async function getAvailableUsersByTournament(req: Request, res: Response) {
+  const params = getTournamentParamsDefinition.parse(req.params);
+  const users = await userService.getAvailableUsersByTournament(params._id);
+  return res.status(200).json(users);
+}
+
+
 export const userController = {
   getUsers,
   getUser,
   createUser,
   updateUser,
+  getAvailableUsers,
+  getAvailableUsersByTournament,
 } as const;

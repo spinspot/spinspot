@@ -9,6 +9,7 @@ interface SelectionSectionProps {
   setIndumentary: (_indumentary: string | null) => void;
   resetInputs: (_length: number) => void;
   initialActive?: number | null;
+  initialIndumentary?: number | null;
 }
 
 export function SelectionSection({
@@ -18,6 +19,7 @@ export function SelectionSection({
   setIndumentary,
   resetInputs,
   initialActive,
+  initialIndumentary,
 }: SelectionSectionProps) {
   return (
     <div>
@@ -35,9 +37,10 @@ export function SelectionSection({
         />
       </div>
       <div className="mt-6 flex flex-col items-center">
-        <h3 className="mr-1 text-lg">Indumentaria: </h3>
+        <h3 className="mr-1 text-lg">¿Necesitas Raquetas y Pelotas? </h3>
         <Pagination
           labels={optinosNo}
+          initialActiveIndex={initialIndumentary ?? null}
           size="sm"
           onPageChange={(label) => setIndumentary(label ?? null)}
           className="btn-neutral mt-2 min-w-28 text-nowrap"
