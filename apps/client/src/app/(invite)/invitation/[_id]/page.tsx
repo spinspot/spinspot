@@ -70,9 +70,7 @@ export default function Invitation({ params }: { params: InvitationParams }) {
                   type: "success",
                   duration: 3000,
                 });
-                router.push(
-                  `/reserve/${encodeURIComponent(`${invitation.data.booking.timeBlock._id}`)}`,
-                );
+                router.push(`/tables`);
               },
             },
           );
