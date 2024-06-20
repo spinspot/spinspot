@@ -9,6 +9,7 @@ import {
 } from "@spin-spot/components";
 import {
   useAuth,
+  useAvailableUsers,
   useTimeBlock,
   useToast,
   useUpdateBooking,
@@ -35,7 +36,7 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
 
   const timeBlock = useTimeBlock(params.timeBlockId);
   const users = useUsers();
-
+  const availableUsers = useAvailableUsers();
   const updateBooking = useUpdateBooking();
 
   useEffect(() => {
@@ -61,6 +62,11 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
       );
 
       setEventType(timeBlock.data?.booking.eventType);
+
+      const equipmentValue = timeBlock.data?.booking.equipment;
+      if (equipmentValue !== undefined) {
+        setIndumentary(equipmentValue ? "SI" : "NO");
+      }
     }
   }, [timeBlock.status]);
 
@@ -75,7 +81,7 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
 
     if (text.length >= 1) {
       const lowerCaseText = text.toLowerCase();
-      const filtered = users.data?.filter((user) => {
+      const filtered = availableUsers.data?.filter((user) => {
         const fullName = `${user.firstName.toLowerCase()} ${user.lastName.toLowerCase()}`;
         return (
           user.firstName.toLowerCase().includes(lowerCaseText) ||
@@ -134,10 +140,11 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
           _id: timeBlock.data?.booking._id,
           eventType: eventType as "1V1" | "2V2",
           owner: user._id,
-          table: timeBlock.data.table._id, // Aquí se pasa `tableId`
+          table: timeBlock.data.table._id,
           players: validPlayers,
           timeBlock: params.timeBlockId,
           status: "PENDING",
+          equipment: indumentary === "SI",
         },
         {
           onSuccess: () => {
@@ -206,6 +213,9 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
     );
   }
 
+  const initialIndumentaryIndex =
+    indumentary === "SI" ? 1 : indumentary === "NO" ? 0 : null;
+
   return (
     <div className="font-body flex-grow py-32">
       {timeBlock.isSuccess && (
@@ -238,8 +248,9 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
         setIndumentary={setIndumentary}
         resetInputs={resetInputs}
         initialActive={eventType === "1V1" ? 0 : 1}
+        initialIndumentary={initialIndumentaryIndex}
       />
-      <div className="mt-8 flex w-full flex-col items-center justify-center">
+      <div className="flex w-full flex-col items-center justify-center max-sm:p-6 sm:mt-4">
         {eventType && (
           <PlayerInput
             searchTexts={searchTexts}
@@ -250,22 +261,22 @@ export default function EditReserve({ params }: { params: ReserveProps }) {
           />
         )}
       </div>
-      <div className="mt-10 flex flex-row justify-center gap-x-6">
-        <Button
-          label="Cancelar"
-          labelSize="text-sm"
-          className="btn-lg btn-secondary"
-          onClick={() => router.back()}
-        />
+      <div className="flex w-full flex-col justify-center gap-2 max-sm:px-6 sm:mt-6">
         <Button
           label="Editar"
           labelSize="text-sm"
           className={
             eventType != null && indumentary != null
-              ? "btn-lg btn-primary w-[102px]"
-              : "btn-primary btn-lg btn-disabled w-[102px]"
+              ? "btn-md btn-primary"
+              : "btn-primary btn-md btn-disabled"
           }
           onClick={handleUpdate}
+        />
+        <Button
+          label="Cancelar"
+          labelSize="text-sm"
+          className="btn-md btn-link text-secondary mx-auto !no-underline"
+          onClick={() => router.back()}
         />
       </div>
     </div>

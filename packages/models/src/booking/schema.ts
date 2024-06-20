@@ -24,6 +24,7 @@ export const bookingSchema = new Schema<IBooking>(
       required: true,
     },
     status: String,
+    equipment: Boolean,
   },
   { timestamps: true },
 );

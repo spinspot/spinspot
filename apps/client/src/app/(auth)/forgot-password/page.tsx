@@ -60,8 +60,8 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="absolute inset-0 z-40 flex items-center justify-center">
-      <div className="mt-24 w-96 space-y-4 rounded-lg p-8 sm:mt-36">
+    <div className="flex items-center justify-center">
+      <div className="w-full space-y-4 rounded-lg p-8 ">
         <div className="flex flex-col gap-1">
           <h2 className="text-primary dark:text-base-300 mb-1 text-center text-3xl font-black">
             Olvidaste tu contraseña?
@@ -94,12 +94,14 @@ export default function ResetPassword() {
           labelSize="text-md"
           onClick={handleSubmit(handleSumbit)}
         />
-        <Button
-          className="btn-sm btn-link text-neutral dark:text-base-300 w-full"
-          label="Volver"
-          labelSize="text-md"
-          onClick={handleVolverClick}
-        />
+        <div className="flex justify-center">
+          <Button
+            className="btn-sm btn-link text-secondary dark:text-base-300 !no-underline"
+            label="Volver"
+            labelSize="text-md"
+            onClick={handleVolverClick}
+          />
+        </div>
       </div>
     </div>
   );

@@ -43,35 +43,39 @@ export default function Profile() {
             className="object-cover"
           />
         </div>
-        <h1 className="mt-4 text-center text-xl font-bold text-purple-700">
+        <h1 className="text-secondary mt-4 text-center text-2xl font-bold dark:text-white">
           {user ? userFullName : "Jane Doe"}
         </h1>
-        <div className="flex items-center justify-center gap-2">
-          <MapPinIcon className="h-6 w-6 text-gray-600"></MapPinIcon>
-          <p className="mt-2 text-center text-gray-600">
+        <div className="flex items-center justify-center gap-1">
+          <MapPinIcon className="text-neutral h-6 w-6"></MapPinIcon>
+          <p className="text-neutral mt-2 text-center">
             Universidad Metropolitana
           </p>
         </div>
         <div className="mt-4 flex justify-center gap-6">
           <div className="text-center">
-            <p className="text-lg font-semibold text-gray-700">{0}</p>
-            <p className="text-sm text-gray-500">Reservas</p>
+            <p className="text-secondary text-lg font-semibold dark:text-white">
+              {0}
+            </p>
+            <p className="text-neutral text-sm">Reservas</p>
           </div>
           <div className="text-center">
-            <p className="text-lg font-semibold text-gray-700">{0}</p>
-            <p className="text-sm text-gray-500">Torneos</p>
+            <p className="text-secondary text-lg font-semibold dark:text-white">
+              {0}
+            </p>
+            <p className="text-neutral text-sm">Torneos</p>
           </div>
         </div>
         <div className="mt-6 flex justify-center space-x-4">
           <Button
             className="btn-sm btn-secondary w-24"
-            label="Back"
+            label="Volver"
             labelSize="text-md"
             onClick={handleBackClick}
           />
           <Button
-            className="btn-sm dark:btn-neutral btn-primary"
-            label="Edit Profile"
+            className="btn-sm btn-primary"
+            label="Editar Perfil"
             labelSize="text-md"
             onClick={handleEditClick}
           />

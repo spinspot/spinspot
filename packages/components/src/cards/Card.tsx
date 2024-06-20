@@ -20,10 +20,7 @@ export function Card({
     <>
       <div className={cn("card w-72 break-all shadow-xl", className)}>
         <figure className="h-50">
-          <img
-            src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
-            alt="Shoes"
-          />
+          <img src="/tournamentBackGround.svg" alt="Shoes" />
         </figure>
         <div className="card-body p-5">
           <h2 className="card-title text-2xl font-semibold">{labelName}</h2>
