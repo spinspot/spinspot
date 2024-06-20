@@ -13,6 +13,7 @@ export * from "./layouts";
 export * from "./loaders";
 export * from "./modals";
 export * from "./paginations";
+export * from "./player-list";
 export * from "./reserves";
 export * from "./service-workers";
 export * from "./text-inputs";
