@@ -12,6 +12,7 @@ import {
   useUpdateBooking,
   useUpdateTimeBlock,
 } from "@spin-spot/services";
+import { cn } from "@spin-spot/utils";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
@@ -32,8 +33,8 @@ export default function Tables() {
   const availableUsers = useAvailableUsers();
   const { showToast } = useToast();
   const updateBooking = useUpdateBooking();
-  const { mutate: updateTimeBlock } = useUpdateTimeBlock();
-  const { mutate: cancelBooking } = useCancelBooking();
+  const updateTimeBlock = useUpdateTimeBlock();
+  const cancelBooking = useCancelBooking();
 
   const [loadingBlockId, setLoadingBlockId] = useState<string | null>(null);
 
@@ -62,10 +63,11 @@ export default function Tables() {
     timeBlockId: string,
     bookingId: string,
   ) => {
-    try {
-      cancelBooking(bookingId, {
+    cancelBooking.mutate(
+      { _id: bookingId },
+      {
         onSuccess: () => {
-          updateTimeBlock({
+          updateTimeBlock.mutate({
             _id: timeBlockId,
             status: "AVAILABLE",
             booking: null,
@@ -82,14 +84,8 @@ export default function Tables() {
             type: "error",
           });
         },
-      });
-    } catch (error) {
-      console.error("Error al cancelar la reserva:", error);
-      showToast({
-        label: "Error al cancelar la reserva",
-        type: "error",
-      });
-    }
+      },
+    );
   };
 
   useEffect(() => {
@@ -307,22 +303,35 @@ export default function Tables() {
                         user?._id === block.booking?.owner && (
                           <div className="flex flex-col items-center justify-center gap-2">
                             <Button
-                              className="btn-primary btn-sm mx-2 w-20"
+                              className={cn(
+                                "btn-secondary btn-sm mx-2 w-20",
+                                !cancelBooking.isIdle && "btn-disabled",
+                              )}
                               label="Editar"
                               labelSize="text-md"
                               onClick={() => handleEdit(`${block._id}`)}
                             />
-                            <Button
-                              className="btn-link text-secondary btn-sm mx-auto !no-underline"
-                              label="Eiminar"
-                              labelSize="text-md"
-                              onClick={() =>
-                                handleShowCancelationToast(
-                                  block._id.toString(),
-                                  block.booking?._id.toString(),
-                                )
-                              }
-                            />
+                            {!cancelBooking.isIdle ? (
+                              <div className="mt-2 flex items-center justify-center">
+                                <Loader
+                                  className="text-secondary"
+                                  size="md"
+                                  variant="dots"
+                                />
+                              </div>
+                            ) : (
+                              <Button
+                                className="btn-link text-secondary btn-sm !no-underline"
+                                label="Eiminar"
+                                labelSize="text-md"
+                                onClick={() =>
+                                  handleShowCancelationToast(
+                                    block._id.toString(),
+                                    block.booking?._id.toString(),
+                                  )
+                                }
+                              />
+                            )}
                           </div>
                         )}
                       {block.status === "BOOKED" &&

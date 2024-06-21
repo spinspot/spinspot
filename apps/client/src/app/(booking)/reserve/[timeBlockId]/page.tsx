@@ -285,6 +285,8 @@ export default function Reserve({ params }: { params: ReserveParams }) {
               : "btn-primary btn-md btn-disabled"
           }
           onClick={handleReserve}
+          isLoading={!createBooking.isIdle}
+          isLoadinglabel="Reservando..."
         />
         <Button
           label="Cancelar"

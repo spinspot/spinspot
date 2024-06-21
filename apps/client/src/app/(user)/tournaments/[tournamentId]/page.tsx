@@ -23,6 +23,7 @@ import {
   useToast,
   useTournament,
 } from "@spin-spot/services";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface TournamentParams {
@@ -49,6 +50,8 @@ export default function TournamentJoin({
   const eventType = tournament.data?.eventType;
 
   const [isUpdating, setIsUpdating] = useState(false); // Estado para controlar si se está actualizando el torneo
+
+  const router = useRouter();
 
   const handleSearch = (index: number, text: string) => {
     const newSearchTexts = [...searchTexts];
@@ -190,6 +193,10 @@ export default function TournamentJoin({
     });
   };
 
+  const handleBackClick = () => {
+    router.push("/tournaments");
+  };
+
   useEffect(() => {
     if (!tournament.isFetching) {
       setIsUpdating(false);
@@ -226,6 +233,8 @@ export default function TournamentJoin({
         <Loader size="md" className="text-primary"></Loader> Inscribiendose...
       </div>
     ));
+
+  console.log(isPlayerInTeams);
 
   return (
     <div>
@@ -285,14 +294,18 @@ export default function TournamentJoin({
                 />
                 <Badge
                   labelName="Sede"
-                  label={"Unimet"}
+                  label={tournament.data.location}
                   leftIcon={
                     <BuildingLibraryIcon className="text-neutral h-[36px] w-[36px]" />
                   }
                 />
                 <Badge
                   labelName="Formato"
-                  label={"Eliminación"}
+                  label={
+                    tournament.data.tournamentFormat === "ELIMINATION"
+                      ? "Eliminación"
+                      : "Liga"
+                  }
                   leftIcon={
                     <TrophyIcon className="text-neutral h-[36px] w-[36px]" />
                   }
@@ -317,14 +330,40 @@ export default function TournamentJoin({
                 ? `Juagdores Inscritos ${tournament.data?.players?.length}/${tournament.data.maxPlayers}`
                 : `Equipos Inscritos ${tournament.data?.teams?.length}/${tournament.data?.maxTeams}`}
             </div>
-            {tournament.data?.players?.length === tournament.data?.maxPlayers ||
-            tournament.data?.teams?.length === tournament.data?.maxTeams ? (
-              <Button
-                label="Torneo Lleno"
-                className={"btn-disabled btn-lg w-72"}
-              />
-            ) : eventType === "2V2" ? (
-              isPlayerInTeams ? (
+            <div className="flex flex-col gap-4">
+              {tournament.data?.players?.length ===
+                tournament.data?.maxPlayers ||
+              (tournament.data?.teams?.length === tournament.data?.maxTeams &&
+                !isPlayerInTeams) ? (
+                <Button
+                  label="Torneo Lleno"
+                  className={"btn-disabled btn-lg w-72"}
+                />
+              ) : eventType === "2V2" ? (
+                isPlayerInTeams ? (
+                  <Button
+                    label={showLoader || buttonText}
+                    className={`btn-lg w-72 ${showLoader ? "btn-disabled" : ""} ${buttonText === "Inscribirse" ? "btn-primary" : "btn-secondary"}`}
+                    onClick={() =>
+                      tournament.data && buttonOnClick(tournament.data)
+                    }
+                  />
+                ) : (
+                  <Modal
+                    searchTexts={searchTexts}
+                    suggestions={suggestions}
+                    selectedUsers={selectedUsers}
+                    handleSearch={handleSearch}
+                    handleSelectUser={handleSelectUser}
+                    teamName={teamName}
+                    setTeamName={setTeamName}
+                    onClick={() =>
+                      tournament.data && handleInscription(tournament.data)
+                    }
+                    isPending={isUpdating}
+                  ></Modal>
+                )
+              ) : (
                 <Button
                   label={showLoader || buttonText}
                   className={`btn-lg w-72 ${showLoader ? "btn-disabled" : ""} ${buttonText === "Inscribirse" ? "btn-primary" : "btn-secondary"}`}
@@ -332,29 +371,13 @@ export default function TournamentJoin({
                     tournament.data && buttonOnClick(tournament.data)
                   }
                 />
-              ) : (
-                <Modal
-                  searchTexts={searchTexts}
-                  suggestions={suggestions}
-                  selectedUsers={selectedUsers}
-                  handleSearch={handleSearch}
-                  handleSelectUser={handleSelectUser}
-                  teamName={teamName}
-                  setTeamName={setTeamName}
-                  onClick={() =>
-                    tournament.data && handleInscription(tournament.data)
-                  }
-                ></Modal>
-              )
-            ) : (
+              )}
               <Button
-                label={showLoader || buttonText}
-                className={`btn-lg w-72 ${showLoader ? "btn-disabled" : ""} ${buttonText === "Inscribirse" ? "btn-primary" : "btn-secondary"}`}
-                onClick={() =>
-                  tournament.data && buttonOnClick(tournament.data)
-                }
-              />
-            )}
+                className="btn btn-link text-secondary mx-auto !no-underline"
+                label="Volver"
+                onClick={handleBackClick}
+              ></Button>
+            </div>
           </div>
         </div>
       )}
