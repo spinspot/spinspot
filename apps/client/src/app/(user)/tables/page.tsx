@@ -218,19 +218,23 @@ export default function Tables() {
 
   const filteredTimeBlocks = useMemo<IPopulatedTimeBlock[]>(() => {
     if (!selectedDate || !timeBlocks.data) return [];
-    return timeBlocks.data.filter((block) => {
-      const blockDate = new Date(block.startTime);
-      // Filtrar por fecha y, si hay una mesa seleccionada, por el código de mesa
-      const isSameDate =
-        blockDate.getDate() === selectedDate.getDate() &&
-        blockDate.getMonth() === selectedDate.getMonth() &&
-        blockDate.getFullYear() === selectedDate.getFullYear();
-      const isSameTable = selectedTable
-        ? block.table.code === selectedTable
-        : true;
-      return isSameDate && isSameTable;
-    })
-    .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());;
+    return timeBlocks.data
+      .filter((block) => {
+        const blockDate = new Date(block.startTime);
+        // Filtrar por fecha y, si hay una mesa seleccionada, por el código de mesa
+        const isSameDate =
+          blockDate.getDate() === selectedDate.getDate() &&
+          blockDate.getMonth() === selectedDate.getMonth() &&
+          blockDate.getFullYear() === selectedDate.getFullYear();
+        const isSameTable = selectedTable
+          ? block.table.code === selectedTable
+          : true;
+        return isSameDate && isSameTable;
+      })
+      .sort(
+        (a, b) =>
+          new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
+      );
   }, [timeBlocks, selectedDate, selectedTable]);
 
   return (
@@ -243,8 +247,8 @@ export default function Tables() {
       <Pagination
         className="btn-neutral"
         labels={tables?.map((table) => table.code) || []}
-        onPageChange={(label) => setSelectedTable(label ?? null)} 
-        initialActiveIndex={tables? 0:null} 
+        onPageChange={(label) => setSelectedTable(label ?? null)}
+        initialActiveIndex={tables ? 0 : null}
       />
       <div className="mt-2 w-full overflow-x-auto p-4 sm:w-4/5">
         {timeBlocks.isLoading ? (
@@ -258,9 +262,8 @@ export default function Tables() {
         ) : filteredTimeBlocks.length === 0 ? (
           <div className="flex items-center justify-center text-center text-lg font-bold">
             Lo Sentimos, no hay horarios disponibles para esta fecha.
-            </div>
-        ) :   
-        (
+          </div>
+        ) : (
           <table className="table-lg table w-full items-center justify-center text-center">
             <thead>
               <tr>
