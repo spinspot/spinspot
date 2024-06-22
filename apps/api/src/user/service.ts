@@ -14,6 +14,7 @@ import {
 } from "@spin-spot/models";
 import { hash } from "bcrypt";
 import { UpdateQuery, model } from "mongoose";
+import dayjs from "dayjs";
 
 userSchema.pre("save", async function (next) {
   if (this.password) this.password = await hash(this.password, 10);
@@ -59,6 +60,8 @@ async function updateUser(
 }
 
 async function getAvailableUsers() {
+  const today = dayjs().startOf('day').toDate(); 
+
   const users: IUser[] = await User.aggregate([
     {
       $lookup: {
@@ -69,19 +72,30 @@ async function getAvailableUsers() {
       },
     },
     {
+      $lookup: {
+        from: "timeblocks",
+        localField: "bookings.timeBlock",
+        foreignField: "_id",
+        as: "timeBlocks",
+      },
+    },
+    {
       $match: {
-        bookings: {
-          $not: {
-            $elemMatch: {
-              status: { $in: ["PENDING", "IN_PROGRESS"] },
-            },
+        $or: [
+          {
+            "timeBlocks.startTime": { $gte: today },
+            "bookings.status": { $in: ["PENDING", "IN_PROGRESS"] },
           },
-        },
+          {
+            bookings: { $eq: [] }
+          }
+        ]
       },
     },
     {
       $project: {
         bookings: false,
+        timeBlocks: false,
       },
     },
   ]);
@@ -89,14 +103,17 @@ async function getAvailableUsers() {
   return users;
 }
 
-async function isUserAvailable(_id : TGetUserParamsDefinition["_id"]){
+async function isUserAvailable(_id: TGetUserParamsDefinition["_id"]) {
   const user = await User.findById(_id);
   if (!user) return false;
+
+  const today = dayjs().startOf('day').toDate(); 
 
   const bookings = await Booking.find({
     players: _id,
     status: { $in: ["PENDING", "IN_PROGRESS"] },
-  });
+    'timeBlock.startTime': { $gte: today } 
+  }).populate('timeBlock'); 
 
   return bookings.length === 0;
 }
