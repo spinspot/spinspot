@@ -306,6 +306,8 @@ export default function Tables() {
                               label="Reservar"
                               labelSize="text-md"
                               onClick={() => handleReserve(`${block._id}`)}
+                              isLoading={timeBlocks.isFetching}
+                              isLoadinglabel="Actualizando..."
                             />
                           )}
                           {block.status.toLowerCase() === "booked" &&
@@ -363,8 +365,12 @@ export default function Tables() {
                                       onClick={() =>
                                         handleShowSalirseToast(block.booking)
                                       }
+                                      isLoading={timeBlocks.isFetching}
+                                      isLoadinglabel="Actualizando..."
                                     />
-                                    <span>{`${playersCount}/${maxPlayers}`}</span>
+                                    {!timeBlocks.isFetching && (
+                                      <span>{`${playersCount}/${maxPlayers}`}</span>
+                                    )}
                                   </>
                                 ) : playersCount < maxPlayers ? (
                                   <>
@@ -383,8 +389,12 @@ export default function Tables() {
                                       onClick={() =>
                                         handleShowJoinToast(block.booking)
                                       }
+                                      isLoading={timeBlocks.isFetching}
+                                      isLoadinglabel="Actualizando..."
                                     />
-                                    <span>{`${playersCount}/${maxPlayers}`}</span>
+                                    {!timeBlocks.isFetching && (
+                                      <span>{`${playersCount}/${maxPlayers}`}</span>
+                                    )}
                                   </>
                                 ) : (
                                   <span>Reservado</span>
