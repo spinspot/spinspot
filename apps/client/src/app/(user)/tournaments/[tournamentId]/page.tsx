@@ -124,6 +124,7 @@ export default function TournamentJoin({
               label: "Error al inscribirse en el torneo",
               type: "error",
             });
+            setIsUpdating(false);
           },
         },
       );
@@ -168,6 +169,7 @@ export default function TournamentJoin({
               type: "error",
               duration: 3000,
             });
+            setIsUpdating(false);
           },
         },
       );
