@@ -1,4 +1,5 @@
 import {
+  IPopulatedBooking,
   TGetBookingParamsDefinition,
   TGetBookingsQueryDefinition,
   TUpdateBookingInputDefinition,
@@ -24,7 +25,9 @@ async function getBookings(filter: TGetBookingsQueryDefinition = {}) {
 }
 
 async function getBooking(_id: TGetBookingParamsDefinition["_id"]) {
-  const booking = await Booking.findById(_id).populate([
+  const booking = await Booking.findById<IPopulatedBooking>(
+    _id,
+  ).populate([
     "owner",
     "players",
     "table",
