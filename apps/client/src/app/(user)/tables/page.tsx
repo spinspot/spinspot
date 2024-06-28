@@ -6,6 +6,8 @@ import {
   useAuth,
   useAvailableUsers,
   useCancelBooking,
+  useJoinBooking,
+  useLeaveBooking,
   useTables,
   useTimeBlocks,
   useToast,
@@ -35,6 +37,8 @@ export default function Tables() {
   const updateBooking = useUpdateBooking();
   const updateTimeBlock = useUpdateTimeBlock();
   const cancelBooking = useCancelBooking();
+  const joinBooking = useJoinBooking();
+  const leaveBooking = useLeaveBooking();
 
   const [loadingBlockId, setLoadingBlockId] = useState<string | null>(null);
 
@@ -140,11 +144,11 @@ export default function Tables() {
     }
 
     if (user?._id) {
-      const playerIds = booking.players.map((player) => player._id);
-      const newPlayers = [...playerIds, user._id];
+      //const playerIds = booking.players.map((player) => player._id);
+      //const newPlayers = [...playerIds, user._id];
       setLoadingBlockId(booking.timeBlock.toString());
-      updateBooking.mutate(
-        { _id: booking._id, players: newPlayers },
+      joinBooking.mutate(
+        { _id: booking._id },
         {
           onSuccess() {
             showToast({
@@ -162,6 +166,26 @@ export default function Tables() {
           },
         },
       );
+
+      // updateBooking.mutate(
+      //   { _id: booking._id, players: newPlayers },
+      //   {
+      //     onSuccess() {
+      //       showToast({
+      //         label: "Se ha unido a la reserva de forma exitosa!",
+      //         type: "success",
+      //         duration: 3000,
+      //       });
+      //     },
+      //     onError() {
+      //       showToast({
+      //         label: "Error al unirse a la reserva.",
+      //         type: "error",
+      //         duration: 3000,
+      //       });
+      //     },
+      //   },
+      // );
     }
   }
 
@@ -191,11 +215,12 @@ export default function Tables() {
 
   function handleSalirse(booking: IPopulatedBooking) {
     if (user?._id) {
-      const playerIds = booking.players.map((player) => player._id);
-      const newPlayers = playerIds.filter((playerId) => playerId !== user._id);
+      //const playerIds = booking.players.map((player) => player._id);
+      //const newPlayers = playerIds.filter((playerId) => playerId !== user._id);
       setLoadingBlockId(booking.timeBlock.toString());
-      updateBooking.mutate(
-        { _id: booking._id, players: newPlayers },
+
+      leaveBooking.mutate(
+        { _id: booking._id },
         {
           onSuccess() {
             showToast({
@@ -213,6 +238,26 @@ export default function Tables() {
           },
         },
       );
+
+      // updateBooking.mutate(
+      //   { _id: booking._id, players: newPlayers },
+      //   {
+      //     onSuccess() {
+      //       showToast({
+      //         label: "Se ha salido de la reserva de forma exitosa!",
+      //         type: "success",
+      //         duration: 3000,
+      //       });
+      //     },
+      //     onError() {
+      //       showToast({
+      //         label: "Error al salirse de la reserva.",
+      //         type: "error",
+      //         duration: 3000,
+      //       });
+      //     },
+      //   },
+      // );
     }
   }
 
