@@ -341,6 +341,13 @@ async function cancelBooking(req: Request, res: Response) {
   return res.status(200).json(booking);
 }
 
+async function getBookingsByPlayer(req: Request, res: Response) {
+  const { playerId } = req.params;
+  const validPlayerId = playerId ?? ""; 
+  const bookings = await bookingService.getBookingsByPlayer(validPlayerId);
+  return res.status(200).json(bookings);
+}
+
 export const bookingController = {
   bookingWithUser,
   getBookings,
@@ -348,5 +355,6 @@ export const bookingController = {
   updateBooking,
   cancelBooking,
   joinBooking,
-  leaveBooking
+  leaveBooking,
+  getBookingsByPlayer,
 } as const;

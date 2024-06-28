@@ -38,3 +38,17 @@ export function useBookingsByOwner(owner: TGetUserParamsDefinition["_id"]) {
     queryFn: () => getBookingsByOwner(owner),
   });
 }
+
+export async function getBookingsByPlayer(playerId: TGetUserParamsDefinition["_id"]) {
+  const playerID = String(playerId);
+  const res = await api.get(`/booking/player/${encodeURIComponent(playerID)}`);
+  const bookings: IBooking[] = await res.json();
+  return bookings;
+}
+
+export function useBookingsByPlayer(playerId: TGetUserParamsDefinition["_id"]) {
+  return useQuery({
+    queryKey: ["getBookingsByPlayer", playerId],
+    queryFn: () => getBookingsByPlayer(playerId),
+  });
+}
