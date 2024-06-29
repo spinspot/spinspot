@@ -280,12 +280,15 @@ export default function Tables() {
       );
   }, [timeBlocks, selectedDate, selectedTable]);
 
+  const today = new Date();
+  const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 6);
+
   return (
     <div className="inset-0 z-40 my-3 flex flex-col items-center justify-center">
       <h1 className="mt-6 text-center text-3xl font-bold">
         Reservas de Mesas de Ping Pong 🏓
       </h1>
-      <Calendar onDateChange={setSelectedDate} />
+      <Calendar onDateChange={setSelectedDate} endDate={endDate} />
       <h3 className="mb-3 text-xl font-bold">Mesa</h3>
       <Pagination
         className="btn-neutral"
