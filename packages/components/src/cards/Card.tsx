@@ -6,6 +6,7 @@ interface CardProps {
   label?: string;
   className?: string;
   labelButton?: string;
+  image?: boolean;
   onClick?: () => void;
 }
 
@@ -15,13 +16,16 @@ export function Card({
   labelButton,
   onClick,
   className,
+  image = true,
 }: CardProps) {
   return (
     <>
       <div className={cn("card w-72 break-all shadow-xl", className)}>
-        <figure className="h-50">
-          <img src="/tournamentBackGround.svg" alt="Shoes" />
-        </figure>
+        {image && (
+          <figure className="h-50">
+            <img src="/tournamentBackGround.svg" alt="Shoes" />
+          </figure>
+        )}
         <div className="card-body p-5">
           <h2 className="card-title text-2xl font-semibold">{labelName}</h2>
           <p>{label}</p>

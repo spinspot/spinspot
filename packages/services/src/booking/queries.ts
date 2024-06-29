@@ -1,4 +1,9 @@
-import { IBooking, TGetBookingParamsDefinition, TGetUserParamsDefinition } from "@spin-spot/models";
+import {
+  IBooking,
+  IPopulatedBooking,
+  TGetBookingParamsDefinition,
+  TGetUserParamsDefinition,
+} from "@spin-spot/models";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../api";
 
@@ -25,10 +30,14 @@ export function useBooking(_id: TGetBookingParamsDefinition["_id"]) {
   });
 }
 
-export async function getBookingsByOwner(owner: TGetUserParamsDefinition["_id"]) { 
+export async function getBookingsByOwner(
+  owner: TGetUserParamsDefinition["_id"],
+) {
   const ownerId = String(owner);
-  const res = await api.get(`/booking?owner=${encodeURIComponent(ownerId)}&status=PENDING`);
-  const bookings: IBooking = await res.json();
+  const res = await api.get(
+    `/booking?owner=${encodeURIComponent(ownerId)}&status=PENDING`,
+  );
+  const bookings: IPopulatedBooking[] = await res.json();
   return bookings;
 }
 

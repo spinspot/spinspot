@@ -11,7 +11,6 @@ import {
   useTables,
   useTimeBlocks,
   useToast,
-  useUpdateBooking,
   useUpdateTimeBlock,
 } from "@spin-spot/services";
 import { cn } from "@spin-spot/utils";
@@ -34,7 +33,6 @@ export default function Tables() {
   const router = useRouter();
   const availableUsers = useAvailableUsers();
   const { showToast } = useToast();
-  const updateBooking = useUpdateBooking();
   const updateTimeBlock = useUpdateTimeBlock();
   const cancelBooking = useCancelBooking();
   const joinBooking = useJoinBooking();
