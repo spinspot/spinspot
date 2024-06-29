@@ -48,10 +48,12 @@ export function useBookingsByOwner(owner: TGetUserParamsDefinition["_id"]) {
   });
 }
 
-export async function getBookingsByPlayer(playerId: TGetUserParamsDefinition["_id"]) {
+export async function getBookingsByPlayer(
+  playerId: TGetUserParamsDefinition["_id"],
+) {
   const playerID = String(playerId);
   const res = await api.get(`/booking/player/${encodeURIComponent(playerID)}`);
-  const bookings: IBooking[] = await res.json();
+  const bookings: IPopulatedBooking[] = await res.json();
   return bookings;
 }
 

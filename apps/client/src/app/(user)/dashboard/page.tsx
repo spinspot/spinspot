@@ -4,6 +4,7 @@ import { Button, Card, Loader } from "@spin-spot/components";
 import {
   useAuth,
   useBookingsByOwner,
+  useBookingsByPlayer,
   useTournaments,
 } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
@@ -14,6 +15,7 @@ export default function Dashboard() {
   const tournaments = useTournaments();
   const userBookings = useBookingsByOwner(user?._id || "");
   console.log(userBookings.data && userBookings.data[0]?.timeBlock);
+  const playerBookings = useBookingsByPlayer(user?._id || "");
 
   const handleClick = () => {
     router.push("/tables");
@@ -125,6 +127,37 @@ export default function Dashboard() {
                   .replace(/\//g, "-")}
                 labelButton="Editar"
                 onClick={() => handleEditTournament(`${booking.timeBlock._id}`)}
+                className="carousel-item"
+                image={false}
+              />
+            ))
+          ) : playerBookings.data?.length !== 0 ? (
+            playerBookings.data &&
+            playerBookings.data.map((booking, index) => (
+              <Card
+                key={index}
+                label={`de ${new Date(
+                  booking.timeBlock.startTime,
+                ).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })} a ${new Date(booking.timeBlock.endTime).toLocaleTimeString(
+                  [],
+                  {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  },
+                )}`}
+                labelName={new Date(booking.timeBlock.startTime)
+                  .toLocaleDateString([], {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  })
+                  .replace(/\//g, "-")}
+                labelButton="Ver Mesas"
+                onClick={handleClick}
                 className="carousel-item"
                 image={false}
               />
