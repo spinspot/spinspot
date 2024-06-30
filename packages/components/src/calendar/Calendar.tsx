@@ -7,13 +7,13 @@ import { DayPicker } from "react-day-picker";
 const today = new Date();
 const fromMonth = new Date(today.getFullYear(), today.getMonth());
 const startDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-const endDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 6);
 
 interface CalendarProps {
   onDateChange: (_date: Date | undefined) => void;
+  endDate?: Date;
 }
 
-export function Calendar({ onDateChange }: CalendarProps) {
+export function Calendar({ onDateChange, endDate }: CalendarProps) {
   const [date, setDate] = useState<Date | undefined>(new Date());
 
   const handleDateChange = (newDate: Date | undefined) => {
@@ -24,7 +24,10 @@ export function Calendar({ onDateChange }: CalendarProps) {
   };
 
   const disablePastDates = (date: Date): boolean => {
-    return date < startDate || date > endDate;
+    if (endDate){
+    return date < startDate || date > endDate ;
+    }
+    return date < startDate;
   };
 
   return (
