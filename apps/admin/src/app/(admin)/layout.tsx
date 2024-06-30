@@ -1,17 +1,14 @@
-"use client";
+import { LayoutMain } from "@spin-spot/components";
 
-import { AuthGuard, LayoutAdmin } from "@spin-spot/components";
-
-export default function AuthLayout({
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <LayoutAdmin>
-      <AuthGuard validate={(user) => user === null} route="/dashboard">
-        {children}
-      </AuthGuard>
-    </LayoutAdmin>
+    <LayoutMain isAdmin={true}>
+      {children}
+      {/* <AuthGuard>{children}</AuthGuard> */}
+    </LayoutMain>
   );
 }

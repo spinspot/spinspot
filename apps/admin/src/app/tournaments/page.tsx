@@ -35,9 +35,9 @@ export default function Tournaments() {
               <Card
                 labelName={tournament.name}
                 label={tournament.description}
-                labelButton="Editar Torneo"
+                labelButton="Ver/Editar Torneo"
                 image={false}
-                onClick={() => router.push(`/editar-torneo/${tournament._id}`)}
+                onClick={() => router.push(`/tournaments/edit-tournament/${tournament._id}`)}
               />
             ))
           )}

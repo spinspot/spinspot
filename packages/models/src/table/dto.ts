@@ -1,6 +1,5 @@
 import z from "zod";
 import { baseModelDefinition } from "../definitions";
-import { userDefinition } from "../user";
 
 const tableDefinition = baseModelDefinition.extend({
   code: z.string(),
@@ -29,7 +28,7 @@ export type TUpdateTableParamsDefinition = z.infer<
   typeof getTableParamsDefinition
 >;
 
-export const updateTableInputDefinition = userDefinition.partial();
+export const updateTableInputDefinition = tableDefinition.partial();
 export type TUpdateTableInputDefinition = z.infer<
   typeof updateTableInputDefinition
 >;

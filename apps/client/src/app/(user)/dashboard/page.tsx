@@ -129,6 +129,8 @@ export default function Dashboard() {
                 labelButton="Jugar"
                 onClick={() => handlePlay(`${tournament._id}`)}
                 className="carousel-item"
+                image={true}
+                imageSrc="/tournamentBackGround.svg"
               />
             ))
           ) : (
@@ -177,7 +179,6 @@ export default function Dashboard() {
                 labelButton="Editar"
                 onClick={() => handleEditTournament(`${booking.timeBlock._id}`)}
                 className="carousel-item"
-                image={false}
               />
             ))
           ) : playerBookings.data?.length !== 0 ? (
@@ -215,11 +216,8 @@ export default function Dashboard() {
                   )
                 }
                 className="carousel-item"
-                image={false}
                 classNameButton={`btn-secondary ${!leaveBooking.isIdle ? "btn-disabled" : ""}`}
                 onClick={() => handleShowSalirseToast(booking)}
-                // isLoading={!leaveBooking.isIdle}
-                // isLoadinglabel="Actualizando..."
               />
             ))
           ) : (

@@ -65,6 +65,8 @@ export default function Tournament() {
                   labelButton="Jugar"
                   onClick={() => handlePlay(`${tournament._id}`)}
                   className="carousel-item"
+                  image={true}
+                  imageSrc="/tournamentBackGround.svg"
                 />
               ))
             ) : (
@@ -97,6 +99,8 @@ export default function Tournament() {
                   labelButton="Jugar"
                   onClick={() => handlePlay(`${tournament._id}`)}
                   className="carousel-item"
+                  image={true}
+                  imageSrc="/tournamentBackGround.svg"
                 />
               ))
             ) : (
@@ -129,6 +133,8 @@ export default function Tournament() {
                   labelButton="Jugar"
                   onClick={() => handlePlay(`${tournament._id}`)}
                   className="carousel-item"
+                  image={true}
+                  imageSrc="/tournamentBackGround.svg"
                 />
               ))
             ) : (

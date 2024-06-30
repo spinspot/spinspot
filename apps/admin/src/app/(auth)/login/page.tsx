@@ -10,12 +10,13 @@ import {
 import { useSignInWithCredentials } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useScrollLock } from "usehooks-ts";
 
 export default function Login() {
   const router = useRouter();
   const signInWithCredentials = useSignInWithCredentials();
 
-  //useScrollLock();
+  useScrollLock();
 
   const {
     register,
@@ -27,12 +28,8 @@ export default function Login() {
     mode: "onBlur",
   });
 
-  const handleRegisterClick = () => {
-    router.push("/register");
-  };
-
-  const handleForgotPasswordClick = () => {
-    router.push("/forgot-password");
+  const handleNotAdminClick = () => {
+    router.push("https://spinspot-client.vercel.app/login");
   };
 
   const handleSignIn: SubmitHandler<TSignInWithCredentialsInputDefinition> = (
@@ -93,7 +90,7 @@ export default function Login() {
             className="btn-sm btn-link text-neutral dark:text-base-300 !no-underline"
             label="No eres un administrador?"
             labelSize="text-md"
-            onClick={handleRegisterClick}
+            onClick={handleNotAdminClick}
           />
         </div>
       </div>
