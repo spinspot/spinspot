@@ -5,7 +5,8 @@ interface CardProps {
   labelName?: string;
   label?: string;
   className?: string;
-  labelButton?: string;
+  classNameButton?: string;
+  labelButton?: string | React.ReactNode;
   image?: boolean;
   onClick?: () => void;
 }
@@ -16,6 +17,7 @@ export function Card({
   labelButton,
   onClick,
   className,
+  classNameButton = "btn-primary",
   image = true,
 }: CardProps) {
   return (
@@ -31,7 +33,7 @@ export function Card({
           <p>{label}</p>
           <div className="card-actions justify-start">
             <Button
-              className="btn-md btn-primary"
+              className={cn("btn-md", classNameButton)}
               label={labelButton}
               labelSize="text-md"
               onClick={onClick}

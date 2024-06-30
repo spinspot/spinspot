@@ -1,10 +1,13 @@
 "use client";
 
 import { Button, Card, Loader } from "@spin-spot/components";
+import { IPopulatedBooking } from "@spin-spot/models";
 import {
   useAuth,
   useBookingsByOwner,
   useBookingsByPlayer,
+  useLeaveBooking,
+  useToast,
   useTournaments,
 } from "@spin-spot/services";
 import { useRouter } from "next/navigation";
@@ -16,6 +19,52 @@ export default function Dashboard() {
   const userBookings = useBookingsByOwner(user?._id || "");
   console.log(userBookings.data && userBookings.data[0]?.timeBlock);
   const playerBookings = useBookingsByPlayer(user?._id || "");
+  const leaveBooking = useLeaveBooking();
+  const { showToast } = useToast();
+
+  const handleShowSalirseToast = (booking: IPopulatedBooking) => {
+    showToast({
+      label: "¿Seguro que quieres salirte de la reserva?",
+      type: "warning",
+      acceptButtonLabel: "Sí",
+      denyButtonLabel: "No",
+      onAccept() {
+        handleSalirse(booking);
+      },
+      onDeny() {
+        showToast({
+          label: "Desvinculación Cancelada",
+          type: "error",
+        });
+      },
+    });
+  };
+
+  function handleSalirse(booking: IPopulatedBooking) {
+    if (user?._id) {
+      leaveBooking.mutate(
+        { _id: booking._id },
+        {
+          onSuccess() {
+            showToast({
+              label: "Se ha salido de la reserva de forma exitosa!",
+              type: "success",
+              duration: 3000,
+            });
+            userBookings.refetch();
+            playerBookings.refetch();
+          },
+          onError() {
+            showToast({
+              label: "Error al salirse de la reserva.",
+              type: "error",
+              duration: 3000,
+            });
+          },
+        },
+      );
+    }
+  }
 
   const handleClick = () => {
     router.push("/tables");
@@ -156,10 +205,21 @@ export default function Dashboard() {
                     day: "2-digit",
                   })
                   .replace(/\//g, "-")}
-                labelButton="Ver Mesas"
-                onClick={handleClick}
+                labelButton={
+                  !leaveBooking.isIdle ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <Loader size="sm" /> Saliéndose...
+                    </div>
+                  ) : (
+                    "Salirse"
+                  )
+                }
                 className="carousel-item"
                 image={false}
+                classNameButton={`btn-secondary ${!leaveBooking.isIdle ? "btn-disabled" : ""}`}
+                onClick={() => handleShowSalirseToast(booking)}
+                // isLoading={!leaveBooking.isIdle}
+                // isLoadinglabel="Actualizando..."
               />
             ))
           ) : (
