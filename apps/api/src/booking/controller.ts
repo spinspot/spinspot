@@ -1,7 +1,7 @@
 import { sendMail } from "@/email";
 import { tableService } from "@/table";
-import { userService } from "@/user";
 import { timeBlockService } from "@/time-block";
+import { userService } from "@/user";
 import {
   ApiError,
   IPopulatedBooking,
@@ -63,12 +63,12 @@ async function bookingWithUser(req: Request, res: Response) {
       errors: [{ message: "Hay jugadores repetidos en la reserva" }],
     });
   }
- if (!(await userService.isUserAvailable(user?._id.toString() ?? ""))) {
-   throw new ApiError({
-     status: 400,
-     errors: [{ message: "Ya tienes una Reserva Activa" }],
-   });
- }
+  if (!(await userService.isUserAvailable(user?._id.toString() ?? ""))) {
+    throw new ApiError({
+      status: 400,
+      errors: [{ message: "Ya tienes una Reserva Activa" }],
+    });
+  }
 
   const session = await startSession();
 
@@ -112,7 +112,7 @@ async function updateBooking(req: Request, res: Response) {
 
   //Obtenemos los jugadores de la reserva actual, esto para no revisar si están disponibles
   const currentPlayers = prevBooking.players.map((player: { _id: string }) =>
-    player._id.toString()
+    player._id.toString(),
   );
 
   const unavailablePlayers = [];
@@ -128,9 +128,7 @@ async function updateBooking(req: Request, res: Response) {
   if (unavailablePlayers.length > 0) {
     throw new ApiError({
       status: 400,
-      errors: [
-        { message: "Hay jugadores que ya están en una reserva activa" },
-      ],
+      errors: [{ message: "Hay jugadores que ya están en una reserva activa" }],
     });
   }
 
@@ -142,8 +140,6 @@ async function updateBooking(req: Request, res: Response) {
   const newBooking: IPopulatedBooking | any = await bookingService.getBooking(
     params._id,
   );
-
-
 
   let actionMessage = "";
 
@@ -184,6 +180,8 @@ async function updateBooking(req: Request, res: Response) {
         )
         .join(", ");
       actionMessage = `Hola! ${booking.owner.firstName} ${booking.owner.lastName}, este correo informativo es para notificarle que los siguientes jugadores se han salido de su reserva: <br> ${leftPlayerNames}`;
+    } else if (leftPlayers.length === 0 && joinedPlayers.length === 0) {
+      actionMessage = `Hola! ${booking.owner.firstName} ${booking.owner.lastName}, este correo informativo es para notificarle que su reserva ha sido editada recientemente. A continuación puede presionar el botón para visualizar los cambios`;
     }
   }
 
@@ -233,6 +231,89 @@ async function updateBooking(req: Request, res: Response) {
   return res.status(200).json(booking);
 }
 
+async function joinBooking(req: Request, res: Response) {
+  const user = req.user;
+  const params = updateBookingParamsDefinition.parse(req.params);
+
+  const booking = await bookingService.getBooking(params._id);
+  if(user &&
+    booking && 
+    booking.eventType ==="1V1" &&
+    booking.players &&
+    booking.players.length <2 &&
+    !booking.players.some((player) => player._id.toString() === user._id.toString())
+  ){
+    const updatedPlayers = [...booking.players.map((player) => player._id), user._id];
+    bookingService.updateBooking(booking._id, {
+      players: updatedPlayers,
+    })
+    return res.status(200).json(booking);
+  } else if (
+    user &&
+    booking &&
+    booking.eventType ==="2V2" &&
+    booking.players &&
+    booking.players.length <4 &&
+    !booking.players.some((player) => player._id.toString() === user._id.toString())
+  ){
+      const updatedPlayers = [...booking.players.map((player) => player._id), user._id];
+      bookingService.updateBooking(booking._id, {
+      players: updatedPlayers,
+    })
+    return res.status(200).json(booking);
+  } else {
+    throw new ApiError({
+      status: 400,
+      errors: [
+        {
+          message:
+            "El usuario ya está en la reserva o hay un error al ingresar a la reserva ",
+        },
+      ],
+    });
+  }
+}
+
+async function leaveBooking(req: Request, res: Response) {
+  const user = req.user;
+  const params = updateBookingParamsDefinition.parse(req.params);
+
+  const booking = await bookingService.getBooking(params._id);
+  if(user &&
+    booking && 
+    booking.players
+  ){
+    const playerIndex = booking.players.findIndex((player) => player._id.toString() === user._id.toString());
+    if (playerIndex !== -1) {
+      booking.players.splice(playerIndex, 1);
+      await bookingService.updateBooking(params._id, {
+        players: booking.players.map((player) => player._id),
+      });
+    } else {
+      throw new ApiError({
+        status: 400,
+        errors: [
+          {
+            message:
+              "El usuario no está en la reserva",
+          },
+        ],
+      });
+    }
+  } else {
+    throw new ApiError({
+      status: 400,
+      errors: [
+        {
+          message:
+            "Error al salir de la reserva",
+        },
+      ],
+    });
+  }
+  return res.status(200).json(booking);
+}
+
 async function cancelBooking(req: Request, res: Response) {
   const params = updateBookingParamsDefinition.parse(req.params);
 
@@ -258,10 +339,20 @@ async function cancelBooking(req: Request, res: Response) {
   return res.status(200).json(booking);
 }
 
+async function getBookingsByPlayer(req: Request, res: Response) {
+  const { playerId } = req.params;
+  const validPlayerId = playerId ?? ""; 
+  const bookings = await bookingService.getBookingsByPlayer(validPlayerId);
+  return res.status(200).json(bookings);
+}
+
 export const bookingController = {
   bookingWithUser,
   getBookings,
   getBooking,
   updateBooking,
   cancelBooking,
+  joinBooking,
+  leaveBooking,
+  getBookingsByPlayer,
 } as const;
