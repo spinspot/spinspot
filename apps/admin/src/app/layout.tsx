@@ -1,7 +1,6 @@
 import {
   AuthContextProvider,
   QueryContextProvider,
-
   ToastContextProvider,
 } from "@spin-spot/components";
 import { cn } from "@spin-spot/utils";
