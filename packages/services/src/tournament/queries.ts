@@ -29,3 +29,18 @@ export function useTournament(_id: TGetTournamentParamsDefinition["_id"]) {
     queryFn: () => getTournament(_id),
   });
 }
+
+export async function getTournamentParticipants(
+  _id: TGetTournamentParamsDefinition["_id"],
+) {
+  const res = await api.get(`/tournaments/${encodeURIComponent(`${_id}`)}/participants`);
+  const participants = await res.json();
+  return participants;
+}
+
+export function useTournamentParticipants(_id: TGetTournamentParamsDefinition["_id"]) {
+  return useQuery({
+    queryKey: ["getTournamentParticipants", _id],
+    queryFn: () => getTournamentParticipants(_id),
+  });
+}
