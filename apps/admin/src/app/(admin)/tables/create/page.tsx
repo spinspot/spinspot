@@ -84,7 +84,7 @@ export default function createTableAdmin() {
           className={cn(
             "select-primary",
             errors.isActive
-              ? "dark:text-base-300 input-error"
+              ? "dark:text-base-300 select-error"
               : "dark:text-base-300",
           )}
           bottomLeftLabel={errors.isActive?.message}
