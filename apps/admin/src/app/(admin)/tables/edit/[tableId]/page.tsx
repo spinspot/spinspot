@@ -1,12 +1,12 @@
 "use client";
-import { UserIcon } from "@heroicons/react/24/outline";
+import { CalculatorIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Loader, SelectInput, TextInput } from "@spin-spot/components";
 import {
   TUpdateTableInputDefinition,
   updateTableInputDefinition,
 } from "@spin-spot/models";
-import { useTable } from "@spin-spot/services";
+import { useTable, useToast, useUpdateTable } from "@spin-spot/services";
 import { cn } from "@spin-spot/utils";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -24,7 +24,8 @@ export default function editTableAdmin({
 }) {
   const table = useTable(params.tableId);
   const router = useRouter();
-  //const updateTable = useUp;
+  const updateTable = useUpdateTable();
+  const { showToast } = useToast();
   const {
     register,
     handleSubmit,
@@ -36,7 +37,7 @@ export default function editTableAdmin({
     resolver: zodResolver(
       updateTableInputDefinition
         .omit({ isActive: true })
-        .extend({ isActive: z.enum(["ACTIVO", "INACTIVO"]) }),
+        .extend({ isActive: z.enum(["ACTIVA", "INACTIVA"]) }),
     ),
 
     defaultValues: {
@@ -54,19 +55,20 @@ export default function editTableAdmin({
   const handleUpdateTable: SubmitHandler<
     Omit<TUpdateTableInputDefinition, "isActive"> & { isActive: string }
   > = (data) => {
-    // updateUser.mutate(
-    //   { _id: userId, ...data },
-    //   {
-    //     onSuccess: () => {
-    //       showToast({
-    //         label: "Se ha actualizado su perfil con exito!",
-    //         type: "success",
-    //         duration: 3000,
-    //       });
-    //       router.push("/profile");
-    //     },
-    //   },
-    // );
+    table.data &&
+      updateTable.mutate(
+        { _id: table.data?._id, ...data, isActive: data.isActive === "ACTIVA" },
+        {
+          onSuccess: () => {
+            showToast({
+              label: "Se ha actualizado la mesa con exito!",
+              type: "success",
+              duration: 3000,
+            });
+            router.push("/tables");
+          },
+        },
+      );
   };
 
   useEffect(() => {
@@ -80,11 +82,11 @@ export default function editTableAdmin({
   return (
     <div className="font-body flex-grow py-32">
       <div className="font-title text-center font-bold">
-        <h1 className="text-primary flex flex-col text-3xl">
+        <h1 className="text-primary dark:text-base-300 flex flex-col text-3xl">
           <span>Editar Mesa</span>
         </h1>
       </div>
-      <div className="text-primary mx-auto mt-4 flex max-w-md flex-col items-center gap-y-4">
+      <div className="text-primary mx-auto mt-4 flex max-w-md flex-col items-center gap-y-4 max-sm:px-8">
         {table.isLoading ? (
           <div className="mt-14 flex items-center justify-center">
             <Loader size="lg" variant="dots" className="text-primary"></Loader>
@@ -95,26 +97,32 @@ export default function editTableAdmin({
               placeholder="Código..."
               topRightLabel="Código de la mesa"
               iconLeft={
-                <UserIcon className="text-primary dark:text-neutral h-6 w-6" />
+                <CalculatorIcon className="text-primary dark:text-neutral h-6 w-6" />
               }
               {...register("code")}
-              className={errors.code ? "input-error" : ""}
+              className={
+                errors.code
+                  ? "dark:text-base-300 input-error"
+                  : "dark:text-base-300"
+              }
               bottomLeftLabel={errors.code?.message}
             />
             <SelectInput
               options={["ACTIVA", "INACTIVA"]}
               defaultOption="Seleccione actividad"
               topRightLabel="Actividad"
-              {...register("isActive", {
-                setValueAs: (value) => value === "ACTIVA",
-              })}
+              {...register("isActive")}
               className={cn(
                 "select-primary",
-                errors.isActive ? "input-error" : "",
+                errors.isActive
+                  ? "dark:text-base-300 input-error"
+                  : "dark:text-base-300",
               )}
               bottomLeftLabel={errors.isActive?.message}
             />
-            <div className="mt-6 flex w-full flex-col gap-3">
+            <div
+              className={`${errors.isActive ? "mt-2" : "mt-4"} flex w-full flex-col gap-3`}
+            >
               <Button
                 className="btn-md btn-primary"
                 label="Editar Mesa"

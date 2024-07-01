@@ -2,7 +2,12 @@ import z from "zod";
 import { baseModelDefinition } from "../definitions";
 
 const tableDefinition = baseModelDefinition.extend({
-  code: z.string(),
+  code: z
+    .string()
+    .nonempty("El código no puede estar vacío")
+    .refine((val) => !isNaN(Number(val)), {
+      message: "El código debe ser un número",
+    }),
   isActive: z.boolean(),
 });
 

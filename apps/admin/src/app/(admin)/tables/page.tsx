@@ -19,7 +19,7 @@ export default function Tables() {
         <Button
           className="btn-primary"
           label="Crear Nueva Mesa"
-          onClick={() => router.push("/tournaments/create")}
+          onClick={() => router.push("/tables/create")}
         />
         <div className="text-lg font-semibold">
           Mesas Activas:{" "}
